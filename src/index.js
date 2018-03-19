@@ -3,9 +3,6 @@
 import { connect } from './lib/db'
 import Document from './lib/document'
 import EmbeddedDocument from './lib/embedded-document'
+import { getClient } from './lib/clients'
 
-exports.connect = connect
-exports.getClient = require('./lib/clients').getClient
-
-exports.Document = Document
-exports.EmbeddedDocument = EmbeddedDocument
+export {connect, getClient, Document, EmbeddedDocument}
