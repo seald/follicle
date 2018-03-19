@@ -770,10 +770,6 @@ describe('Document', function () {
 
       data.save().then(function () {
         validateId(data)
-        console.log(data)
-        console.log(data.date)
-        console.log(data.date instanceof Date)
-        console.log(new Date())
         expect(data.date).to.be.below(new Date())
       }).then(done, done)
     })

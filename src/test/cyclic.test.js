@@ -5,8 +5,7 @@ import chai from 'chai'
 import dirtyChai from 'dirty-chai'
 import { connect } from '../index'
 import { validateId } from './util'
-import Foo from './cyclic/foo'
-import Bar from './cyclic/bar'
+import getFooBar from './cyclic'
 
 chai.use(dirtyChai)
 const expect = chai.expect
@@ -16,14 +15,12 @@ describe('Cyclic', function () {
   const url = 'nedb://memory'
   // const url = 'mongodb://localhost/camo_test';
   let database = null
-
-  before(function (done) {
-    connect(url).then(function (db) {
-      database = db
-      return database.dropDatabase()
-    }).then(function () {
-      return done()
-    })
+  let Document, EmbeddedDocument, validators
+  let Foo, Bar
+  before(async () => {
+    ({Document, EmbeddedDocument, validators, client: database} = await connect(url));
+    await database.dropDatabase()
+    ({Foo, Bar} = getFooBar(Document))
   })
 
   beforeEach(function (done) {

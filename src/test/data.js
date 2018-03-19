@@ -1,8 +1,6 @@
 'use strict'
 
-import { Document } from '../index'
-
-export default class Data extends Document {
+export default Document => class Data extends Document {
   constructor () {
     super()
 

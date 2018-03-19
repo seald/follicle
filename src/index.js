@@ -1,8 +1,7 @@
 'use strict'
 
-import { connect } from './lib/db'
+import { connect } from './lib/connect'
 import Document from './lib/document'
 import EmbeddedDocument from './lib/embedded-document'
-import { getClient } from './lib/clients'
 
-export {connect, getClient, Document, EmbeddedDocument}
+export {connect, Document, EmbeddedDocument}
