@@ -1,6 +1,6 @@
 'use strict'
 
-class DatabaseClient {
+export default class DatabaseClient {
   constructor (url) {
     this._url = url
   }
@@ -81,5 +81,3 @@ class DatabaseClient {
     throw new TypeError('You must override driver.')
   }
 }
-
-module.exports = DatabaseClient

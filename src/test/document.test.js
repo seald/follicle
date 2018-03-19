@@ -1,19 +1,16 @@
 /* global describe, it, beforeEach, before, afterEach, after */
 
 'use strict'
+import chai from 'chai'
+import dirtyChai from 'dirty-chai'
+import { connect, Document } from '../index'
+import { isDocument } from '../lib/validate'
+import { ValidationError } from '../lib/errors'
+import Data from './data'
+import { expectError, fail, validateId } from './util'
 
-const dirtyChai = require('dirty-chai')
-const chai = require('chai')
 chai.use(dirtyChai)
 const expect = chai.expect
-const connect = require('../index').connect
-const Document = require('../index').Document
-const isDocument = require('../lib/validate').isDocument
-const ValidationError = require('../lib/errors').ValidationError
-const Data = require('./data')
-const validateId = require('./util').validateId
-const fail = require('./util').fail
-const expectError = require('./util').expectError
 
 describe('Document', function () {
   // TODO: Should probably use mock database client...

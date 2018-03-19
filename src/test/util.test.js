@@ -1,12 +1,12 @@
 /* global describe, it */
 
 'use strict'
+import chai from 'chai'
+import dirtyChai from 'dirty-chai'
+import { deepTraverse } from '../lib/util'
 
-const dirtyChai = require('dirty-chai')
-const chai = require('chai')
 chai.use(dirtyChai)
 const expect = chai.expect
-const deepTraverse = require('../lib/util').deepTraverse
 
 describe('Util', function () {
   describe('deepTraverse()', function () {

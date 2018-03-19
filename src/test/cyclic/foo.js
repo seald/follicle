@@ -1,9 +1,9 @@
 'use strict'
 
-const Document = require('../../index').Document
-const Bar = require('./bar')
+import { Document } from '../../index'
+import Bar from './bar'
 
-class Foo extends Document {
+export default class Foo extends Document {
   constructor () {
     super()
 
@@ -11,5 +11,3 @@ class Foo extends Document {
     this.num = Number
   }
 }
-
-module.exports = Foo

@@ -1,10 +1,10 @@
 'use strict'
 
-const _ = require('lodash')
-const path = require('path')
-const fs = require('fs')
-const Datastore = require('nedb')
-const DatabaseClient = require('./client')
+import * as path from 'path'
+import * as fs from 'fs'
+import _ from 'lodash'
+import Datastore from 'nedb'
+import DatabaseClient from './client'
 
 const urlToPath = function (url) {
   if (url.indexOf('nedb://') > -1) {
@@ -38,7 +38,7 @@ const getCollection = function (name, collections, path) {
   return collections[name]
 }
 
-class NeDbClient extends DatabaseClient {
+export default class NeDbClient extends DatabaseClient {
   constructor (url, collections) {
     super(url)
     this._path = urlToPath(url)
@@ -426,5 +426,3 @@ class NeDbClient extends DatabaseClient {
     return this._collections
   }
 }
-
-module.exports = NeDbClient

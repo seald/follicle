@@ -2,13 +2,13 @@
 
 'use strict'
 
-const dirtyChai = require('dirty-chai')
-const chai = require('chai')
+import dirtyChai from 'dirty-chai'
+import chai from 'chai'
+import { connect, Document } from '../index'
+import { validateId } from './util'
+
 chai.use(dirtyChai)
 const expect = chai.expect
-const connect = require('../index').connect
-const Document = require('../index').Document
-const validateId = require('./util').validateId
 
 describe('NeDbClient', function () {
   const url = 'nedb://memory'

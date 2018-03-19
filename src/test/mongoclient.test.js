@@ -1,14 +1,14 @@
 /* global describe, it, beforeEach, before, afterEach, after */
 
 'use strict'
-const dirtyChai = require('dirty-chai')
-const chai = require('chai')
+import dirtyChai from 'dirty-chai'
+import chai from 'chai'
+import { ObjectId } from 'mongodb'
+import { connect, Document } from '../index'
+import { validateId } from './util'
+
 chai.use(dirtyChai)
 const expect = chai.expect
-const ObjectId = require('mongodb').ObjectId
-const connect = require('../index').connect
-const Document = require('../index').Document
-const validateId = require('./util').validateId
 
 describe.skip('MongoClient', function () {
   const url = 'mongodb://localhost/camo_test'

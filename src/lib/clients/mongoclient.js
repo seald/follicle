@@ -1,13 +1,11 @@
 'use strict'
+import _ from 'lodash'
+import DatabaseClient from './client'
+import { MongoClient as MDBClient, ObjectId } from 'mongodb'
+import { isObject } from '../validate'
+import { deepTraverse } from '../util'
 
-const _ = require('lodash')
-const MDBClient = require('mongodb').MongoClient
-const ObjectId = require('mongodb').ObjectId
-const DatabaseClient = require('./client')
-const isObject = require('../validate').isObject
-const deepTraverse = require('../util').deepTraverse
-
-class MongoClient extends DatabaseClient {
+export default class MongoClient extends DatabaseClient {
   constructor (url, mongo) {
     super(url)
 
@@ -400,5 +398,3 @@ const castQueryIds = function (query) {
 
   return query
 }
-
-module.exports = MongoClient

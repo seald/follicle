@@ -1,18 +1,14 @@
 /* global describe, it, beforeEach, before, afterEach, after */
 'use strict'
+import chai from 'chai'
+import dirtyChai from 'dirty-chai'
+import { connect, Document } from '../index'
+import Data from './data'
+import { data1 as getData1, data2 as getData2, validateData1, validateId } from './util'
+import { isNativeId } from '../lib/validate'
 
-const dirtyChai = require('dirty-chai')
-const chai = require('chai')
 chai.use(dirtyChai)
 const expect = chai.expect
-const connect = require('../index').connect
-const Document = require('../index').Document
-const Data = require('./data')
-const getData1 = require('./util').data1
-const getData2 = require('./util').data2
-const validateData1 = require('./util').validateData1
-const validateId = require('./util').validateId
-const isNativeId = require('../lib/validate').isNativeId
 
 describe('Client', function () {
   const url = 'nedb://memory'

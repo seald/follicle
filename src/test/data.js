@@ -1,8 +1,8 @@
 'use strict'
 
-const Document = require('../index').Document
+import { Document } from '../index'
 
-class Data extends Document {
+export default class Data extends Document {
   constructor () {
     super()
 
@@ -30,5 +30,3 @@ class Data extends Document {
     })
   }
 }
-
-module.exports = Data

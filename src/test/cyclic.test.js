@@ -1,15 +1,15 @@
 /* global describe, it, beforeEach, before, afterEach, after */
 
 'use strict'
+import chai from 'chai'
+import dirtyChai from 'dirty-chai'
+import { connect } from '../index'
+import { validateId } from './util'
+import Foo from './cyclic/foo'
+import Bar from './cyclic/bar'
 
-const dirtyChai = require('dirty-chai')
-const chai = require('chai')
 chai.use(dirtyChai)
 const expect = chai.expect
-const connect = require('../index').connect
-const validateId = require('./util').validateId
-const Foo = require('./cyclic/foo')
-const Bar = require('./cyclic/bar')
 
 describe('Cyclic', function () {
   // TODO: Should probably use mock database client...

@@ -1,11 +1,11 @@
 'use strict'
+import chai from 'chai'
+import dirtyChai from 'dirty-chai'
+import { inherits } from 'util'
+import Data from './data'
 
-const dirtyChai = require('dirty-chai')
-const chai = require('chai')
 chai.use(dirtyChai)
 const expect = chai.expect
-const inherits = require('util').inherits
-const Data = require('./data')
 
 exports.validateId = function (obj) {
   expect(obj).to.not.be.null()

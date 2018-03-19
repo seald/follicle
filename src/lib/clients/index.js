@@ -6,7 +6,7 @@ const assertConnected = function (db) {
   }
 }
 
-exports.getClient = function () {
+export const getClient = function () {
   const client = global.CLIENT
   assertConnected(client)
   return client
