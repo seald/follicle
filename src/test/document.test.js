@@ -1,23 +1,24 @@
+/* global describe, it, beforeEach, before, afterEach, after */
+
 'use strict'
 
-const _ = require('lodash')
-const fs = require('fs')
-const expect = require('chai').expect
+const dirtyChai = require('dirty-chai')
+const chai = require('chai')
+chai.use(dirtyChai)
+const expect = chai.expect
 const connect = require('../index').connect
 const Document = require('../index').Document
 const isDocument = require('../lib/validate').isDocument
 const ValidationError = require('../lib/errors').ValidationError
 const Data = require('./data')
-const getData1 = require('./util').data1
-const getData2 = require('./util').data2
 const validateId = require('./util').validateId
 const fail = require('./util').fail
 const expectError = require('./util').expectError
 
 describe('Document', function () {
-    // TODO: Should probably use mock database client...
+  // TODO: Should probably use mock database client...
   const url = 'nedb://memory'
-    // const url = 'mongodb://localhost/camo_test';
+  // const url = 'mongodb://localhost/camo_test';
   let database = null
 
   before(function (done) {
@@ -49,7 +50,7 @@ describe('Document', function () {
           this.firstName = String
           this.lastName = String
         }
-            }
+      }
 
       let user = User.create()
       user.firstName = 'Billy'
@@ -70,7 +71,7 @@ describe('Document', function () {
             lastName: String
           })
         }
-            }
+      }
 
       let user = User.create()
       user.firstName = 'Billy'
@@ -89,7 +90,7 @@ describe('Document', function () {
           this.lastName = String
           this.nicknames = [String]
         }
-            }
+      }
 
       let user = User.create({
         firstName: 'Billy',
@@ -113,14 +114,14 @@ describe('Document', function () {
           super()
           this.temp = Number
         }
-            }
+      }
 
       class User extends Document {
         constructor () {
           super()
           this.drinks = [Coffee]
         }
-            }
+      }
 
       let coffee = Coffee.create()
       coffee.temp = 105
@@ -144,7 +145,7 @@ describe('Document', function () {
         get fullName () {
           return this.firstName + ' ' + this.lastName
         }
-            }
+      }
 
       let user = User.create()
       user.firstName = 'Billy'
@@ -173,7 +174,7 @@ describe('Document', function () {
           this.firstName = nameArr[0]
           this.lastName = nameArr[1]
         }
-            }
+      }
 
       let user = User.create()
       user.fullName = 'Billy Bob'
@@ -196,7 +197,7 @@ describe('Document', function () {
         fullName () {
           return this.firstName + ' ' + this.lastName
         }
-            }
+      }
 
       let user = User.create()
       user.firstName = 'Billy'
@@ -215,14 +216,14 @@ describe('Document', function () {
           this.firstName = String
           this.lastName = String
         }
-            }
+      }
 
       class ProUser extends User {
         constructor () {
           super()
           this.paymentMethod = String
         }
-            }
+      }
 
       let user = ProUser.create()
       user.firstName = 'Billy'
@@ -246,7 +247,7 @@ describe('Document', function () {
             default: 4
           }
         }
-            }
+      }
 
       class Motorcycle extends Vehicle {
         constructor () {
@@ -256,7 +257,7 @@ describe('Document', function () {
             default: 2
           }
         }
-            }
+      }
 
       let bike = Motorcycle.create()
 
@@ -267,11 +268,7 @@ describe('Document', function () {
     })
 
     it('should provide default collection name based on class name', function (done) {
-      class User extends Document {
-        constructor () {
-          super()
-        }
-            }
+      class User extends Document {}
 
       let user = User.create()
 
@@ -282,17 +279,9 @@ describe('Document', function () {
     })
 
     it('should provide default collection name based on subclass name', function (done) {
-      class User extends Document {
-        constructor () {
-          super()
-        }
-            }
+      class User extends Document {}
 
-      class ProUser extends User {
-        constructor () {
-          super()
-        }
-            }
+      class ProUser extends User {}
 
       let pro = ProUser.create()
 
@@ -304,14 +293,10 @@ describe('Document', function () {
 
     it('should allow custom collection name', function (done) {
       class User extends Document {
-        constructor () {
-          super()
-        }
-
         static collectionName () {
           return 'sheeple'
         }
-            }
+      }
 
       let user = User.create()
 
@@ -333,7 +318,7 @@ describe('Document', function () {
         static collectionName () {
           return 'referencee1'
         }
-            }
+      }
 
       class ReferencerModel extends Document {
         constructor () {
@@ -345,7 +330,7 @@ describe('Document', function () {
         static collectionName () {
           return 'referencer1'
         }
-            }
+      }
 
       let data = ReferencerModel.create()
       data.ref = ReferenceeModel.create()
@@ -376,7 +361,7 @@ describe('Document', function () {
         static collectionName () {
           return 'referencee2'
         }
-            }
+      }
 
       class ReferencerModel extends Document {
         constructor () {
@@ -388,7 +373,7 @@ describe('Document', function () {
         static collectionName () {
           return 'referencer2'
         }
-            }
+      }
 
       let data = ReferencerModel.create()
       data.refs.push(ReferenceeModel.create())
@@ -427,7 +412,7 @@ describe('Document', function () {
         static collectionName () {
           return 'referencee3'
         }
-            }
+      }
 
       class ReferencerModel extends Document {
         constructor () {
@@ -440,7 +425,7 @@ describe('Document', function () {
         static collectionName () {
           return 'referencer3'
         }
-            }
+      }
 
       let data = ReferencerModel.create()
       data.ref1 = ReferenceeModel.create()
@@ -479,7 +464,7 @@ describe('Document', function () {
         static collectionName () {
           return 'referencee4'
         }
-            }
+      }
 
       class ReferencerModel extends Document {
         constructor () {
@@ -491,7 +476,7 @@ describe('Document', function () {
         static collectionName () {
           return 'referencer4'
         }
-            }
+      }
 
       let data = ReferencerModel.create()
       data.refs.push(ReferenceeModel.create())
@@ -526,7 +511,7 @@ describe('Document', function () {
           this.name = String
           this.boss = Boss
         }
-            }
+      }
 
       class Boss extends Document {
         constructor () {
@@ -538,7 +523,7 @@ describe('Document', function () {
         static collectionName () {
           return 'bosses'
         }
-            }
+      }
 
       let employee = Employee.create()
       employee.name = 'Scott'
@@ -566,21 +551,21 @@ describe('Document', function () {
 
         return Boss.findOne({ salary: 10000000 })
       }).then(function (b) {
-                // If we had an issue with an infinite loop
-                // of loading circular dependencies then the
-                // test probably would have crashed by now,
-                // so we're good.
+        // If we had an issue with an infinite loop
+        // of loading circular dependencies then the
+        // test probably would have crashed by now,
+        // so we're good.
 
         validateId(b)
 
-                // Validate that boss employee ref was loaded
+        // Validate that boss employee ref was loaded
         validateId(b.employees[0])
 
-                // .findOne should have only loaded 1 level
-                // of references, so the boss's reference
-                // to the employee is still the ID.
-        expect(b.employees[0].boss).to.not.be.null
-        expect(!isDocument(b.employees[0].boss)).to.be.true
+        // .findOne should have only loaded 1 level
+        // of references, so the boss's reference
+        // to the employee is still the ID.
+        expect(b.employees[0].boss).to.not.be.null()
+        expect(!isDocument(b.employees[0].boss)).to.be.true()
       }).then(done, done)
     })
 
@@ -590,7 +575,7 @@ describe('Document', function () {
           super()
           this.schema({ str: { type: String } })
         }
-            }
+      }
 
       let data = StringModel.create()
       data.str = 'hello'
@@ -611,7 +596,7 @@ describe('Document', function () {
         static collectionName () {
           return 'numbers1'
         }
-            }
+      }
 
       let data = NumberModel.create()
       data.num = 26
@@ -628,7 +613,7 @@ describe('Document', function () {
           super()
           this.schema({ bool: { type: Boolean } })
         }
-            }
+      }
 
       let data = BooleanModel.create()
       data.bool = true
@@ -645,7 +630,7 @@ describe('Document', function () {
           super()
           this.schema({ date: { type: Date } })
         }
-            }
+      }
 
       let data = DateModel.create()
       let date = new Date()
@@ -663,14 +648,14 @@ describe('Document', function () {
           super()
           this.schema({ obj: { type: Object } })
         }
-            }
+      }
 
       let data = ObjectModel.create()
-      data.obj = { hi: 'bye'}
+      data.obj = { hi: 'bye' }
 
       data.save().then(function () {
         validateId(data)
-        expect(data.obj.hi).to.not.be.null
+        expect(data.obj.hi).to.not.be.null()
         expect(data.obj.hi).to.be.equal('bye')
       }).then(done, done)
     })
@@ -681,10 +666,10 @@ describe('Document', function () {
           super()
           this.schema({ buf: { type: Buffer } })
         }
-            }
+      }
 
       let data = BufferModel.create()
-      data.buf = new Buffer('hello')
+      data.buf = Buffer.from('hello')
 
       data.save().then(function () {
         validateId(data)
@@ -698,7 +683,7 @@ describe('Document', function () {
           super()
           this.schema({ arr: { type: Array } })
         }
-            }
+      }
 
       let data = ArrayModel.create()
       data.arr = [1, 'number', true]
@@ -718,7 +703,7 @@ describe('Document', function () {
           super()
           this.schema({ arr: { type: [String] } })
         }
-            }
+      }
 
       let data = ArrayModel.create()
       data.arr = ['1', '2', '3']
@@ -742,7 +727,7 @@ describe('Document', function () {
         static collectionName () {
           return 'numbers2'
         }
-            }
+      }
 
       let data = NumberModel.create()
       data.num = '1'
@@ -760,7 +745,7 @@ describe('Document', function () {
           super()
           this.schema({ arr: { type: [String] } })
         }
-            }
+      }
 
       let data = ArrayModel.create()
       data.arr = [1, 2, 3]
@@ -788,7 +773,11 @@ describe('Document', function () {
 
       data.save().then(function () {
         validateId(data)
-        expect(data.date).to.be.lessThan(Date.now())
+        console.log(data)
+        console.log(data.date)
+        console.log(data.date instanceof Date)
+        console.log(new Date())
+        expect(data.date).to.be.below(new Date())
       }).then(done, done)
     })
 
@@ -803,7 +792,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Scott'
@@ -815,7 +804,7 @@ describe('Document', function () {
       }).then(function (p) {
         validateId(p)
         expect(p.name).to.be.equal('Scott')
-        expect(p.age).to.be.undefined
+        expect(p.age).to.be.undefined()
       }).then(done, done)
     })
   })
@@ -920,7 +909,7 @@ describe('Document', function () {
             match: /^\$?[\d,]+(\.\d*)?$/
           }
         }
-            }
+      }
 
       let product = Product.create()
       product.name = 'Dark Roast Coffee'
@@ -943,7 +932,7 @@ describe('Document', function () {
             match: /^\$?[\d,]+(\.\d*)?$/
           }
         }
-            }
+      }
 
       let product = Product.create()
       product.name = 'Light Roast Coffee'
@@ -974,7 +963,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Scott'
@@ -1002,7 +991,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Matt'
@@ -1028,7 +1017,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let now = new Date()
 
@@ -1054,7 +1043,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let birthday = new Date(Date.UTC(2016, 1, 17, 5, 6, 8, 0))
       let graduationDate = new Date(2016, 1, 17, 0, 0, 0, 0)
@@ -1090,7 +1079,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: ''
@@ -1116,7 +1105,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Scott'
@@ -1143,7 +1132,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create()
 
@@ -1171,7 +1160,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         isMerried: true,
@@ -1180,8 +1169,8 @@ describe('Document', function () {
 
       person.save().then(function () {
         validateId(person)
-        expect(person.isMerried).to.be.true
-        expect(person.isSingle).to.be.false
+        expect(person.isMerried).to.be.true()
+        expect(person.isSingle).to.be.false()
       }).then(done, done)
     })
 
@@ -1199,7 +1188,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let myBirthDate = new Date()
 
@@ -1231,7 +1220,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         age: 21,
@@ -1259,7 +1248,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create()
 
@@ -1285,7 +1274,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create()
 
@@ -1310,7 +1299,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: null
@@ -1337,7 +1326,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         names: []
@@ -1364,7 +1353,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: ''
@@ -1391,7 +1380,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         names: {}
@@ -1416,10 +1405,6 @@ describe('Document', function () {
       let postDeleteCalled = false
 
       class Person extends Document {
-        constructor () {
-          super()
-        }
-
         static collectionName () {
           return 'people'
         }
@@ -1447,20 +1432,20 @@ describe('Document', function () {
         postDelete () {
           postDeleteCalled = true
         }
-            }
+      }
 
       let person = Person.create()
 
       person.save().then(function () {
         validateId(person)
 
-                // Pre/post save and validate should be called
+        // Pre/post save and validate should be called
         expect(preValidateCalled).to.be.equal(true)
         expect(preSaveCalled).to.be.equal(true)
         expect(postValidateCalled).to.be.equal(true)
         expect(postSaveCalled).to.be.equal(true)
 
-                // Pre/post delete should not have been called yet
+        // Pre/post delete should not have been called yet
         expect(preDeleteCalled).to.be.equal(false)
         expect(postDeleteCalled).to.be.equal(false)
 
@@ -1493,7 +1478,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Scott',
@@ -1509,7 +1494,7 @@ describe('Document', function () {
         expect(person.age).to.be.equal(28)
         expect(person.isAlive).to.be.equal(true)
         expect(person.children).to.have.length(2)
-        expect(person.spouse).to.be.null
+        expect(person.spouse).to.be.null()
 
         let json = person.toJSON()
 
@@ -1517,7 +1502,7 @@ describe('Document', function () {
         expect(json.age).to.be.equal(28)
         expect(json.isAlive).to.be.equal(true)
         expect(json.children).to.have.length(2)
-        expect(json.spouse).to.be.null
+        expect(json.spouse).to.be.null()
         expect(json._id).to.be.equal(person._id.toString())
       }).then(done, done)
     })
@@ -1538,7 +1523,7 @@ describe('Document', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Scott'
@@ -1609,7 +1594,7 @@ describe('Document', function () {
         getFoo () {
           return 'foo'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Scott'

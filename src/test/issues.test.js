@@ -1,6 +1,11 @@
+/* global describe, it, beforeEach, before, afterEach, after */
+
 'use strict'
 
-const expect = require('chai').expect
+const dirtyChai = require('dirty-chai')
+const chai = require('chai')
+chai.use(dirtyChai)
+const expect = chai.expect
 const connect = require('../index').connect
 const Document = require('../index').Document
 const EmbeddedDocument = require('../index').EmbeddedDocument
@@ -8,9 +13,9 @@ const ValidationError = require('../lib/errors').ValidationError
 const validateId = require('./util').validateId
 
 describe('Issues', function () {
-    // TODO: Should probably use mock database client...
+  // TODO: Should probably use mock database client...
   const url = 'nedb://memory'
-    // const url = 'mongodb://localhost/camo_test';
+  // const url = 'mongodb://localhost/camo_test';
   let database = null
 
   before(function (done) {
@@ -36,7 +41,7 @@ describe('Issues', function () {
 
   describe('#4', function () {
     it('should not load duplicate references in array when only one reference is present', function (done) {
-            /*
+      /*
              * This issue happens when there are multiple objects in the database,
              * each object has an array of references, and at least two of the
              * object's arrays contain the same reference.
@@ -51,21 +56,19 @@ describe('Issues', function () {
           super()
           this.color = String
         }
-            }
+      }
 
       class User extends Document {
         constructor () {
           super()
           this.eyes = [Eye]
         }
-            }
+      }
 
       let user1 = User.create()
       let user2 = User.create()
       let eye1 = Eye.create({color: 'blue'})
       let eye2 = Eye.create({color: 'brown'})
-
-      let id
 
       eye1.save().then(function (e) {
         validateId(e)
@@ -84,16 +87,16 @@ describe('Issues', function () {
       }).then(function (users) {
         expect(users).to.have.length(2)
 
-                // Get user1
+        // Get user1
         let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
 
-                // Ensure we have correct number of eyes...
+        // Ensure we have correct number of eyes...
         expect(u1.eyes).to.have.length(2)
 
         let e1 = String(u1.eyes[0]._id) === String(eye1._id) ? u1.eyes[0] : u1.eyes[1]
         let e2 = String(u1.eyes[1]._id) === String(eye2._id) ? u1.eyes[1] : u1.eyes[0]
 
-                // ...and that we have the correct eyes
+        // ...and that we have the correct eyes
         expect(String(e1._id)).to.be.equal(String(eye1._id))
         expect(String(e2._id)).to.be.equal(String(eye2._id))
       }).then(done, done)
@@ -102,7 +105,7 @@ describe('Issues', function () {
 
   describe('#5', function () {
     it('should allow multiple references to the same object in same array', function (done) {
-            /*
+      /*
              * This issue happens when an object has an array of
              * references and there are multiple references to the
              * same object in the array.
@@ -117,14 +120,14 @@ describe('Issues', function () {
           super()
           this.color = String
         }
-            }
+      }
 
       class User extends Document {
         constructor () {
           super()
           this.eyes = [Eye]
         }
-            }
+      }
 
       let user = User.create()
       let eye = Eye.create({color: 'blue'})
@@ -149,7 +152,7 @@ describe('Issues', function () {
 
   describe('#8', function () {
     it('should use virtuals when initializing instance with data', function (done) {
-            /*
+      /*
              * This issue happens when a model has virtual setters
              * and the caller tries to use those setters during
              * initialization via `create()`. The setters are
@@ -172,7 +175,7 @@ describe('Issues', function () {
         get fullName () {
           return this.firstName + ' ' + this.lastName
         }
-            }
+      }
 
       let user = User.create({
         fullName: 'Billy Bob'
@@ -187,7 +190,7 @@ describe('Issues', function () {
 
   describe('#20', function () {
     it('should not alias _id to id in queries and returned documents', function (done) {
-            /*
+      /*
              * Camo inconsistently aliases the '_id' field to 'id'. When
              * querying, we must use '_id', but documents are returned
              * with '_id' AND 'id'. 'id' alias should be removed.
@@ -201,7 +204,7 @@ describe('Issues', function () {
           super()
           this.name = String
         }
-            }
+      }
 
       let user = User.create({
         name: 'Billy Bob'
@@ -210,26 +213,26 @@ describe('Issues', function () {
       user.save().then(function () {
         validateId(user)
 
-                // expect(user.id).to.not.exist;
-        expect(user._id).to.exist
+        // expect(user.id).to.not.exist;
+        expect(user._id).to.exist()
 
-                // Should NOT be able to use 'id' to query
+        // Should NOT be able to use 'id' to query
         return User.findOne({ id: user._id })
       }).then(function (u) {
-        expect(u).to.not.exist
+        expect(u).to.not.exist()
 
-                // SHOULD be able to use '_id' to query
+        // SHOULD be able to use '_id' to query
         return User.findOne({ _id: user._id })
       }).then(function (u) {
-                // expect(u.id).to.not.exist;
-        expect(u).to.exist
+        // expect(u.id).to.not.exist;
+        expect(u).to.exist()
         validateId(user)
       }).then(done, done)
     })
   })
 
   describe('#43', function () {
-        /*
+    /*
          * Changes made to the model in postValidate and preSave hooks
          * should be saved to the database
          */
@@ -259,7 +262,7 @@ describe('Issues', function () {
             postValidateChange: true
           }))
         }
-            }
+      }
 
       class Pet extends EmbeddedDocument {
         constructor () {
@@ -271,7 +274,7 @@ describe('Issues', function () {
         static collectionName () {
           return 'pets'
         }
-            }
+      }
 
       let person = Person.create()
       person.pet = Pet.create()
@@ -280,13 +283,13 @@ describe('Issues', function () {
       person.save().then(function () {
         validateId(person)
         return Person
-                    .findOne({ _id: person._id }, { populate: true })
-                    .then((p) => {
-                      expect(p.postValidateChange).to.be.equal(true)
-                      expect(p.pet.postValidateChange).to.be.equal(true)
-                      expect(p.pets[0].postValidateChange).to.be.equal(true)
-                      expect(p.pets[1].postValidateChange).to.be.equal(true)
-                    })
+          .findOne({ _id: person._id }, { populate: true })
+          .then((p) => {
+            expect(p.postValidateChange).to.be.equal(true)
+            expect(p.pet.postValidateChange).to.be.equal(true)
+            expect(p.pets[0].postValidateChange).to.be.equal(true)
+            expect(p.pets[1].postValidateChange).to.be.equal(true)
+          })
       }).then(done, done)
     })
 
@@ -316,7 +319,7 @@ describe('Issues', function () {
             preSaveChange: true
           }))
         }
-            }
+      }
 
       class Pet extends EmbeddedDocument {
         constructor () {
@@ -328,7 +331,7 @@ describe('Issues', function () {
         static collectionName () {
           return 'pets'
         }
-            }
+      }
 
       let person = Person.create()
       person.pet = Pet.create()
@@ -337,19 +340,19 @@ describe('Issues', function () {
       person.save().then(function () {
         validateId(person)
         return Person
-                    .findOne({ _id: person._id }, { populate: true })
-                    .then((p) => {
-                      expect(p.preSaveChange).to.be.equal(true)
-                      expect(p.pet.preSaveChange).to.be.equal(true)
-                      expect(p.pets[0].preSaveChange).to.be.equal(true)
-                      expect(p.pets[1].preSaveChange).to.be.equal(true)
-                    })
+          .findOne({ _id: person._id }, { populate: true })
+          .then((p) => {
+            expect(p.preSaveChange).to.be.equal(true)
+            expect(p.pet.preSaveChange).to.be.equal(true)
+            expect(p.pets[0].preSaveChange).to.be.equal(true)
+            expect(p.pets[1].preSaveChange).to.be.equal(true)
+          })
       }).then(done, done)
     })
   })
 
   describe('#53', function () {
-        /*
+    /*
          * Camo should validate that all properties conform to
          * the type they were given in the schema. However,
          * array types are not properly validated due to not
@@ -364,7 +367,7 @@ describe('Issues', function () {
 
           this.bar = Array
         }
-            }
+      }
 
       let foo = Foo.create({bar: [1, 2, 3]})
 
@@ -390,7 +393,7 @@ describe('Issues', function () {
 
           this.bar = []
         }
-            }
+      }
 
       let foo = Foo.create({bar: [1, 2, 3]})
 
@@ -412,7 +415,7 @@ describe('Issues', function () {
 
   describe('#55', function () {
     it('should return updated data on findOneAndUpdate when updating nested data', function (done) {
-            /*
+      /*
              * When updating nested data with findOneAndUpdate,
              * the document returned to you should contain
              * all of the updated data. But due to lack of
@@ -431,7 +434,7 @@ describe('Issues', function () {
           this.email = String
           this.phone = String
         }
-            }
+      }
 
       class Person extends Document {
         constructor () {
@@ -439,7 +442,7 @@ describe('Issues', function () {
           this.name = String
           this.contact = Contact
         }
-            }
+      }
 
       let person = Person.create({
         name: 'John Doe',
@@ -461,7 +464,7 @@ describe('Issues', function () {
 
   describe('#57', function () {
     it('should not save due to Promise.reject in hook', function (done) {
-            /*
+      /*
              * Rejecting a Promise inside of a pre-save hook should
              * cause the save to be aborted, and the .caught() method
              * should be invoked on the Promise chain. This wasn't
@@ -477,14 +480,14 @@ describe('Issues', function () {
         }
 
         preValidate () {
-          return Promise.reject('DO NOT SAVE')
+          return Promise.reject(new Error('DO NOT SAVE'))
         }
-            }
+      }
 
       Foo.create({bar: 'bar'}).save().then(function (foo) {
         expect.fail(null, Error, 'Expected error, but got none.')
       }).catch(function (error) {
-        expect(error).to.be.equal('DO NOT SAVE')
+        expect(error).to.have.property('message', 'DO NOT SAVE')
       }).then(done, done)
     })
   })

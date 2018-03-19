@@ -23,15 +23,15 @@ const normalizeType = property => {
   let typeDeclaration = {}
   if (property.type) typeDeclaration = property
   else if (isSupportedType(property)) typeDeclaration.type = property
-  else throw new Error('Unsupported type or bad variable. Remember, non-persisted objects must start with an underscore (_). Got:', property)
+  else throw new Error('Unsupported type or bad variable. Remembuer, non-persisted objects must start with an underscore (_). Got:', property)
 
   return typeDeclaration
 }
 
 export default class BaseDocument {
   constructor () {
-    this._schema = {                            // Defines document structure/properties
-      _id: {type: DB().nativeIdType()}     // Native ID to backend database
+    this._schema = { // Defines document structure/properties
+      _id: {type: DB().nativeIdType()} // Native ID to backend database
     }
 
     this._id = null
@@ -168,23 +168,17 @@ export default class BaseDocument {
         throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} should be ${typeName}, got ${valueName}`)
       }
 
-      if (this._schema[key].required && isEmptyValue(value))
-        throw new ValidationError(`Key ${this.collectionName()}.${key} is required, but got ${value}`)
+      if (this._schema[key].required && isEmptyValue(value)) { throw new ValidationError(`Key ${this.collectionName()}.${key} is required, but got ${value}`) }
 
-      if (this._schema[key].match && isString(value) && !this._schema[key].match.test(value))
-        throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} does not match the regex/string ${this._schema[key].match.toString()}. Value was ${value}`)
+      if (this._schema[key].match && isString(value) && !this._schema[key].match.test(value)) { throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} does not match the regex/string ${this._schema[key].match.toString()}. Value was ${value}`) }
 
-      if (!isInChoices(this._schema[key].choices, value))
-        throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} should be in choices [${this._schema[key].choices.join(', ')}], got ${value}`)
+      if (!isInChoices(this._schema[key].choices, value)) { throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} should be in choices [${this._schema[key].choices.join(', ')}], got ${value}`) }
 
-      if (isNumber(this._schema[key].min) && value < this._schema[key].min)
-        throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} is less than min, ${this._schema[key].min}, got ${value}`)
+      if (isNumber(this._schema[key].min) && value < this._schema[key].min) { throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} is less than min, ${this._schema[key].min}, got ${value}`) }
 
-      if (isNumber(this._schema[key].max) && value > this._schema[key].max)
-        throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} is less than max, ${this._schema[key].max}, got ${value}`)
+      if (isNumber(this._schema[key].max) && value > this._schema[key].max) { throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} is less than max, ${this._schema[key].max}, got ${value}`) }
 
-      if (typeof (this._schema[key].validate) === 'function' && !this._schema[key].validate(value))
-        throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} failed custom validator. Value was ${value}`)
+      if (typeof (this._schema[key].validate) === 'function' && !this._schema[key].validate(value)) { throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} failed custom validator. Value was ${value}`) }
     })
   }
 
@@ -199,8 +193,7 @@ export default class BaseDocument {
 
       if (this._schema[key].type === Date && isDate(value)) this[key] = new Date(value)
       // TODO: This should probably be in Document, not BaseDocument
-      else if (value !== null && value !== undefined && value.documentClass && value.documentClass() === 'embedded')
-        value.canonicalize()
+      else if (value !== null && value !== undefined && value.documentClass && value.documentClass() === 'embedded') { value.canonicalize() }
     })
   }
 
@@ -253,7 +246,7 @@ export default class BaseDocument {
               instance[key][i] = type[0]._fromData(v)
             })
           } else instance[key] = value // Initialize primitive or array of primitives
-        } else if (key in instance) instance[key] = value  // Handles virtual setters
+        } else if (key in instance) instance[key] = value // Handles virtual setters
       })
       documents.push(instance)
     })
@@ -296,11 +289,9 @@ export default class BaseDocument {
       if (isArray(fields) && fields.indexOf(key) < 0) return
 
       // Handle array of references (ex: { type: [MyObject] })
-      if (isArray(anInstance._schema[key].type) && anInstance._schema[key].type.length > 0 && isDocument(anInstance._schema[key].type[0]))
-        keys.push(key)
+      if (isArray(anInstance._schema[key].type) && anInstance._schema[key].type.length > 0 && isDocument(anInstance._schema[key].type[0])) keys.push(key)
       // Handle anInstance[key] being a string id, a native id, or a Document instance
-      else if ((isString(anInstance[key]) || DB().isNativeId(anInstance[key])) && isDocument(anInstance._schema[key].type))
-        keys.push(key)
+      else if ((isString(anInstance[key]) || DB().isNativeId(anInstance[key])) && isDocument(anInstance._schema[key].type)) keys.push(key)
     })
 
     // ...then get all ids for each type of reference to be loaded...
@@ -317,7 +308,7 @@ export default class BaseDocument {
     keys.forEach(k => {
       ids[k] = {}
       documents.forEach(d => {
-        ids[k][DB().toCanonicalId(d._id)] = [].concat(d[k])     // Handles values and arrays
+        ids[k][DB().toCanonicalId(d._id)] = [].concat(d[k]) // Handles values and arrays
 
         // Also, initialize document member arrays
         // to assign to later if needed
@@ -343,7 +334,7 @@ export default class BaseDocument {
       })
 
       // Only want to load each reference once
-      keyIds = _.unique(keyIds)
+      keyIds = _.uniq(keyIds)
 
       // Handle array of references (like [MyObject])
       const type = isArray(anInstance._schema[key].type) ? anInstance._schema[key].type[0] : anInstance._schema[key].type
@@ -388,7 +379,7 @@ export default class BaseDocument {
     if (schemaProp in this._schema && 'default' in this._schema[schemaProp]) {
       const def = this._schema[schemaProp].default
       const defVal = typeof (def) === 'function' ? def() : def
-      this[schemaProp] = defVal  // TODO: Wait... should we be assigning it here?
+      this[schemaProp] = defVal // TODO: Wait... should we be assigning it here?
       return defVal
     } else if (schemaProp === '_id') return null
   }
@@ -447,17 +438,15 @@ export default class BaseDocument {
   _getEmbeddeds () {
     let embeddeds = []
     _.keys(this._schema).forEach(v => {
-      if (isEmbeddedDocument(this._schema[v].type) || (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0])))
-        embeddeds = embeddeds.concat(this[v])
+      if (isEmbeddedDocument(this._schema[v].type) || (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0]))) { embeddeds = embeddeds.concat(this[v]) }
     })
     return embeddeds
   }
 
   _getHookPromises (hookName) {
     const embeddeds = this._getEmbeddeds()
-
     let hookPromises = []
-    hookPromises = hookPromises.concat(_.invoke(embeddeds, hookName))
+    hookPromises = hookPromises.concat(_.invokeMap(embeddeds, hookName))
     hookPromises.push(this[hookName]())
     return hookPromises
   }

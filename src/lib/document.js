@@ -4,7 +4,7 @@ import _ from 'lodash'
 import depd from 'depd'
 import { getClient as DB } from './clients'
 import BaseDocument from './base-document'
-import { isArray, isEmbeddedDocument, isReferenceable, isString, isSupportedType } from './validate'
+import { isArray, isEmbeddedDocument, isReferenceable } from './validate'
 
 const deprecate = depd('camo')
 

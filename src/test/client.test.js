@@ -1,20 +1,22 @@
+/* global describe, it, beforeEach, before, afterEach, after */
 'use strict'
 
-const _ = require('lodash')
-const expect = require('chai').expect
+const dirtyChai = require('dirty-chai')
+const chai = require('chai')
+chai.use(dirtyChai)
+const expect = chai.expect
 const connect = require('../index').connect
 const Document = require('../index').Document
 const Data = require('./data')
 const getData1 = require('./util').data1
 const getData2 = require('./util').data2
 const validateData1 = require('./util').validateData1
-const validateData2 = require('./util').validateData2
 const validateId = require('./util').validateId
 const isNativeId = require('../lib/validate').isNativeId
 
 describe('Client', function () {
   const url = 'nedb://memory'
-    // const url = 'mongodb://localhost/camo_test';
+  // const url = 'mongodb://localhost/camo_test';
   let database = null
 
   before(function (done) {
@@ -61,31 +63,27 @@ describe('Client', function () {
     static collectionName () {
       return 'addresses'
     }
-    }
+  }
 
   class Pet extends Document {
     constructor () {
       super()
 
       this.schema({
-        type: String,
-        name: String
+        type: String, name: String
       })
     }
-    }
+  }
 
   class User extends Document {
     constructor () {
       super()
 
       this.schema({
-        firstName: String,
-        lastName: String,
-        pet: Pet,
-        address: Address
+        firstName: String, lastName: String, pet: Pet, address: Address
       })
     }
-    }
+  }
 
   describe('#findOne()', function () {
     it('should load a single object from the collection', function (done) {
@@ -102,21 +100,15 @@ describe('Client', function () {
 
     it('should populate all fields', function (done) {
       let address = Address.create({
-        street: '123 Fake St.',
-        city: 'Cityville',
-        zipCode: 12345
+        street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
       let dog = Pet.create({
-        type: 'dog',
-        name: 'Fido'
+        type: 'dog', name: 'Fido'
       })
 
       let user = User.create({
-        firstName: 'Billy',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
       Promise.all([address.save(), dog.save()]).then(function () {
@@ -134,21 +126,15 @@ describe('Client', function () {
 
     it('should not populate any fields', function (done) {
       let address = Address.create({
-        street: '123 Fake St.',
-        city: 'Cityville',
-        zipCode: 12345
+        street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
       let dog = Pet.create({
-        type: 'dog',
-        name: 'Fido'
+        type: 'dog', name: 'Fido'
       })
 
       let user = User.create({
-        firstName: 'Billy',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
       Promise.all([address.save(), dog.save()]).then(function () {
@@ -159,28 +145,22 @@ describe('Client', function () {
         validateId(user)
         return User.findOne({_id: user._id}, {populate: false})
       }).then(function (u) {
-        expect(isNativeId(u.pet)).to.be.true
-        expect(isNativeId(u.address)).to.be.true
+        expect(isNativeId(u.pet)).to.be.true()
+        expect(isNativeId(u.address)).to.be.true()
       }).then(done, done)
     })
 
     it('should populate specified fields', function (done) {
       let address = Address.create({
-        street: '123 Fake St.',
-        city: 'Cityville',
-        zipCode: 12345
+        street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
       let dog = Pet.create({
-        type: 'dog',
-        name: 'Fido'
+        type: 'dog', name: 'Fido'
       })
 
       let user = User.create({
-        firstName: 'Billy',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
       Promise.all([address.save(), dog.save()]).then(function () {
@@ -192,7 +172,7 @@ describe('Client', function () {
         return User.findOne({_id: user._id}, {populate: ['pet']})
       }).then(function (u) {
         expect(u.pet).to.be.an.instanceof(Pet)
-        expect(isNativeId(u.address)).to.be.true
+        expect(isNativeId(u.address)).to.be.true()
       }).then(done, done)
     })
   })
@@ -213,7 +193,7 @@ describe('Client', function () {
 
     it('should insert a single object to the collection', function (done) {
       Data.findOne({number: 1}).then(function (d) {
-        expect(d).to.be.null
+        expect(d).to.be.null()
         return Data.findOneAndUpdate({number: 1}, {number: 1}, {upsert: true})
       }).then(function (data) {
         validateId(data)
@@ -257,33 +237,30 @@ describe('Client', function () {
       static collectionName () {
         return 'cities'
       }
-        }
+    }
 
     var Springfield, SouthPark, Quahog
 
     beforeEach(function (done) {
       Springfield = City.create({
-        name: 'Springfield',
-        population: 30720
+        name: 'Springfield', population: 30720
       })
 
       SouthPark = City.create({
-        name: 'South Park',
-        population: 4388
+        name: 'South Park', population: 4388
       })
 
       Quahog = City.create({
-        name: 'Quahog',
-        population: 800
+        name: 'Quahog', population: 800
       })
 
       Promise.all([Springfield.save(), SouthPark.save(), Quahog.save()])
-            .then(function () {
-              validateId(Springfield)
-              validateId(SouthPark)
-              validateId(Quahog)
-              done()
-            })
+        .then(function () {
+          validateId(Springfield)
+          validateId(SouthPark)
+          validateId(Quahog)
+          done()
+        })
     })
 
     it('should load multiple objects from the collection', function (done) {
@@ -330,13 +307,11 @@ describe('Client', function () {
 
     it('should sort results using multiple keys', function (done) {
       let AlphaVille = City.create({
-        name: 'Alphaville',
-        population: 4388
+        name: 'Alphaville', population: 4388
       })
 
       let BetaTown = City.create({
-        name: 'Beta Town',
-        population: 4388
+        name: 'Beta Town', population: 4388
       })
 
       Promise.all([AlphaVille.save(), BetaTown.save()]).then(function () {
@@ -381,28 +356,19 @@ describe('Client', function () {
 
     it('should populate all fields', function (done) {
       let address = Address.create({
-        street: '123 Fake St.',
-        city: 'Cityville',
-        zipCode: 12345
+        street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
       let dog = Pet.create({
-        type: 'dog',
-        name: 'Fido'
+        type: 'dog', name: 'Fido'
       })
 
       let user1 = User.create({
-        firstName: 'Billy',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
       let user2 = User.create({
-        firstName: 'Sally',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
       })
 
       Promise.all([address.save(), dog.save()]).then(function () {
@@ -423,28 +389,19 @@ describe('Client', function () {
 
     it('should not populate any fields', function (done) {
       let address = Address.create({
-        street: '123 Fake St.',
-        city: 'Cityville',
-        zipCode: 12345
+        street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
       let dog = Pet.create({
-        type: 'dog',
-        name: 'Fido'
+        type: 'dog', name: 'Fido'
       })
 
       let user1 = User.create({
-        firstName: 'Billy',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
       let user2 = User.create({
-        firstName: 'Sally',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
       })
 
       Promise.all([address.save(), dog.save()]).then(function () {
@@ -456,37 +413,28 @@ describe('Client', function () {
         validateId(user2)
         return User.find({}, {populate: false})
       }).then(function (users) {
-        expect(isNativeId(users[0].pet)).to.be.true
-        expect(isNativeId(users[0].address)).to.be.true
-        expect(isNativeId(users[1].pet)).to.be.true
-        expect(isNativeId(users[1].address)).to.be.true
+        expect(isNativeId(users[0].pet)).to.be.true()
+        expect(isNativeId(users[0].address)).to.be.true()
+        expect(isNativeId(users[1].pet)).to.be.true()
+        expect(isNativeId(users[1].address)).to.be.true()
       }).then(done, done)
     })
 
     it('should populate specified fields', function (done) {
       let address = Address.create({
-        street: '123 Fake St.',
-        city: 'Cityville',
-        zipCode: 12345
+        street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
       let dog = Pet.create({
-        type: 'dog',
-        name: 'Fido'
+        type: 'dog', name: 'Fido'
       })
 
       let user1 = User.create({
-        firstName: 'Billy',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
       let user2 = User.create({
-        firstName: 'Sally',
-        lastName: 'Bob',
-        pet: dog,
-        address: address
+        firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
       })
 
       Promise.all([address.save(), dog.save()]).then(function () {
@@ -499,9 +447,9 @@ describe('Client', function () {
         return User.find({}, {populate: ['pet']})
       }).then(function (users) {
         expect(users[0].pet).to.be.an.instanceof(Pet)
-        expect(isNativeId(users[0].address)).to.be.true
+        expect(isNativeId(users[0].address)).to.be.true()
         expect(users[1].pet).to.be.an.instanceof(Pet)
-        expect(isNativeId(users[1].address)).to.be.true
+        expect(isNativeId(users[1].address)).to.be.true()
       }).then(done, done)
     })
   })
@@ -545,7 +493,7 @@ describe('Client', function () {
         expect(numDeleted).to.be.equal(1)
         return Data.findOne({item: 99})
       }).then(function (d) {
-        expect(d).to.be.null
+        expect(d).to.be.null()
       }).then(done, done)
     })
   })
@@ -561,7 +509,7 @@ describe('Client', function () {
         expect(numDeleted).to.be.equal(1)
         return Data.findOne({number: 1})
       }).then(function (d) {
-        expect(d).to.be.null
+        expect(d).to.be.null()
       }).then(done, done)
     })
   })

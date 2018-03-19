@@ -1,17 +1,20 @@
+/* global describe, it, beforeEach, before, afterEach, after */
+
 'use strict'
 
-const _ = require('lodash')
-const fs = require('fs')
-const expect = require('chai').expect
+const dirtyChai = require('dirty-chai')
+const chai = require('chai')
+chai.use(dirtyChai)
+const expect = chai.expect
 const connect = require('../index').connect
 const validateId = require('./util').validateId
 const Foo = require('./cyclic/foo')
 const Bar = require('./cyclic/bar')
 
 describe('Cyclic', function () {
-    // TODO: Should probably use mock database client...
+  // TODO: Should probably use mock database client...
   const url = 'nedb://memory'
-    // const url = 'mongodb://localhost/camo_test';
+  // const url = 'mongodb://localhost/camo_test';
   let database = null
 
   before(function (done) {

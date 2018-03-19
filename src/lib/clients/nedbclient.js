@@ -50,7 +50,7 @@ class NeDbClient extends DatabaseClient {
     }
   }
 
-    /**
+  /**
      * Save (upsert) document
      *
      * @param {String} collection Collection's name
@@ -63,9 +63,9 @@ class NeDbClient extends DatabaseClient {
     return new Promise(function (resolve, reject) {
       const db = getCollection(collection, that._collections, that._path)
 
-            // TODO: I'd like to just use update with upsert:true, but I'm
-            // note sure how the query will work if id == null. Seemed to
-            // have some problems before with passing null ids.
+      // TODO: I'd like to just use update with upsert:true, but I'm
+      // note sure how the query will work if id == null. Seemed to
+      // have some problems before with passing null ids.
       if (id === null) {
         db.insert(values, function (error, result) {
           if (error) return reject(error)
@@ -80,7 +80,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Delete document
      *
      * @param {String} collection Collection's name
@@ -100,7 +100,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Delete one document by query
      *
      * @param {String} collection Collection's name
@@ -118,7 +118,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Delete many documents by query
      *
      * @param {String} collection Collection's name
@@ -136,7 +136,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Find one document
      *
      * @param {String} collection Collection's name
@@ -154,7 +154,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Find one document and update it
      *
      * @param {String} collection Collection's name
@@ -170,16 +170,16 @@ class NeDbClient extends DatabaseClient {
       options = {}
     }
 
-        // Since this is 'findOne...' we'll only allow user to update
-        // one document at a time
+    // Since this is 'findOne...' we'll only allow user to update
+    // one document at a time
     options.multi = false
 
     return new Promise(function (resolve, reject) {
       const db = getCollection(collection, that._collections, that._path)
 
-            // TODO: Would like to just use 'Collection.update' here, but
-            // it doesn't return objects on update (but will on insert)...
-            /* db.update(query, values, options, function(error, numReplaced, newDoc) {
+      // TODO: Would like to just use 'Collection.update' here, but
+      // it doesn't return objects on update (but will on insert)...
+      /* db.update(query, values, options, function(error, numReplaced, newDoc) {
                 if (error) return reject(error);
                 resolve(newDoc);
             }); */
@@ -198,7 +198,7 @@ class NeDbClient extends DatabaseClient {
           return db.update(query, { $set: values }, function (error, result) {
             if (error) return reject(error)
 
-                        // Fixes issue #55. Remove when NeDB is updated to v1.8+
+            // Fixes issue #55. Remove when NeDB is updated to v1.8+
             db.findOne({_id: data._id}, function (error, doc) {
               if (error) return reject(error)
               resolve(doc)
@@ -209,7 +209,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Find one document and delete it
      *
      * @param {String} collection Collection's name
@@ -224,8 +224,8 @@ class NeDbClient extends DatabaseClient {
       options = {}
     }
 
-        // Since this is 'findOne...' we'll only allow user to update
-        // one document at a time
+    // Since this is 'findOne...' we'll only allow user to update
+    // one document at a time
     options.multi = false
 
     return new Promise(function (resolve, reject) {
@@ -237,7 +237,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Find documents
      *
      * @param {String} collection Collection's name
@@ -283,7 +283,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Get count of collection by query
      *
      * @param {String} collection Collection's name
@@ -301,7 +301,7 @@ class NeDbClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Create index
      *
      * @param {String} collection Collection's name
@@ -318,7 +318,7 @@ class NeDbClient extends DatabaseClient {
     db.ensureIndex({fieldName: field, unique: options.unique, sparse: options.sparse})
   }
 
-    /**
+  /**
      * Connect to database
      *
      * @param {String} url
@@ -326,16 +326,16 @@ class NeDbClient extends DatabaseClient {
      * @returns {Promise}
      */
   static connect (url, options) {
-        // Could be directory path or 'memory'
+    // Could be directory path or 'memory'
     let dbLocation = urlToPath(url)
 
     return new Promise(function (resolve, reject) {
       let collections = {}
 
-            // TODO: Load all data upfront or on-demand?
-            // Maybe give user the option to load upfront.
-            // But which should we do by default?
-            /* fs.readdir(dbLocation, function(error, files) {
+      // TODO: Load all data upfront or on-demand?
+      // Maybe give user the option to load upfront.
+      // But which should we do by default?
+      /* fs.readdir(dbLocation, function(error, files) {
                 files.forEach(function(file) {
                     let extname = path.extname(file);
                     let filename = file.split('.')[0];
@@ -347,21 +347,21 @@ class NeDbClient extends DatabaseClient {
                 global.CLIENT = new NeDbClient(dbLocation, collections);
                 resolve(global.CLIENT);
             }); */
-            // global.CLIENT = new NeDbClient(dbLocation, collections);
+      // global.CLIENT = new NeDbClient(dbLocation, collections);
       resolve(new NeDbClient(dbLocation, collections))
     })
   }
 
-    /**
+  /**
      * Close current connection
      *
      * @returns {Promise}
      */
   close () {
-        // Nothing to do for NeDB
+    // Nothing to do for NeDB
   }
 
-    /**
+  /**
      * Drop collection
      *
      * @param {String} collection
@@ -371,7 +371,7 @@ class NeDbClient extends DatabaseClient {
     return this.deleteMany(collection, {})
   }
 
-    /**
+  /**
      * Drop current database
      *
      * @returns {Promise}
@@ -385,11 +385,11 @@ class NeDbClient extends DatabaseClient {
         let dbLocation = getCollectionPath(that._path, key)
 
         if (dbLocation === 'memory') {
-                    // Only exists in memory, so just delete the 'Datastore'
+          // Only exists in memory, so just delete the 'Datastore'
           delete that._collections[key]
           resolve()
         } else {
-                    // Delete the file, but only if it exists
+          // Delete the file, but only if it exists
           fs.stat(dbLocation, function (err, stat) {
             if (err === null) {
               fs.unlink(dbLocation, function (err) {
@@ -413,7 +413,7 @@ class NeDbClient extends DatabaseClient {
     return id
   }
 
-    // Native ids are the same as NeDB ids
+  // Native ids are the same as NeDB ids
   isNativeId (value) {
     return String(value).match(/^[a-zA-Z0-9]{16}$/) !== null
   }

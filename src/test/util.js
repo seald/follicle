@@ -1,11 +1,14 @@
 'use strict'
 
-const expect = require('chai').expect
+const dirtyChai = require('dirty-chai')
+const chai = require('chai')
+chai.use(dirtyChai)
+const expect = chai.expect
 const inherits = require('util').inherits
 const Data = require('./data')
 
 exports.validateId = function (obj) {
-  expect(obj).to.not.be.null
+  expect(obj).to.not.be.null()
   expect(obj).to.be.a('object')
   expect(obj._id.toString()).to.be.a('string')
   expect(obj._id.toString()).to.have.length.of.at.least(1)
@@ -72,5 +75,5 @@ exports.expectError = function (error) {
     expect.fail(error.expected, error.actual, error.message)
     return
   }
-  expect(error instanceof Error).to.be.true
+  expect(error instanceof Error).to.be.true()
 }

@@ -84,5 +84,5 @@ export const isInChoices = (choices, choice) => {
 }
 
 export const isEmptyValue = value =>
-  typeof value === 'undefined'
-  || (!(typeof value === 'number' || value instanceof Date || typeof value === 'boolean') && (Object.keys(value).length === 0))
+  typeof value === 'undefined' ||
+  (!(typeof value === 'number' || value instanceof Date || typeof value === 'boolean') && (Object.keys(value).length === 0))

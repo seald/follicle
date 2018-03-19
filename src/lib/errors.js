@@ -9,7 +9,7 @@ export class CamoError extends Error {
   constructor (message) {
     super(message)
 
-        // Extending Error is weird and does not propagate `message`
+    // Extending Error is weird and does not propagate `message`
     Object.defineProperty(this, 'message', {
       enumerable: false,
       value: message
@@ -35,8 +35,4 @@ export class CamoError extends Error {
 /*
  * Error indicating document didn't pass validation.
  */
-export class ValidationError extends CamoError {
-  constructor (message) {
-    super(message)
-  }
-}
+export class ValidationError extends CamoError {}

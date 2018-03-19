@@ -1,8 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-const path = require('path')
-const fs = require('fs')
 const MDBClient = require('mongodb').MongoClient
 const ObjectId = require('mongodb').ObjectId
 const DatabaseClient = require('./client')
@@ -16,7 +14,7 @@ class MongoClient extends DatabaseClient {
     this._mongo = mongo
   }
 
-    /**
+  /**
      * Save (upsert) document
      *
      * @param {String} collection Collection's name
@@ -29,9 +27,9 @@ class MongoClient extends DatabaseClient {
     return new Promise(function (resolve, reject) {
       const db = that._mongo.collection(collection)
 
-            // TODO: I'd like to just use update with upsert:true, but I'm
-            // note sure how the query will work if id == null. Seemed to
-            // have some problems before with passing null ids.
+      // TODO: I'd like to just use update with upsert:true, but I'm
+      // note sure how the query will work if id == null. Seemed to
+      // have some problems before with passing null ids.
       if (id === null) {
         db.insertOne(values, function (error, result) {
           if (error) return reject(error)
@@ -50,7 +48,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Delete document
      *
      * @param {String} collection Collection's name
@@ -70,7 +68,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Delete one document by query
      *
      * @param {String} collection Collection's name
@@ -89,7 +87,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Delete many documents by query
      *
      * @param {String} collection Collection's name
@@ -108,7 +106,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Find one document
      *
      * @param {String} collection Collection's name
@@ -127,7 +125,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Find one document and update it
      *
      * @param {String} collection Collection's name
@@ -143,7 +141,7 @@ class MongoClient extends DatabaseClient {
       options = {}
     }
 
-        // Always return the updated object
+    // Always return the updated object
     options.returnOriginal = false
 
     return new Promise(function (resolve, reject) {
@@ -163,7 +161,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Find one document and delete it
      *
      * @param {String} collection Collection's name
@@ -188,7 +186,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Find documents
      *
      * @param {String} collection Collection's name
@@ -234,7 +232,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Count number of matching documents in the db to a query.
      *
      * @param {String} collection Collection's name
@@ -253,7 +251,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Create index
      *
      * @param {String} collection Collection's name
@@ -273,7 +271,7 @@ class MongoClient extends DatabaseClient {
     db.createIndex(keys, {unique: options.unique, sparse: options.sparse})
   }
 
-    /**
+  /**
      * Connect to database
      *
      * @param {String} url
@@ -292,7 +290,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Close current connection
      *
      * @returns {Promise}
@@ -307,7 +305,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Drop collection
      *
      * @param {String} collection
@@ -323,7 +321,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Drop current database
      *
      * @returns {Promise}
@@ -338,7 +336,7 @@ class MongoClient extends DatabaseClient {
     })
   }
 
-    /**
+  /**
      * Convert ObjectId to canonical form
      *
      * @param {ObjectId} id
@@ -348,7 +346,7 @@ class MongoClient extends DatabaseClient {
     return id.toString()
   }
 
-    /**
+  /**
      * Is Native ID
      *
      * @param {*} value
@@ -391,10 +389,10 @@ const castQueryIds = function (query) {
       if (String(parent[key]).match(/^[a-fA-F0-9]{24}$/)) {
         parent[key] = castId(parent[key])
       } else if (isObject(parent[key]) && _.has(parent[key], '$in')) {
-                // { _id: { '$in': [ 'K1cbMk7T8A0OU83IAT4dFa91', 'Y1cbak7T8A1OU83IBT6aPq11' ] } }
+        // { _id: { '$in': [ 'K1cbMk7T8A0OU83IAT4dFa91', 'Y1cbak7T8A1OU83IBT6aPq11' ] } }
         parent[key].$in = castIdArray(parent[key].$in)
       } else if (isObject(parent[key]) && _.has(parent[key], '$nin')) {
-                // { _id: { '$nin': [ 'K1cbMk7T8A0OU83IAT4dFa91', 'Y1cbak7T8A1OU83IBT6aPq11' ] } }
+        // { _id: { '$nin': [ 'K1cbMk7T8A0OU83IAT4dFa91', 'Y1cbak7T8A1OU83IBT6aPq11' ] } }
         parent[key].$nin = castIdArray(parent[key].$nin)
       }
     }

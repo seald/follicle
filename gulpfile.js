@@ -6,7 +6,6 @@ const sourcemaps = require('gulp-sourcemaps')
 const jetpack = require('fs-jetpack')
 const babel = require('gulp-babel')
 
-
 const srcDir = jetpack.cwd('./src')
 
 const libDir = srcDir.cwd('./lib')
@@ -58,7 +57,6 @@ gulp.task('build-lib', ['clean-build'], () => {
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(libBuildDir.path('.')))
 })
-
 
 gulp.task('build-index', ['clean-build'], () => {
   return gulp.src(srcDir.path('*.js'))

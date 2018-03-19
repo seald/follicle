@@ -1,6 +1,11 @@
+/* global describe, it */
+
 'use strict'
 
-const expect = require('chai').expect
+const dirtyChai = require('dirty-chai')
+const chai = require('chai')
+chai.use(dirtyChai)
+const expect = chai.expect
 const deepTraverse = require('../lib/util').deepTraverse
 
 describe('Util', function () {

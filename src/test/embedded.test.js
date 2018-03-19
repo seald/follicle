@@ -1,22 +1,21 @@
+/* global describe, it, beforeEach, before, afterEach, after */
+
 'use strict'
 
-const _ = require('lodash')
-const fs = require('fs')
-const expect = require('chai').expect
+const dirtyChai = require('dirty-chai')
+const chai = require('chai')
+chai.use(dirtyChai)
+const expect = chai.expect
 const connect = require('../index').connect
 const Document = require('../index').Document
 const EmbeddedDocument = require('../index').EmbeddedDocument
-const isDocument = require('../lib/validate').isDocument
 const ValidationError = require('../lib/errors').ValidationError
-const Data = require('./data')
-const getData1 = require('./util').data1
-const getData2 = require('./util').data2
 const validateId = require('./util').validateId
 
 describe('Embedded', function () {
-    // TODO: Should probably use mock database client...
+  // TODO: Should probably use mock database client...
   const url = 'nedb://memory'
-    // const url = 'mongodb://localhost/camo_test';
+  // const url = 'mongodb://localhost/camo_test';
   let database = null
 
   before(function (done) {
@@ -47,7 +46,7 @@ describe('Embedded', function () {
           super()
           this.str = String
         }
-            }
+      }
 
       class DocumentModel extends Document {
         constructor () {
@@ -55,7 +54,7 @@ describe('Embedded', function () {
           this.mod = EmbeddedModel
           this.num = { type: Number }
         }
-            }
+      }
 
       let data = DocumentModel.create()
       data.mod = EmbeddedModel.create()
@@ -63,10 +62,10 @@ describe('Embedded', function () {
       data.num = 1
 
       data.save().then(function () {
-        expect(data.mod._id).to.be.undefined
+        expect(data.mod._id).to.be.undefined()
         return DocumentModel.findOne({ num: 1 })
       }).then(function (d) {
-        expect(d.mod._id).to.be.undefined
+        expect(d.mod._id).to.be.undefined()
       }).then(done, done)
     })
   })
@@ -78,7 +77,7 @@ describe('Embedded', function () {
           super()
           this.str = String
         }
-            }
+      }
 
       class DocumentModel extends Document {
         constructor () {
@@ -86,7 +85,7 @@ describe('Embedded', function () {
           this.mod = EmbeddedModel
           this.num = { type: Number }
         }
-            }
+      }
 
       let data = DocumentModel.create()
       data.mod = EmbeddedModel.create()
@@ -111,7 +110,7 @@ describe('Embedded', function () {
           super()
           this.type = String
         }
-            }
+      }
 
       class Person extends Document {
         constructor () {
@@ -123,7 +122,7 @@ describe('Embedded', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create()
       person.name = 'Scott'
@@ -159,21 +158,21 @@ describe('Embedded', function () {
           this.x = Number
           this.y = Number
         }
-            }
+      }
 
       class Polygon extends EmbeddedDocument {
         constructor () {
           super()
           this.points = [Point]
         }
-            }
+      }
 
       class WorldMap extends Document {
         constructor () {
           super()
           this.polygons = [Polygon]
         }
-            }
+      }
 
       let map = WorldMap.create()
       let polygon1 = Polygon.create()
@@ -205,7 +204,7 @@ describe('Embedded', function () {
           this.authorized = Boolean
           this.amount = Number
         }
-            }
+      }
 
       class Product extends Document {
         constructor () {
@@ -213,7 +212,7 @@ describe('Embedded', function () {
           this.name = String
           this.discount = Discount
         }
-            }
+      }
 
       let product = Product.create({
         name: 'bike',
@@ -227,7 +226,7 @@ describe('Embedded', function () {
         validateId(product)
         expect(product.name).to.be.equal('bike')
         expect(product.discount).to.be.a('object')
-        expect(product.discount instanceof Discount).to.be.true
+        expect(product.discount instanceof Discount).to.be.true()
         expect(product.discount.authorized).to.be.equal(true)
         expect(product.discount.amount).to.be.equal(9.99)
       }).then(done, done)
@@ -240,7 +239,7 @@ describe('Embedded', function () {
           this.authorized = Boolean
           this.amount = Number
         }
-            }
+      }
 
       class Product extends Document {
         constructor () {
@@ -248,7 +247,7 @@ describe('Embedded', function () {
           this.name = String
           this.discounts = [Discount]
         }
-            }
+      }
 
       let product = Product.create({
         name: 'bike',
@@ -266,8 +265,8 @@ describe('Embedded', function () {
         validateId(product)
         expect(product.name).to.be.equal('bike')
         expect(product.discounts).to.have.length(2)
-        expect(product.discounts[0] instanceof Discount).to.be.true
-        expect(product.discounts[1] instanceof Discount).to.be.true
+        expect(product.discounts[0] instanceof Discount).to.be.true()
+        expect(product.discounts[1] instanceof Discount).to.be.true()
         expect(product.discounts[0].authorized).to.be.equal(true)
         expect(product.discounts[0].amount).to.be.equal(9.99)
         expect(product.discounts[1].authorized).to.be.equal(false)
@@ -283,7 +282,7 @@ describe('Embedded', function () {
           super()
           this.str = { type: String, default: 'hello' }
         }
-            }
+      }
 
       class DocumentModel extends Document {
         constructor () {
@@ -291,7 +290,7 @@ describe('Embedded', function () {
           this.emb = EmbeddedModel
           this.num = { type: Number }
         }
-            }
+      }
 
       let data = DocumentModel.create()
       data.emb = EmbeddedModel.create()
@@ -312,7 +311,7 @@ describe('Embedded', function () {
           super()
           this.value = { type: Number, default: 100 }
         }
-            }
+      }
 
       class Wallet extends Document {
         constructor () {
@@ -320,7 +319,7 @@ describe('Embedded', function () {
           this.contents = [Money]
           this.owner = String
         }
-            }
+      }
 
       let wallet = Wallet.create()
       wallet.owner = 'Scott'
@@ -348,14 +347,14 @@ describe('Embedded', function () {
           super()
           this.num = { type: Number, max: 10 }
         }
-            }
+      }
 
       class DocumentModel extends Document {
         constructor () {
           super()
           this.emb = EmbeddedModel
         }
-            }
+      }
 
       let data = DocumentModel.create()
       data.emb = EmbeddedModel.create()
@@ -375,14 +374,14 @@ describe('Embedded', function () {
           super()
           this.value = { type: Number, choices: [1, 5, 10, 20, 50, 100] }
         }
-            }
+      }
 
       class Wallet extends Document {
         constructor () {
           super()
           this.contents = [Money]
         }
-            }
+      }
 
       let wallet = Wallet.create()
       wallet.contents.push(Money.create())
@@ -413,7 +412,7 @@ describe('Embedded', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       class Person extends Document {
         constructor () {
@@ -425,7 +424,7 @@ describe('Embedded', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let now = new Date()
 
@@ -460,10 +459,6 @@ describe('Embedded', function () {
       let postDeleteCalled = false
 
       class Coffee extends EmbeddedDocument {
-        constructor () {
-          super()
-        }
-
         preValidate () {
           preValidateCalled = true
         }
@@ -487,7 +482,7 @@ describe('Embedded', function () {
         postDelete () {
           postDeleteCalled = true
         }
-            }
+      }
 
       class Cup extends Document {
         constructor () {
@@ -495,7 +490,7 @@ describe('Embedded', function () {
 
           this.contents = Coffee
         }
-            }
+      }
 
       let cup = Cup.create()
       cup.contents = Coffee.create()
@@ -503,13 +498,13 @@ describe('Embedded', function () {
       cup.save().then(function () {
         validateId(cup)
 
-                // Pre/post save and validate should be called
+        // Pre/post save and validate should be called
         expect(preValidateCalled).to.be.equal(true)
         expect(preSaveCalled).to.be.equal(true)
         expect(postValidateCalled).to.be.equal(true)
         expect(postSaveCalled).to.be.equal(true)
 
-                // Pre/post delete should not have been called yet
+        // Pre/post delete should not have been called yet
         expect(preDeleteCalled).to.be.equal(false)
         expect(postDeleteCalled).to.be.equal(false)
 
@@ -532,10 +527,6 @@ describe('Embedded', function () {
       let postDeleteCalled = false
 
       class Money extends EmbeddedDocument {
-        constructor () {
-          super()
-        }
-
         preValidate () {
           preValidateCalled = true
         }
@@ -559,7 +550,7 @@ describe('Embedded', function () {
         postDelete () {
           postDeleteCalled = true
         }
-            }
+      }
 
       class Wallet extends Document {
         constructor () {
@@ -567,7 +558,7 @@ describe('Embedded', function () {
 
           this.contents = [Money]
         }
-            }
+      }
 
       let wallet = Wallet.create()
       wallet.contents.push(Money.create())
@@ -576,13 +567,13 @@ describe('Embedded', function () {
       wallet.save().then(function () {
         validateId(wallet)
 
-                // Pre/post save and validate should be called
+        // Pre/post save and validate should be called
         expect(preValidateCalled).to.be.equal(true)
         expect(postValidateCalled).to.be.equal(true)
         expect(preSaveCalled).to.be.equal(true)
         expect(postSaveCalled).to.be.equal(true)
 
-                // Pre/post delete should not have been called yet
+        // Pre/post delete should not have been called yet
         expect(preDeleteCalled).to.be.equal(false)
         expect(postDeleteCalled).to.be.equal(false)
 
@@ -607,7 +598,7 @@ describe('Embedded', function () {
           this.zipCode = Number
           this.isPoBox = Boolean
         }
-            }
+      }
 
       class Person extends Document {
         constructor () {
@@ -623,7 +614,7 @@ describe('Embedded', function () {
         static collectionName () {
           return 'people'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Scott',
@@ -665,7 +656,7 @@ describe('Embedded', function () {
         getBar () {
           return 'bar'
         }
-            }
+      }
 
       class Person extends Document {
         constructor () {
@@ -682,7 +673,7 @@ describe('Embedded', function () {
         getFoo () {
           return 'foo'
         }
-            }
+      }
 
       let person = Person.create({
         name: 'Scott',
