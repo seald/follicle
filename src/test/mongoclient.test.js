@@ -4,39 +4,34 @@
 import dirtyChai from 'dirty-chai'
 import chai from 'chai'
 import { ObjectId } from 'mongodb'
-import { connect, Document } from '../index'
+import { connect } from '../index'
 import { validateId } from './util'
 
 chai.use(dirtyChai)
 const expect = chai.expect
 
-describe.skip('MongoClient', function () {
+describe.skip('MongoClient', () => {
   const url = 'mongodb://localhost/camo_test'
+  let Document, EmbeddedDocument, validators
   let database = null
+  let User
 
-  before(function (done) {
-    connect(url).then(function (db) {
-      database = db
-      return database.dropDatabase()
-    }).then(function () {
-      return done()
-    })
+  before(async () => {
+    ({Document, EmbeddedDocument, validators, client: database} = await connect(url))
+    await database.dropDatabase()
+    User = class extends Document {
+      constructor () {
+        super()
+        this.firstName = String
+        this.lastName = String
+      }
+    }
   })
 
-  beforeEach(function (done) {
-    done()
-  })
+  afterEach(() => database.dropDatabase())
 
-  afterEach(function (done) {
-    database.dropDatabase().then(function () {}).then(done, done)
-  })
-
-  after(function (done) {
-    done()
-  })
-
-  describe('id', function () {
-    it('should allow custom _id values', function (done) {
+  describe('id', () => {
+    it('should allow custom _id values', async () => {
       class School extends Document {
         constructor () {
           super()
@@ -49,69 +44,55 @@ describe.skip('MongoClient', function () {
       school._id = new ObjectId('1234567890abcdef12345678')
       school.name = 'Springfield Elementary'
 
-      school.save().then(function () {
-        validateId(school)
-        expect(school._id.toString()).to.be.equal('1234567890abcdef12345678')
-        return School.findOne()
-      }).then(function (s) {
-        validateId(s)
-        expect(s._id.toString()).to.be.equal('1234567890abcdef12345678')
-      }).then(done, done)
+      await school.save()
+      validateId(school)
+      expect(school._id.toString()).to.be.equal('1234567890abcdef12345678')
+      const s = await School.findOne()
+      validateId(s)
+      expect(s._id.toString()).to.be.equal('1234567890abcdef12345678')
     })
   })
 
-  describe('query', function () {
-    class User extends Document {
-      constructor () {
-        super()
-        this.firstName = String
-        this.lastName = String
-      }
-    }
-
+  describe('query', () => {
     /*
          * The MongoClient should cast all IDs to ObjectIDs. If the objects
          * requested aren't properly returned, then the IDs were not
          * successfully cast.
          */
-    it('should automatically cast string ID in query to ObjectID', function (done) {
+    it('should automatically cast string ID in query to ObjectID', async () => {
       let user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
 
-      user.save().then(function () {
-        validateId(user)
+      await user.save()
+      validateId(user)
 
-        let id = String(user._id)
-        return User.findOne({_id: id})
-      }).then(function (u) {
-        validateId(u)
-      }).then(done, done)
+      let id = String(user._id)
+      const u = await User.findOne({_id: id})
+      validateId(u)
     })
 
     /*
          * Sanity check to make sure we didn't screw up the case
          * where user actually passes an ObjectId
          */
-    it('should automatically cast string ID in query to ObjectID', function (done) {
+    it('should automatically cast string ID in query to ObjectID', async () => {
       let user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
 
-      user.save().then(function () {
-        validateId(user)
+      await user.save()
+      validateId(user)
 
-        return User.findOne({_id: user._id})
-      }).then(function (u) {
-        validateId(u)
-      }).then(done, done)
+      const u = await User.findOne({_id: user._id})
+      validateId(u)
     })
 
     /*
          * Same as above, but we're testing out more complicated
          * queries. In this case we try it with '$in'.
          */
-    it('should automatically cast string IDs in \'$in\' operator to ObjectIDs', function (done) {
+    it('should automatically cast string IDs in \'$in\' operator to ObjectIDs', async () => {
       let user1 = User.create()
       user1.firstName = 'Billy'
       user1.lastName = 'Bob'
@@ -124,25 +105,23 @@ describe.skip('MongoClient', function () {
       user3.firstName = 'Danny'
       user3.lastName = 'David'
 
-      Promise.all([user1.save(), user2.save(), user3.save()]).then(function () {
-        validateId(user1)
-        validateId(user2)
+      await Promise.all([user1.save(), user2.save(), user3.save()])
+      validateId(user1)
+      validateId(user2)
 
-        let id1 = String(user1._id)
-        let id3 = String(user3._id)
-        return User.find({ _id: { '$in': [ id1, id3 ] } })
-      }).then(function (users) {
-        expect(users).to.have.length(2)
+      let id1 = String(user1._id)
+      let id3 = String(user3._id)
+      const users = await User.find({_id: {'$in': [id1, id3]}})
+      expect(users).to.have.length(2)
 
-        let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
-        let u3 = String(users[1]._id) === String(user3._id) ? users[1] : users[0]
+      let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
+      let u3 = String(users[1]._id) === String(user3._id) ? users[1] : users[0]
 
-        expect(String(u1._id)).to.be.equal(String(user1._id))
-        expect(String(u3._id)).to.be.equal(String(user3._id))
-      }).then(done, done)
+      expect(String(u1._id)).to.be.equal(String(user1._id))
+      expect(String(u3._id)).to.be.equal(String(user3._id))
     })
 
-    it('should automatically cast string IDs in deep query objects', function (done) {
+    it('should automatically cast string IDs in deep query objects', async () => {
       let user1 = User.create()
       user1.firstName = 'Billy'
       user1.lastName = 'Bob'
@@ -155,27 +134,25 @@ describe.skip('MongoClient', function () {
       user3.firstName = 'Danny'
       user3.lastName = 'David'
 
-      Promise.all([user1.save(), user2.save(), user3.save()]).then(function () {
-        validateId(user1)
-        validateId(user2)
+      await Promise.all([user1.save(), user2.save(), user3.save()])
+      validateId(user1)
+      validateId(user2)
 
-        let id1 = String(user1._id)
-        let id3 = String(user3._id)
-        return User.find({ $or: [ { _id: id1 }, { _id: id3 } ] })
-      }).then(function (users) {
-        expect(users).to.have.length(2)
+      let id1 = String(user1._id)
+      let id3 = String(user3._id)
+      const users = await User.find({$or: [{_id: id1}, {_id: id3}]})
+      expect(users).to.have.length(2)
 
-        let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
-        let u3 = String(users[1]._id) === String(user3._id) ? users[1] : users[0]
+      let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
+      let u3 = String(users[1]._id) === String(user3._id) ? users[1] : users[0]
 
-        expect(String(u1._id)).to.be.equal(String(user1._id))
-        expect(String(u3._id)).to.be.equal(String(user3._id))
-      }).then(done, done)
+      expect(String(u1._id)).to.be.equal(String(user1._id))
+      expect(String(u3._id)).to.be.equal(String(user3._id))
     })
   })
 
-  describe('indexes', function () {
-    it('should reject documents with duplicate values in unique-indexed fields', function (done) {
+  describe('indexes', () => {
+    it('should reject documents with duplicate values in unique-indexed fields', async () => {
       class User extends Document {
         constructor () {
           super()
@@ -198,14 +175,12 @@ describe.skip('MongoClient', function () {
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
 
-      Promise.all([user1.save(), user2.save()]).then(function () {
-        expect.fail(null, Error, 'Expected error, but got none.')
-      }).catch(function (error) {
-        expect(error instanceof Error).to.be.true()
-      }).then(done, done)
+      await Promise.all([user1.save(), user2.save()])
+        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
+        .catch(error => expect(error instanceof Error).to.be.true())
     })
 
-    it('should accept documents with duplicate values in non-unique-indexed fields', function (done) {
+    it('should accept documents with duplicate values in non-unique-indexed fields', async () => {
       class User extends Document {
         constructor () {
           super()
@@ -228,12 +203,11 @@ describe.skip('MongoClient', function () {
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
 
-      Promise.all([user1.save(), user2.save()]).then(function () {
-        validateId(user1)
-        validateId(user2)
-        expect(user1.email).to.be.equal('billy@example.com')
-        expect(user2.email).to.be.equal('billy@example.com')
-      }).then(done, done)
+      await Promise.all([user1.save(), user2.save()])
+      validateId(user1)
+      validateId(user2)
+      expect(user1.email).to.be.equal('billy@example.com')
+      expect(user2.email).to.be.equal('billy@example.com')
     })
   })
 })

@@ -11,7 +11,7 @@ const expect = chai.expect
 
 process.on('unhandledRejection', console.error)
 
-describe.only('Client', () => {
+describe('Client', () => {
   let Document, EmbeddedDocument, validators
   let Data, Address, Pet, User, City
   let getData1, getData2

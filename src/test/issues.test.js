@@ -3,7 +3,7 @@
 'use strict'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
-import { connect, Document, EmbeddedDocument } from '../index'
+import { connect } from '../index'
 import { ValidationError } from '../lib/errors'
 import { validateId } from './util'
 
@@ -14,31 +14,20 @@ describe('Issues', function () {
   // TODO: Should probably use mock database client...
   const url = 'nedb://memory'
   // const url = 'mongodb://localhost/camo_test';
+  let Document, EmbeddedDocument, validators
   let database = null
 
-  before(function (done) {
-    connect(url).then(function (db) {
-      database = db
-      return database.dropDatabase()
-    }).then(function () {
-      return done()
-    })
+  before(async () => {
+    ({Document, EmbeddedDocument, validators, client: database} = await connect(url))
+    await database.dropDatabase()
   })
 
-  beforeEach(function (done) {
-    done()
-  })
+  afterEach(() => database.dropDatabase())
 
-  afterEach(function (done) {
-    database.dropDatabase().then(function () {}).then(done, done)
-  })
+  after(() => database.dropDatabase())
 
-  after(function (done) {
-    database.dropDatabase().then(function () {}).then(done, done)
-  })
-
-  describe('#4', function () {
-    it('should not load duplicate references in array when only one reference is present', function (done) {
+  describe('#4', () => {
+    it('should not load duplicate references in array when only one reference is present', async () => {
       /*
              * This issue happens when there are multiple objects in the database,
              * each object has an array of references, and at least two of the
@@ -68,41 +57,36 @@ describe('Issues', function () {
       let eye1 = Eye.create({color: 'blue'})
       let eye2 = Eye.create({color: 'brown'})
 
-      eye1.save().then(function (e) {
-        validateId(e)
-        return eye2.save()
-      }).then(function (e) {
-        validateId(e)
-        user1.eyes.push(eye1, eye2)
-        return user1.save()
-      }).then(function (u) {
-        validateId(u)
-        user2.eyes.push(eye1)
-        return user2.save()
-      }).then(function (u) {
-        validateId(u)
-        return User.find({})
-      }).then(function (users) {
-        expect(users).to.have.length(2)
+      let e = await eye1.save()
+      validateId(e)
+      e = await eye2.save()
+      validateId(e)
+      user1.eyes.push(eye1, eye2)
+      let u = await user1.save()
+      validateId(u)
+      user2.eyes.push(eye1)
+      u = await user2.save()
+      validateId(u)
+      const users = await User.find({})
+      expect(users).to.have.length(2)
 
-        // Get user1
-        let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
+      // Get user1
+      let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
 
-        // Ensure we have correct number of eyes...
-        expect(u1.eyes).to.have.length(2)
+      // Ensure we have correct number of eyes...
+      expect(u1.eyes).to.have.length(2)
 
-        let e1 = String(u1.eyes[0]._id) === String(eye1._id) ? u1.eyes[0] : u1.eyes[1]
-        let e2 = String(u1.eyes[1]._id) === String(eye2._id) ? u1.eyes[1] : u1.eyes[0]
+      let e1 = String(u1.eyes[0]._id) === String(eye1._id) ? u1.eyes[0] : u1.eyes[1]
+      let e2 = String(u1.eyes[1]._id) === String(eye2._id) ? u1.eyes[1] : u1.eyes[0]
 
-        // ...and that we have the correct eyes
-        expect(String(e1._id)).to.be.equal(String(eye1._id))
-        expect(String(e2._id)).to.be.equal(String(eye2._id))
-      }).then(done, done)
+      // ...and that we have the correct eyes
+      expect(String(e1._id)).to.be.equal(String(eye1._id))
+      expect(String(e2._id)).to.be.equal(String(eye2._id))
     })
   })
 
-  describe('#5', function () {
-    it('should allow multiple references to the same object in same array', function (done) {
+  describe('#5', () => {
+    it('should allow multiple references to the same object in same array', async () => {
       /*
              * This issue happens when an object has an array of
              * references and there are multiple references to the
@@ -130,26 +114,23 @@ describe('Issues', function () {
       let user = User.create()
       let eye = Eye.create({color: 'blue'})
 
-      eye.save().then(function (e) {
-        validateId(e)
-        user.eyes.push(eye, eye)
-        return user.save()
-      }).then(function (u) {
-        validateId(u)
-        return User.find({})
-      }).then(function (users) {
-        expect(users).to.have.length(1)
-        expect(users[0].eyes).to.have.length(2)
+      const e = await eye.save()
+      validateId(e)
+      user.eyes.push(eye, eye)
+      const u = await user.save()
+      validateId(u)
+      const users = await User.find({})
+      expect(users).to.have.length(1)
+      expect(users[0].eyes).to.have.length(2)
 
-        let eyeRefs = users[0].eyes.map(function (e) { return e._id })
+      let eyeRefs = users[0].eyes.map(function (e) { return e._id })
 
-        expect(eyeRefs).to.include(eye._id)
-      }).then(done, done)
+      expect(eyeRefs).to.include(eye._id)
     })
   })
 
-  describe('#8', function () {
-    it('should use virtuals when initializing instance with data', function (done) {
+  describe('#8', () => {
+    it('should use virtuals when initializing instance with data', () => {
       /*
              * This issue happens when a model has virtual setters
              * and the caller tries to use those setters during
@@ -181,13 +162,11 @@ describe('Issues', function () {
 
       expect(user.firstName).to.be.equal('Billy')
       expect(user.lastName).to.be.equal('Bob')
-
-      done()
     })
   })
 
-  describe('#20', function () {
-    it('should not alias _id to id in queries and returned documents', function (done) {
+  describe('#20', () => {
+    it('should not alias _id to id in queries and returned documents', async () => {
       /*
              * Camo inconsistently aliases the '_id' field to 'id'. When
              * querying, we must use '_id', but documents are returned
@@ -208,33 +187,30 @@ describe('Issues', function () {
         name: 'Billy Bob'
       })
 
-      user.save().then(function () {
-        validateId(user)
+      await user.save()
+      validateId(user)
 
-        // expect(user.id).to.not.exist;
-        expect(user._id).to.exist()
+      // expect(user.id).to.not.exist;
+      expect(user._id).to.exist()
 
-        // Should NOT be able to use 'id' to query
-        return User.findOne({ id: user._id })
-      }).then(function (u) {
-        expect(u).to.not.exist()
+      // Should NOT be able to use 'id' to query
+      let u = await User.findOne({id: user._id})
+      expect(u).to.not.exist()
 
-        // SHOULD be able to use '_id' to query
-        return User.findOne({ _id: user._id })
-      }).then(function (u) {
-        // expect(u.id).to.not.exist;
-        expect(u).to.exist()
-        validateId(user)
-      }).then(done, done)
+      // SHOULD be able to use '_id' to query
+      u = await User.findOne({_id: user._id})
+      // expect(u.id).to.not.exist;
+      expect(u).to.exist()
+      validateId(user)
     })
   })
 
-  describe('#43', function () {
+  describe('#43', () => {
     /*
          * Changes made to the model in postValidate and preSave hooks
          * should be saved to the database
          */
-    it('should save changes made in postValidate hook', function (done) {
+    it('should save changes made in postValidate hook', async () => {
       class Person extends Document {
         constructor () {
           super()
@@ -278,20 +254,17 @@ describe('Issues', function () {
       person.pet = Pet.create()
       person.pets.push(Pet.create())
 
-      person.save().then(function () {
-        validateId(person)
-        return Person
-          .findOne({ _id: person._id }, { populate: true })
-          .then((p) => {
-            expect(p.postValidateChange).to.be.equal(true)
-            expect(p.pet.postValidateChange).to.be.equal(true)
-            expect(p.pets[0].postValidateChange).to.be.equal(true)
-            expect(p.pets[1].postValidateChange).to.be.equal(true)
-          })
-      }).then(done, done)
+      await person.save()
+      validateId(person)
+      const p = await Person.findOne({_id: person._id}, {populate: true})
+
+      expect(p.postValidateChange).to.be.equal(true)
+      expect(p.pet.postValidateChange).to.be.equal(true)
+      expect(p.pets[0].postValidateChange).to.be.equal(true)
+      expect(p.pets[1].postValidateChange).to.be.equal(true)
     })
 
-    it('should save changes made in preSave hook', function (done) {
+    it('should save changes made in preSave hook', async () => {
       class Person extends Document {
         constructor () {
           super()
@@ -335,21 +308,17 @@ describe('Issues', function () {
       person.pet = Pet.create()
       person.pets.push(Pet.create())
 
-      person.save().then(function () {
-        validateId(person)
-        return Person
-          .findOne({ _id: person._id }, { populate: true })
-          .then((p) => {
-            expect(p.preSaveChange).to.be.equal(true)
-            expect(p.pet.preSaveChange).to.be.equal(true)
-            expect(p.pets[0].preSaveChange).to.be.equal(true)
-            expect(p.pets[1].preSaveChange).to.be.equal(true)
-          })
-      }).then(done, done)
+      await person.save()
+      validateId(person)
+      const p = await Person.findOne({_id: person._id}, {populate: true})
+      expect(p.preSaveChange).to.be.equal(true)
+      expect(p.pet.preSaveChange).to.be.equal(true)
+      expect(p.pets[0].preSaveChange).to.be.equal(true)
+      expect(p.pets[1].preSaveChange).to.be.equal(true)
     })
   })
 
-  describe('#53', function () {
+  describe('#53', () => {
     /*
          * Camo should validate that all properties conform to
          * the type they were given in the schema. However,
@@ -358,7 +327,7 @@ describe('Issues', function () {
          * 'type === []' in validator code.
          */
 
-    it('should validate Array types properly', function (done) {
+    it('should validate Array types properly', async () => {
       class Foo extends Document {
         constructor () {
           super()
@@ -369,22 +338,19 @@ describe('Issues', function () {
 
       let foo = Foo.create({bar: [1, 2, 3]})
 
-      foo.save().then(function (f) {
-        expect(f.bar).to.have.length(3)
-        expect(f.bar).to.include(1)
-        expect(f.bar).to.include(2)
-        expect(f.bar).to.include(3)
+      const f = await foo.save()
+      expect(f.bar).to.have.length(3)
+      expect(f.bar).to.include(1)
+      expect(f.bar).to.include(2)
+      expect(f.bar).to.include(3)
 
-        foo.bar = 1
-        return foo.save()
-      }).then(function (f) {
-        expect.fail(null, Error, 'Expected error, but got none.')
-      }).catch(function (error) {
-        expect(error).to.be.instanceof(ValidationError)
-      }).then(done, done)
+      foo.bar = 1
+      await foo.save()
+        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
+        .catch(error => expect(error).to.be.instanceof(ValidationError))
     })
 
-    it('should validate [] types properly', function (done) {
+    it('should validate [] types properly', async () => {
       class Foo extends Document {
         constructor () {
           super()
@@ -395,24 +361,21 @@ describe('Issues', function () {
 
       let foo = Foo.create({bar: [1, 2, 3]})
 
-      foo.save().then(function (f) {
-        expect(f.bar).to.have.length(3)
-        expect(f.bar).to.include(1)
-        expect(f.bar).to.include(2)
-        expect(f.bar).to.include(3)
+      const f = await foo.save()
+      expect(f.bar).to.have.length(3)
+      expect(f.bar).to.include(1)
+      expect(f.bar).to.include(2)
+      expect(f.bar).to.include(3)
 
-        foo.bar = 2
-        return foo.save()
-      }).then(function (f) {
-        expect.fail(null, Error, 'Expected error, but got none.')
-      }).catch(function (error) {
-        expect(error).to.be.instanceof(ValidationError)
-      }).then(done, done)
+      foo.bar = 2
+      await foo.save()
+        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
+        .catch(error => expect(error).to.be.instanceof(ValidationError))
     })
   })
 
-  describe('#55', function () {
-    it('should return updated data on findOneAndUpdate when updating nested data', function (done) {
+  describe('#55', () => {
+    it('should return updated data on findOneAndUpdate when updating nested data', async () => {
       /*
              * When updating nested data with findOneAndUpdate,
              * the document returned to you should contain
@@ -450,18 +413,16 @@ describe('Issues', function () {
         }
       })
 
-      person.save().then(function (person) {
-        return Person.findOneAndUpdate({_id: person._id}, {name: 'John Derp', 'contact.phone': '0123456789'})
-      }).then(function (person) {
-        expect(person.name).to.be.equal('John Derp')
-        expect(person.contact.email).to.be.equal('john@doe.info')
-        expect(person.contact.phone).to.be.equal('0123456789')
-      }).then(done, done)
+      person = await person.save()
+      person = await Person.findOneAndUpdate({_id: person._id}, {name: 'John Derp', 'contact.phone': '0123456789'})
+      expect(person.name).to.be.equal('John Derp')
+      expect(person.contact.email).to.be.equal('john@doe.info')
+      expect(person.contact.phone).to.be.equal('0123456789')
     })
   })
 
-  describe('#57', function () {
-    it('should not save due to Promise.reject in hook', function (done) {
+  describe('#57', () => {
+    it('should not save due to Promise.reject in hook', async () => {
       /*
              * Rejecting a Promise inside of a pre-save hook should
              * cause the save to be aborted, and the .caught() method
@@ -482,11 +443,9 @@ describe('Issues', function () {
         }
       }
 
-      Foo.create({bar: 'bar'}).save().then(function (foo) {
-        expect.fail(null, Error, 'Expected error, but got none.')
-      }).catch(function (error) {
-        expect(error).to.have.property('message', 'DO NOT SAVE')
-      }).then(done, done)
+      await Foo.create({bar: 'bar'}).save()
+        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
+        .catch(error => expect(error).to.have.property('message', 'DO NOT SAVE'))
     })
   })
 })

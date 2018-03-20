@@ -8,9 +8,9 @@ import { deepTraverse } from '../lib/util'
 chai.use(dirtyChai)
 const expect = chai.expect
 
-describe('Util', function () {
-  describe('deepTraverse()', function () {
-    it('should iterate over all keys nested in an object', function (done) {
+describe('Util', () => {
+  describe('deepTraverse()', () => {
+    it('should iterate over all keys nested in an object', () => {
       let object = { 'a': [{ 'b': { 'c': 3 } }] }
 
       let keysSeen = []
@@ -32,8 +32,6 @@ describe('Util', function () {
       expect(parentsSeen).to.have.length(4)
       expect(keysSeen[0]).to.be.equal('a')
       expect(parentsSeen[1]).to.be.equal(object.a)
-
-      done()
     })
   })
 })
