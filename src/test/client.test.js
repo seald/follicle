@@ -26,7 +26,7 @@ describe('Client', () => {
     Data = await getData(Document);
     ({data1: getData1, data2: getData2} = data(Document))
 
-    Address = class extends Document {
+    Address = class Address extends Document {
       constructor () {
         super()
 
@@ -40,7 +40,7 @@ describe('Client', () => {
       }
     }
 
-    Pet = class extends Document {
+    Pet = class Pet extends Document {
       constructor () {
         super()
 
@@ -50,7 +50,7 @@ describe('Client', () => {
       }
     }
 
-    User = class extends Document {
+    User = class User extends Document {
       constructor () {
         super()
 
@@ -59,7 +59,7 @@ describe('Client', () => {
         })
       }
     }
-    City = class extends Document {
+    City = class City extends Document {
       constructor () {
         super()
 

@@ -36,6 +36,7 @@ gulp.task('pretest', ['build-lib', 'build-index'], () => {
         }]
       ]
     }))
+    .pipe(sourcemaps.mapSources(sourcePath => '../../src/test/' + sourcePath))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(testBuildDir.path()))
 })
@@ -54,6 +55,7 @@ gulp.task('build-lib', ['clean-build'], () => {
         }]
       ]
     }))
+    .pipe(sourcemaps.mapSources(sourcePath => '../../src/lib/' + sourcePath))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(libBuildDir.path('.')))
 })
@@ -72,6 +74,7 @@ gulp.task('build-index', ['clean-build'], () => {
         }]
       ]
     }))
+    .pipe(sourcemaps.mapSources(sourcePath => '../src/' + sourcePath))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(buildDir.path('.')))
 })

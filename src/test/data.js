@@ -28,3 +28,32 @@ export default Document => class Data extends Document {
     })
   }
 }
+
+export const getMigratedDataModel = Document => class Data extends Document {
+  constructor () {
+    super()
+
+    this.schema({
+      number: {
+        type: Number
+      },
+      source: {
+        type: String,
+        choices: ['redit', 'hacker-news', 'wired', 'arstechnica'],
+        default: 'redit'
+      },
+      item: {
+        type: Number,
+        min: 0,
+        max: 100
+      },
+      values: {
+        type: [Number]
+      },
+      date: {
+        type: Date,
+        default: Date.now
+      }
+    })
+  }
+}

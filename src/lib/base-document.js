@@ -63,12 +63,13 @@ export default ({client, validators}) => {
      * @returns {String}
      */
     static collectionName () {
+      return this.name
       // DEPRECATED
       // Getting ready to remove this functionality
-      let instance = new this()
+/*      let instance = new this()
       if (instance._meta) return instance._meta.collection
 
-      return this.name.toLowerCase() + 's'
+      return this.name.toLowerCase() + 's'*/
     }
 
     /**

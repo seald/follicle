@@ -2,11 +2,13 @@
 
 import _ from 'lodash'
 import depd from 'depd'
+import { migrateDocument } from './util'
+import {CamoError} from './errors'
 
 const deprecate = depd('camo')
 
-export default ({client, BaseDocument, validators}) => {
-  const { isArray, isEmbeddedDocument, isReferenceable } = validators
+export default ({client, BaseDocument, validators, migrations = {}}) => {
+  const {isArray, isEmbeddedDocument, isReferenceable} = validators
 
   return class Document extends BaseDocument {
     constructor (name) {
@@ -104,6 +106,7 @@ export default ({client, BaseDocument, validators}) => {
         }
       })
 
+      toUpdate._version = this.constructor._getDocumentVersion()
       const id = await client.save(this.collectionName(), this._id, toUpdate)
       if (this._id === null) this._id = id
       // TODO: hack?
@@ -250,6 +253,10 @@ export default ({client, BaseDocument, validators}) => {
     }
 
     static _fromData (datas) {
+      if (!isArray(datas)) datas = [datas]
+      const documentVersion = this._getDocumentVersion()
+      if (datas.some(data => data.hasOwnProperty('_version') && data._version !== documentVersion)) throw new CamoError('💩')
+
       const instances = super._fromData(datas)
       // This way we preserve the original structure of the data. Data
       // that was passed as an array is returned as an array, and data
@@ -268,6 +275,26 @@ export default ({client, BaseDocument, validators}) => {
       */
 
       return instances
+    }
+
+    static _getDocumentVersion () {
+      return this._getMigrations().length // cast to string
+    }
+
+    static _getMigrations () {
+      return migrations[this.collectionName()] || []
+    }
+
+    static async _migrateCollection () {
+      const data = await client.find(this.collectionName(), {_version: {$ne: this._getDocumentVersion()}}, {})
+      const migrate = migrateDocument(this._getMigrations())
+      await Promise.all(data
+        .map(entry => {
+          const _e = migrate(entry)
+          return _e
+        })
+        .map(async entry => client.save(this.collectionName(), entry._id, entry))
+      )
     }
 
     /**

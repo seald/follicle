@@ -12,16 +12,16 @@ import getValidators from './validate'
  * Connect to current database
  *
  * @param {String} url
- * @param {Object} options
+ * @param {Object} [options]
  * @returns {Promise}
  */
-export const connect = async (url, options) => {
+export const connect = async (url, options, migrations) => {
   if (url.indexOf('nedb://') > -1) {
     // url example: nedb://path/to/file/folder
     const client = await NeDbClient.connect(url, options)
     const validators = getValidators({client})
     const BaseDocument = getBaseDocument({client, validators})
-    const Document = getDocument({BaseDocument, client, validators})
+    const Document = getDocument({BaseDocument, client, validators, migrations})
     const EmbeddedDocument = getEmbeddedDocument({BaseDocument, client, validators})
 
     return {

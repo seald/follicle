@@ -250,8 +250,8 @@ describe('Document', () => {
 
       let user = User.create()
 
-      expect(user.collectionName()).to.be.equal('users')
-      expect(User.collectionName()).to.be.equal('users')
+      expect(user.collectionName()).to.be.equal('User')
+      expect(User.collectionName()).to.be.equal('User')
     })
 
     it('should provide default collection name based on subclass name', () => {
@@ -261,8 +261,8 @@ describe('Document', () => {
 
       let pro = ProUser.create()
 
-      expect(pro.collectionName()).to.be.equal('prousers')
-      expect(ProUser.collectionName()).to.be.equal('prousers')
+      expect(pro.collectionName()).to.be.equal('ProUser')
+      expect(ProUser.collectionName()).to.be.equal('ProUser')
     })
 
     it('should allow custom collection name', () => {

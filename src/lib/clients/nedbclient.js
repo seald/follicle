@@ -373,28 +373,26 @@ export default class NeDbClient extends DatabaseClient {
 
   /**
      * Drop current database
-     *
      * @returns {Promise}
      */
+  // TODO: this must be carefully used, will drop database known at this point in runtime. If no instance of a model has been created, the collection of this model won't be dropped.
   dropDatabase () {
-    const that = this
-
     let clearPromises = []
-    _.keys(this._collections).forEach(function (key) {
-      let p = new Promise(function (resolve, reject) {
-        let dbLocation = getCollectionPath(that._path, key)
+    _.keys(this._collections).forEach(key => {
+      let p = new Promise((resolve, reject) => {
+        let dbLocation = getCollectionPath(this._path, key)
 
         if (dbLocation === 'memory') {
           // Only exists in memory, so just delete the 'Datastore'
-          delete that._collections[key]
+          delete this._collections[key]
           resolve()
         } else {
           // Delete the file, but only if it exists
-          fs.stat(dbLocation, function (err, stat) {
+          fs.stat(dbLocation, (err, stat) => {
             if (err === null) {
               fs.unlink(dbLocation, function (err) {
                 if (err) reject(err)
-                delete that._collections[key]
+                delete this._collections[key]
                 resolve()
               })
             } else {
