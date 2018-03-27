@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach, before, afterEach, after */
+/* global describe, it, before, afterEach, after */
 
 'use strict'
 import chai from 'chai'
@@ -17,11 +17,11 @@ describe('Document', () => {
   const url = 'nedb://memory'
   // const url = 'mongodb://localhost/camo_test';
   let database = null
-  let Document, EmbeddedDocument, validators
+  let Document
   let Data
 
   before(async () => {
-    ({Document, EmbeddedDocument, validators, client: database} = await connect(url))
+    ({Document, client: database} = await connect(url))
     await database.dropDatabase()
     Data = await getData(Document)
   })
@@ -554,7 +554,6 @@ describe('Document', () => {
       await data.save()
       validateId(data)
       expect(data.num).to.be.equal(26)
-
     })
 
     it('should allow boolean types', async () => {

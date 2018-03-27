@@ -12,7 +12,7 @@ const expect = chai.expect
 process.on('unhandledRejection', console.error)
 
 describe('Client', () => {
-  let Document, EmbeddedDocument, validators
+  let Document, validators
   let Data, Address, Pet, User, City
   let getData1, getData2
   let Springfield, SouthPark, Quahog
@@ -21,7 +21,7 @@ describe('Client', () => {
   let database = null
 
   before(async () => {
-    ({Document, EmbeddedDocument, validators, client: database} = await connect(url))
+    ({Document, validators, client: database} = await connect(url))
     await database.dropDatabase()
     Data = await getData(Document);
     ({data1: getData1, data2: getData2} = data(Document))
@@ -176,7 +176,6 @@ describe('Client', () => {
       const u = await User.findOne({_id: user._id}, {populate: ['pet']})
       expect(u.pet).to.be.an.instanceof(Pet)
       expect(validators.isNativeId(u.address)).to.be.true()
-
     })
   })
 
@@ -199,7 +198,7 @@ describe('Client', () => {
       const data = await Data.findOneAndUpdate({number: 1}, {number: 1}, {upsert: true})
       validateId(data)
       expect(data.number).to.equal(1)
-      d = await  Data.findOne({number: 1})
+      d = await Data.findOne({number: 1})
       validateId(d)
       expect(d.number).to.equal(1)
     })
@@ -415,7 +414,6 @@ describe('Client', () => {
       expect(validators.isNativeId(users[0].address)).to.be.true()
       expect(users[1].pet).to.be.an.instanceof(Pet)
       expect(validators.isNativeId(users[1].address)).to.be.true()
-
     })
   })
 

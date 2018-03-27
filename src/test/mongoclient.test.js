@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach, before, afterEach, after */
+/* global describe, it, before, afterEach */
 
 'use strict'
 import dirtyChai from 'dirty-chai'
@@ -12,12 +12,12 @@ const expect = chai.expect
 
 describe.skip('MongoClient', () => {
   const url = 'mongodb://localhost/camo_test'
-  let Document, EmbeddedDocument, validators
+  let Document
   let database = null
   let User
 
   before(async () => {
-    ({Document, EmbeddedDocument, validators, client: database} = await connect(url))
+    ({Document, client: database} = await connect(url))
     await database.dropDatabase()
     User = class extends Document {
       constructor () {

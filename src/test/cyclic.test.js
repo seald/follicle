@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach, before, afterEach, after */
+/* global describe, it, before, afterEach, after */
 
 'use strict'
 import chai from 'chai'
@@ -15,11 +15,11 @@ describe('Cyclic', () => {
   const url = 'nedb://memory'
   // const url = 'mongodb://localhost/camo_test';
   let database = null
-  let Document, EmbeddedDocument, validators
+  let Document
   let Foo, Bar
 
   before(async () => {
-    ({Document, EmbeddedDocument, validators, client: database} = await connect(url))
+    ({Document, client: database} = await connect(url))
     await database.dropDatabase();
     ({Foo, Bar} = getFooBar(Document))
   })

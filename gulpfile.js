@@ -22,7 +22,7 @@ gulp.task('clean-build', () => {
   testBuildDir.dir('.', {empty: true})
 })
 
-gulp.task('pretest', ['build-lib', 'build-index'], () => {
+gulp.task('pretest', ['build'], () => {
   return gulp.src(testDir.path('**/*.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
@@ -78,3 +78,5 @@ gulp.task('build-index', ['clean-build'], () => {
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(buildDir.path('.')))
 })
+
+gulp.task('build', ['build-index', 'build-lib'])

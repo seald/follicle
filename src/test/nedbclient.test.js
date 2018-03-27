@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach, before, afterEach, after */
+/* global describe, it, before, afterEach */
 
 'use strict'
 
@@ -13,14 +13,14 @@ const expect = chai.expect
 describe('NeDbClient', () => {
   const url = 'nedb://memory'
   let database = null
-  let Document, EmbeddedDocument, validators
+  let Document
 
   // TODO: This is acting weird. Randomly passes/fails. Seems to
   // be caused by document.test.js. When that one doesn't run,
   // this one always passes. Maybe some leftover files are still
   // floating around due to document.test.js?
   before(async () => {
-    ({Document, EmbeddedDocument, validators, client: database} = await connect(url))
+    ({Document, client: database} = await connect(url))
     await database.dropDatabase()
   })
 

@@ -3,7 +3,6 @@
 import _ from 'lodash'
 import { ValidationError } from './errors'
 
-
 export default ({client, validators}) => {
   const {
     isArray,
@@ -66,10 +65,12 @@ export default ({client, validators}) => {
       return this.name
       // DEPRECATED
       // Getting ready to remove this functionality
-/*      let instance = new this()
+      /*
+      let instance = new this()
       if (instance._meta) return instance._meta.collection
 
-      return this.name.toLowerCase() + 's'*/
+      return this.name.toLowerCase() + 's'
+      */
     }
 
     /**

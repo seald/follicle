@@ -29,7 +29,9 @@
   },
   "license": "MIT",
   "scripts": {
+    "build": "gulp",
     "pretest": "gulp pretest",
+    "posttest": "standard",
     "test": "mocha build/test/*.test.js"
   },
   "engines": {

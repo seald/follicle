@@ -1,7 +1,6 @@
 'use strict'
 
 export default Document => {
-
   class Foo extends Document {
     constructor () {
       super()

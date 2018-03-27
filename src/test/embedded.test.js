@@ -1,4 +1,4 @@
-/* global describe, it, beforeEach, before, afterEach, after */
+/* global describe, it, before, afterEach, after */
 
 'use strict'
 import chai from 'chai'
@@ -14,11 +14,11 @@ describe('Embedded', () => {
   // TODO: Should probably use mock database client...
   const url = 'nedb://memory'
   // const url = 'mongodb://localhost/camo_test';
-  let Document, EmbeddedDocument, validators
+  let Document, EmbeddedDocument
   let database = null
 
   before(async () => {
-    ({Document, EmbeddedDocument, validators, client: database} = await connect(url))
+    ({Document, EmbeddedDocument, client: database} = await connect(url))
     await database.dropDatabase()
   })
 
@@ -232,11 +232,10 @@ describe('Embedded', () => {
         discounts: [{
           authorized: true,
           amount: 9.99
-        },
-          {
-            authorized: false,
-            amount: 187.44
-          }]
+        }, {
+          authorized: false,
+          amount: 187.44
+        }]
       })
 
       await product.save()
