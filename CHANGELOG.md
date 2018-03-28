@@ -1,3 +1,15 @@
+#Changelog
+
+## 0.0.1
+
+Features:
+ - **[BREAKING]** dynamically connect to a database rather than a static connection (mostly to improve testing) with a factory function pattern;
+ - added migrations
+ - **[BREAKING]** changed how the collections are stored with NeDB: rather than giving a file path, a directory path is given and the name of each collection is given by the name of the class;
+
+
+#Old changelog (camo)
+
 ## 0.12.3 (2016-11-04)
 Bugfixes:
  - Merged PR that allows changes to persist in `postValidate` and `preSave` hooks ([#85](https://github.com/scottwrobinson/camo/pull/85)). Fixes [#43](https://github.com/scottwrobinson/camo/pull/43).

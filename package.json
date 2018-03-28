@@ -1,11 +1,11 @@
 {
-  "name": "camo",
-  "version": "0.12.3",
+  "name": "follicle",
+  "version": "0.0.1",
   "description": "A class-based ES6 ODM for Mongo-like databases.",
   "author": {
-    "name": "Scott Robinson",
-    "email": "s.w.robinson@gmail.com",
-    "url": "http://stackabuse.com"
+    "name": "Timothée Rebours",
+    "email": "tim@seald.io",
+    "url": "https://www.seald.io"
   },
   "keywords": [
     "es6",
@@ -22,17 +22,22 @@
     "query",
     "db"
   ],
-  "homepage": "https://github.com/scottwrobinson/camo",
+  "homepage": "https://gitlab.tardis.seald.io/seald/follicle",
   "repository": {
     "type": "git",
-    "url": "git@github.com:scottwrobinson/camo.git"
+    "url": "https://gitlab.tardis.seald.io/seald/follicle.git"
   },
-  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://nexus.tardis.seald.io/repository/npm-hosted"
+  },
+  "license": "UNLICENSED",
   "scripts": {
     "build": "gulp",
     "pretest": "gulp pretest",
     "posttest": "standard",
-    "test": "mocha build/test/*.test.js"
+    "test": "mocha build/test/*.test.js",
+    "precoverage": "rm -rf coverage/ .nyc_output/",
+    "coverage": "nyc npm test"
   },
   "engines": {
     "node": ">=2.0.0"
@@ -56,6 +61,7 @@
     "gulp-babel": "^8.0.0-beta.2",
     "gulp-sourcemaps": "^2.6.4",
     "mocha": "5.0.4",
+    "nyc": "^11.6.0",
     "source-map-support": "^0.5.4",
     "standard": "^11.0.1",
     "vinyl-buffer": "^1.0.1"

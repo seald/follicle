@@ -1,5 +1,6 @@
-todo.txt
-notes.txt
-node_modules/
 npm-debug.log
-.jshintrc
+build/
+node_modules/
+.idea/
+coverage/
+.nyc_output/

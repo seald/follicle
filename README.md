@@ -1,6 +1,6 @@
-# Camo
+# Follicle
 
-**Camo needs your help!** Interested in contributing? [Let me know](mailto:s.w.robinson+camo@gmail.com)!
+Follicle is a fork of camo (https://github.com/scottwrobinson/camo) made for the needs of Seald (https://www.seald.io/)
 
 ## Jump To
 * <a href="#why-do-we-need-another-odm">Why do we need another ODM?</a>
@@ -25,6 +25,10 @@
 Short answer, we probably don't. Camo was created for two reasons: to bring traditional-style classes to [MongoDB](https://www.mongodb.com/) JavaScript, and to support [NeDB](https://github.com/louischatriot/nedb) as a backend (which is much like the SQLite-alternative to Mongo).
 
 Throughout development this eventually turned in to a library full of [ES6](https://github.com/lukehoban/es6features) features. Coming from a Java background, its easier for me to design and write code in terms of classes, and I suspect this is true for many JavaScript beginners. While ES6 classes don't bring any new functionality to the language, they certainly do make it much easier to jump in to OOP with JavaScript, which is reason enough to warrent a new library, IMO.
+
+## Why forking camo?
+
+Camo is awesome but has too many incompatible patterns for internal use, a PR wouldn't make sense.
 
 ## Advantages
 So, why use Camo?
@@ -67,13 +71,22 @@ Before using any document methods, you must first connect to your underlying dat
 So to connect to an NeDB database, use the following:
 
 ```javascript
-var connect = require('camo').connect;
+const connect = require('@seald/follicle').connect;
 
-var database;
-var uri = 'nedb:///Users/scott/data/animals';
-connect(uri).then(function(db) {
-    database = db;
-});
+const main = async () => {
+  const migrations = {
+    Data: [entry => {
+      // DO STUFF
+      return entry
+    }]    
+  }
+    
+  const { client, validators, BaseDocument, Document, EmbeddedDocument } = await connect('nedb:///Users/scott/data/animals', {}, migrations)
+  
+  class MyModel extends Document {
+    // DO STUFF
+  }
+}
 ```
 
 ### Declaring Your Document
