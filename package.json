@@ -1,5 +1,7 @@
 {
   "name": "@seald/follicle",
+  "main": "build/index.js",
+  "module": "src/index.js",
   "version": "1.0.0-1",
   "description": "A class-based ES6 ODM for Mongo-like databases.",
   "author": {
