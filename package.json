@@ -1,6 +1,6 @@
 {
   "name": "follicle",
-  "version": "0.0.1",
+  "version": "1.0.0-0",
   "description": "A class-based ES6 ODM for Mongo-like databases.",
   "author": {
     "name": "Timothée Rebours",
