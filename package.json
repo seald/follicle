@@ -1,5 +1,5 @@
 {
-  "name": "follicle",
+  "name": "@seald/follicle",
   "version": "1.0.0-0",
   "description": "A class-based ES6 ODM for Mongo-like databases.",
   "author": {
@@ -32,7 +32,7 @@
   },
   "license": "UNLICENSED",
   "scripts": {
-    "build": "gulp",
+    "build": "gulp build",
     "pretest": "gulp pretest",
     "posttest": "standard",
     "test": "mocha build/test/*.test.js",
