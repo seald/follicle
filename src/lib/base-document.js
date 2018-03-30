@@ -426,11 +426,11 @@ export default ({client, validators}) => {
       _.keys(this).forEach((k) => {
         if (_.startsWith(k, '_')) {
           if (k === '_id' && keep._id) values[k] = this[k]
-        } else if (isEmbeddedDocument(this[k])) values[k] = this[k]._toData()
+        } else if (isEmbeddedDocument(this[k])) values[k] = this[k]._toData(null, toJSON)
         else if (isArray(this[k]) && this[k].length > 0 && isEmbeddedDocument(this[k][0])) {
           values[k] = []
           this[k].forEach(v => {
-            values[k].push(v._toData())
+            values[k].push(v._toData(null, toJSON))
           })
         } else {
           if (!toJSON || !(this[k] && this[k].toJSON)) values[k] = this[k]
