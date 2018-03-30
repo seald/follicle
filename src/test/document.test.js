@@ -1212,7 +1212,6 @@ describe('Document', () => {
         }
       }
 
-
       expect(() => Person.create({
         names: []
       })).to.throw(Error)
@@ -1234,7 +1233,6 @@ describe('Document', () => {
         }
       }
 
-
       expect(() => Person.create({
         name: ''
       })).to.throw(Error)
@@ -1255,7 +1253,6 @@ describe('Document', () => {
           return 'people'
         }
       }
-
 
       expect(() => Person.create({
         names: {}
