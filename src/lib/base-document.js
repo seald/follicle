@@ -393,7 +393,7 @@ export default ({client, validators}) => {
      * @returns {*}
      */
     toJSON () {
-      const values = this._toData({_id: true})
+      const values = this._toData({_id: true}, true)
       const schema = this._schema
       for (let key in schema) {
         if (schema.hasOwnProperty(key)) {
@@ -418,7 +418,7 @@ export default ({client, validators}) => {
      * @returns {{}}
      * @private
      */
-    _toData (keep = {}) {
+    _toData (keep = {}, toJSON = false) {
       if (keep === null) keep = {}
       else if (keep._id === undefined) keep._id = true
 
@@ -432,7 +432,10 @@ export default ({client, validators}) => {
           this[k].forEach(v => {
             values[k].push(v._toData())
           })
-        } else values[k] = this[k]
+        } else {
+          if (!toJSON || !(this[k] && this[k].toJSON)) values[k] = this[k]
+          else values[k] = this[k].toJSON()
+        }
       })
 
       return values
