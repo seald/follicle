@@ -206,12 +206,12 @@ export default ({client, validators}) => {
      * @param {Object} data
      * @returns {Document}
      */
-    static create (data) {
+    static create (data = {}) {
       this.createIndexes()
 
-      if (typeof (data) !== 'undefined') return this._fromData(data)
-
-      return this._instantiate()
+      const tmp = this._fromData(data)
+      tmp.validate()
+      return tmp
     }
 
     static createIndexes () { }

@@ -355,18 +355,9 @@ describe('Embedded', () => {
         }
       }
 
-      let wallet = Wallet.create()
-      wallet.contents.push(Money.create())
-      wallet.contents[0].value = 5
-      wallet.contents.push(Money.create())
-      wallet.contents[1].value = 26
-
-      await wallet.save()
-        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
-        .catch(error => {
-          expect(error).to.be.instanceof(ValidationError)
-          expect(error.message).to.contain('choices')
-        })
+      expect(() => Wallet.create({
+        contents: [Money.create({value: 5}), Money.create({value: 26})]
+      })).to.throw(Error, /choices/)
     })
   })
 

@@ -909,13 +909,9 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      expect(() => Person.create({
         name: 'Matt'
-      })
-
-      await person.save()
-        .then(() => fail(null, Error, 'Expected error, but got none.'))
-        .catch(error => expectError(error))
+      })).to.throw(Error)
     })
   })
 
@@ -1156,11 +1152,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create()
-
-      await person.save()
-        .then(() => fail(null, Error, 'Expected error, but got none.'))
-        .catch(error => expectError(error))
+      expect(() => Person.create()).to.throw(Error)
     })
 
     it('should reject value if specified default empty value', async () => {
@@ -1180,11 +1172,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create()
-
-      await person.save()
-        .then(() => fail(null, Error, 'Expected error, but got none.'))
-        .catch(error => expectError(error))
+      expect(() => Person.create()).to.throw(Error)
     })
 
     it('should reject value that is null', async () => {
@@ -1203,13 +1191,9 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      expect(() => Person.create({
         name: null
-      })
-
-      await person.save()
-        .then(() => fail(null, Error, 'Expected error, but got none.'))
-        .catch(error => expectError(error))
+      })).to.throw(Error)
     })
 
     it('should reject value that is an empty array', async () => {
@@ -1228,13 +1212,10 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
-        names: []
-      })
 
-      await person.save()
-        .then(() => fail(null, Error, 'Expected error, but got none.'))
-        .catch(error => expectError(error))
+      expect(() => Person.create({
+        names: []
+      })).to.throw(Error)
     })
 
     it('should reject value that is an empty string', async () => {
@@ -1253,13 +1234,10 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
-        name: ''
-      })
 
-      await person.save()
-        .then(() => fail(null, Error, 'Expected error, but got none.'))
-        .catch(error => expectError(error))
+      expect(() => Person.create({
+        name: ''
+      })).to.throw(Error)
     })
 
     it('should reject value that is an empty object', async () => {
@@ -1278,13 +1256,10 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
-        names: {}
-      })
 
-      await person.save()
-        .then(() => fail(null, Error, 'Expected error, but got none.'))
-        .catch(error => expectError(error))
+      expect(() => Person.create({
+        names: {}
+      })).to.throw(Error)
     })
   })
 
