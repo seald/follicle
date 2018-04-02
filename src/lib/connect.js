@@ -1,8 +1,5 @@
 'use strict'
 
-import NeDbClient from './clients/nedbclient'
-
-import MongoClient from './clients/mongoclient'
 import getBaseDocument from './base-document'
 import getEmbeddedDocument from './embedded-document'
 import getDocument from './document'
@@ -18,7 +15,7 @@ import getValidators from './validate'
 export const connect = async (url, options, migrations) => {
   if (url.indexOf('nedb://') > -1) {
     // url example: nedb://path/to/file/folder
-    const client = await NeDbClient.connect(url, options)
+    const client = await (require('./clients/nedbclient').default.connect(url, options))
     const validators = getValidators({client})
     const BaseDocument = getBaseDocument({client, validators})
     const Document = getDocument({BaseDocument, client, validators, migrations})
@@ -33,7 +30,7 @@ export const connect = async (url, options, migrations) => {
     }
   } else if (url.indexOf('mongodb://') > -1) {
     // url example: 'mongodb://localhost:27017/myproject'
-    const client = await MongoClient.connect(url, options)
+    const client = await (require('./clients/mongoclient').default.connect(url, options))
     const validators = getValidators({client})
     const BaseDocument = getBaseDocument({client})
     const Document = getDocument({BaseDocument, client})
