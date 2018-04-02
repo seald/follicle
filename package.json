@@ -45,15 +45,13 @@
     "node": ">=2.0.0"
   },
   "peerDependencies": {
-    "@babel/polyfill": "^7.0.0-beta.42"
+    "@babel/polyfill": "^7.0.0-beta.42",
+    "mongodb": "2.0.42",
+    "nedb": "1.8.0"
   },
   "dependencies": {
     "depd": "1.1.2",
     "lodash": "4.17.5"
-  },
-  "optionalDependencies": {
-    "mongodb": "2.0.42",
-    "nedb": "1.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.42",
