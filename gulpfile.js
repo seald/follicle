@@ -26,16 +26,7 @@ gulp.task('pretest', ['build'], () => {
   return gulp.src(testDir.path('**/*.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(babel({
-      presets: [
-        ['@babel/preset-env', {
-          targets: {
-            node: '8'
-          },
-          useBuiltIns: 'usage'
-        }]
-      ]
-    }))
+    .pipe(babel())
     .pipe(sourcemaps.mapSources(sourcePath => '../../src/test/' + sourcePath))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(testBuildDir.path()))
@@ -45,16 +36,7 @@ gulp.task('build-lib', ['clean-build'], () => {
   return gulp.src(libDir.path('**/*.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(babel({
-      presets: [
-        ['@babel/preset-env', {
-          targets: {
-            node: '8'
-          },
-          useBuiltIns: 'usage'
-        }]
-      ]
-    }))
+    .pipe(babel())
     .pipe(sourcemaps.mapSources(sourcePath => '../../src/lib/' + sourcePath))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(libBuildDir.path('.')))
@@ -64,16 +46,7 @@ gulp.task('build-index', ['clean-build'], () => {
   return gulp.src(srcDir.path('*.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(babel({
-      presets: [
-        ['@babel/preset-env', {
-          targets: {
-            node: '8'
-          },
-          useBuiltIns: 'usage'
-        }]
-      ]
-    }))
+    .pipe(babel())
     .pipe(sourcemaps.mapSources(sourcePath => '../src/' + sourcePath))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(buildDir.path('.')))
