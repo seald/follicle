@@ -1,5 +1,5 @@
 'use strict'
 
-import { connect } from './lib/connect'
+import { connectNeDB } from './lib/connectNeDB'
 
-export { connect }
+export { connectNeDB }

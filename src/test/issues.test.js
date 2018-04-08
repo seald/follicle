@@ -3,7 +3,7 @@
 'use strict'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
-import { connect } from '../index'
+import { connectNeDB } from '../index'
 import { ValidationError } from '../lib/errors'
 import { validateId } from './util'
 
@@ -18,7 +18,7 @@ describe('Issues', function () {
   let database = null
 
   before(async () => {
-    ({Document, EmbeddedDocument, client: database} = await connect(url))
+    ({Document, EmbeddedDocument, client: database} = await connectNeDB(url))
     await database.dropDatabase()
   })
 

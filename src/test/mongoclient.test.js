@@ -4,7 +4,7 @@
 import dirtyChai from 'dirty-chai'
 import chai from 'chai'
 import { ObjectId } from 'mongodb'
-import { connect } from '../index'
+import { connectNeDB } from '../index'
 import { validateId } from './util'
 
 chai.use(dirtyChai)
@@ -17,7 +17,7 @@ describe.skip('MongoClient', () => {
   let User
 
   before(async () => {
-    ({Document, client: database} = await connect(url))
+    ({Document, client: database} = await connectNeDB(url))
     await database.dropDatabase()
     User = class extends Document {
       constructor () {

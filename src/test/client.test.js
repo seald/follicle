@@ -2,7 +2,7 @@
 'use strict'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
-import { connect } from '../index'
+import { connectNeDB } from '../index'
 import getData from './data'
 import { data, validateData1, validateId } from './util'
 
@@ -21,7 +21,7 @@ describe('Client', () => {
   let database = null
 
   before(async () => {
-    ({Document, validators, client: database} = await connect(url))
+    ({Document, validators, client: database} = await connectNeDB(url))
     await database.dropDatabase()
     Data = await getData(Document);
     ({data1: getData1, data2: getData2} = data(Document))
