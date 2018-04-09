@@ -2,9 +2,9 @@
   "presets": [
     ["@babel/preset-env", {
       "targets": {
-        "node": "8"
+        "node": "9"
       },
-      "useBuiltIns": "usage"
+      "useBuiltIns": false
     }]
   ]
 }
