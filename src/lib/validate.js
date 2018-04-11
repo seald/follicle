@@ -20,8 +20,9 @@ export const isInChoices = (choices, choice) => {
   return choices.indexOf(choice) > -1
 }
 export const isEmptyValue = value =>
-  typeof value === 'undefined' ||
-  (!(typeof value === 'number' || value instanceof Date || typeof value === 'boolean') && (Object.keys(value).length === 0))
+  value == null ||
+  (value === '') ||
+  (!(typeof value === 'number' || value instanceof Date || typeof value === 'boolean' || typeof value === 'string') && (Object.keys(value).length === 0))
 
 export default ({client}) => {
   const isNativeId = n => client.isNativeId(n)
