@@ -17,7 +17,7 @@ const getCollectionPath = function (dbLocation, collection) {
   if (dbLocation === 'memory') {
     return dbLocation
   }
-  return path.join(dbLocation, collection) + '.db'
+  return path.join(dbLocation, collection) + '.fdb'
 }
 
 const createCollection = function (collectionName, url) {
