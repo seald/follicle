@@ -3,7 +3,7 @@
 'use strict'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
-import { connectNeDB } from '../index'
+import { connectNeDB } from '../lib/connectNeDB'
 import { isDocument } from '../lib/validate'
 import { ValidationError } from '../lib/errors'
 import getData from './data'

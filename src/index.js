@@ -1,5 +1,5 @@
 'use strict'
 
-import { connectNeDB } from './lib/connectNeDB'
+import { DocumentsFactory } from './lib/documentsFactory'
 
-export { connectNeDB }
+export default DocumentsFactory

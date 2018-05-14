@@ -3,7 +3,7 @@
 'use strict'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
-import { connectNeDB } from '../index'
+import { connectNeDB } from '../lib/connectNeDB'
 import { validateId } from './util'
 import getFooBar from './cyclic'
 

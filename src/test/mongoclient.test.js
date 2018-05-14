@@ -4,7 +4,7 @@
 import dirtyChai from 'dirty-chai'
 import chai from 'chai'
 import { ObjectId } from 'mongodb'
-import { connectNeDB } from '../index'
+import { connectNeDB } from '../lib/connectNeDB'
 import { validateId } from './util'
 
 chai.use(dirtyChai)

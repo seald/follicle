@@ -3,7 +3,7 @@
 
 import { default as getData, getMigratedDataModel } from './data'
 import jetpack from 'fs-jetpack'
-import { connectNeDB } from '../index'
+import { connectNeDB } from '../lib/connectNeDB'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
 
