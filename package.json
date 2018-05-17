@@ -34,8 +34,8 @@
   },
   "license": "UNLICENSED",
   "scripts": {
-    "build": "gulp build",
-    "pretest": "gulp pretest",
+    "build": "cm build",
+    "pretest": "cm pretest",
     "posttest": "standard",
     "test": "mocha build/test/*.test.js",
     "precoverage": "rm -rf coverage/ .nyc_output/",
@@ -56,19 +56,15 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.43",
     "@babel/preset-env": "^7.0.0-beta.43",
-    "nedb": "1.8.0",
-    "react-native-local-mongodb": "^2.0.0",
-    "mongodb": "2.0.42",
+    "@seald/centimaitre": "^0.1.2",
     "chai": "4.1.2",
     "dirty-chai": "^2.0.1",
     "fs-jetpack": "^1.3.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^8.0.0-beta.2",
-    "gulp-sourcemaps": "^2.6.4",
     "mocha": "^5.0.5",
+    "mongodb": "2.0.42",
+    "nedb": "1.8.0",
     "nyc": "^11.6.0",
     "source-map-support": "^0.5.4",
-    "standard": "^11.0.1",
-    "vinyl-buffer": "^1.0.1"
+    "standard": "^11.0.1"
   }
 }

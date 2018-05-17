@@ -1,4 +1,4 @@
-image: node:8
+image: node:latest
 
 before_script:
   - echo "//nexus.tardis.seald.io/repository/npm/:_authToken=${AUTH_TOKEN}" > .npmrc
