@@ -14,8 +14,8 @@ cm.setDefaultOptions({
 
 cm.task('clean-build', () => {
   jetpack.dir('./build/', {empty: true})
-  jetpack.dir('./build/lib', {empty: true})
-  jetpack.dir('./build/test', {empty: true})
+  jetpack.dir('./build/lib')
+  jetpack.dir('./build/test')
 })
 
 const buildJS = async (options, {srcDirPath, destDirPath, rootDirPath = jetpack.path(), matching}) => {
