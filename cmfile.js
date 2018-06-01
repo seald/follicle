@@ -1,6 +1,6 @@
 'use strict'
 
-const cm = require('@seald/centimaitre')
+const cm = require('centimaitre')
 const jetpack = require('fs-jetpack')
 const babel = require('@babel/core')
 const {promisify} = require('util')
