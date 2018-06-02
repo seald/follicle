@@ -935,8 +935,13 @@ describe('Document', () => {
         birthday: now
       })
 
+      expect(person.birthday.valueOf()).to.be.equal(now.valueOf())
+
+      person.birthday = now
+
       await person.save()
       validateId(person)
+
       expect(person.birthday.valueOf()).to.be.equal(now.valueOf())
     })
 
@@ -964,8 +969,17 @@ describe('Document', () => {
         weddingDate: '2016/02/17'
       })
 
+      expect(person.birthday.valueOf()).to.be.equal(birthday.valueOf())
+      expect(person.graduationDate.valueOf()).to.be.equal(graduationDate.valueOf())
+      expect(person.weddingDate.valueOf()).to.be.equal(weddingDate.valueOf())
+
+      person.birthday = '2016-02-17T05:06:08+00:00'
+      person.graduationDate = 'February 17, 2016'
+      person.weddingDate = '2016/02/17'
+
       await person.save()
       validateId(person)
+
       expect(person.birthday.valueOf()).to.be.equal(birthday.valueOf())
       expect(person.graduationDate.valueOf()).to.be.equal(graduationDate.valueOf())
       expect(person.weddingDate.valueOf()).to.be.equal(weddingDate.valueOf())
