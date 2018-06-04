@@ -210,6 +210,7 @@ export default ({client, validators}) => {
       this.createIndexes()
 
       const tmp = this._fromData(data)
+      tmp.canonicalize()
       tmp.validate()
       return tmp
     }
