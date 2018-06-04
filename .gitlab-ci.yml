@@ -1,5 +1,12 @@
 image: node:latest
 
+services:
+ - name: mongo:jessie
+   alias: mongo
+
+variables:
+  MONGO_HOSTNAME: mongo:27017
+
 before_script:
   - echo "//nexus.tardis.seald.io/repository/npm/:_authToken=${AUTH_TOKEN}" > .npmrc
   - echo "//nexus.tardis.seald.io/repository/npm-hosted/:_authToken=${AUTH_TOKEN}" >> .npmrc

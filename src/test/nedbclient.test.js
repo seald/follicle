@@ -4,7 +4,7 @@
 
 import dirtyChai from 'dirty-chai'
 import chai from 'chai'
-import { connectNeDB } from '../lib/connectNeDB'
+import { connect } from '../lib/connect'
 import { validateId } from './util'
 
 chai.use(dirtyChai)
@@ -20,7 +20,7 @@ describe('NeDbClient', () => {
   // this one always passes. Maybe some leftover files are still
   // floating around due to document.test.js?
   before(async () => {
-    ({Document, client: database} = await connectNeDB(url))
+    ({Document, client: database} = await connect(url))
     await database.dropDatabase()
   })
 
