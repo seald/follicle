@@ -4,12 +4,13 @@ import DatabaseClient from './client'
 import { MongoClient as MDBClient, ObjectId } from 'mongodb'
 import { isObject } from '../validate'
 import { deepTraverse } from '../util'
+import * as URL from 'url'
 
 export default class MongoClient extends DatabaseClient {
   constructor (url, mongo) {
     super(url)
-
-    this._mongo = mongo
+    this._mongo = mongo.db(URL.parse(url).pathname.slice(1))
+    this._client = mongo
   }
 
   /**
@@ -296,7 +297,7 @@ export default class MongoClient extends DatabaseClient {
   close () {
     const that = this
     return new Promise(function (resolve, reject) {
-      that._mongo.close(function (error) {
+      that._client.close(function (error) {
         if (error) return reject(error)
         return resolve()
       })
