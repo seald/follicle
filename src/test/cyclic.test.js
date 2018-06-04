@@ -3,7 +3,7 @@
 'use strict'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
-import { connectNeDB } from '../lib/connectNeDB'
+import { connect } from '../lib/connect'
 import { validateId } from './util'
 import getFooBar from './cyclic'
 
@@ -19,7 +19,7 @@ describe('Cyclic', () => {
   let Foo, Bar
 
   before(async () => {
-    ({Document, client: database} = await connectNeDB(url))
+    ({Document, client: database} = await connect(url))
     await database.dropDatabase();
     ({Foo, Bar} = getFooBar(Document))
   })

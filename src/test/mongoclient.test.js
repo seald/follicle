@@ -1,37 +1,49 @@
-/* global describe, it, before, afterEach */
+/* global describe, it, before, after, afterEach */
 
 'use strict'
 import dirtyChai from 'dirty-chai'
 import chai from 'chai'
 import { ObjectId } from 'mongodb'
-import { connectNeDB } from '../lib/connectNeDB'
+import { connect } from '../lib/connect'
 import { validateId } from './util'
 
 chai.use(dirtyChai)
 const expect = chai.expect
 
-describe.skip('MongoClient', () => {
-  const url = 'mongodb://localhost/camo_test'
+describe('MongoClient', function () {
+  const url = `mongodb://${process.env.MONGO_HOSTNAME}/camo_test`
   let Document
   let database = null
   let User
 
-  before(async () => {
-    ({Document, client: database} = await connectNeDB(url))
-    await database.dropDatabase()
-    User = class extends Document {
-      constructor () {
-        super()
-        this.firstName = String
-        this.lastName = String
+  before(async function () {
+    if (!process.env.MONGO_HOSTNAME) this.skip()
+    else {
+      ({Document, client: database} = await connect(url))
+      await database.dropDatabase()
+      User = class extends Document {
+        constructor () {
+          super()
+          this.firstName = String
+          this.lastName = String
+        }
       }
     }
   })
 
-  afterEach(() => database.dropDatabase())
+  afterEach(function () {
+    return database && database.dropDatabase()
+  })
 
-  describe('id', () => {
-    it('should allow custom _id values', async () => {
+  after(async function () {
+    if (database) await database.close()
+  })
+
+  describe('id', function () {
+    before(function () {
+      if (!process.env.MONGO_HOSTNAME) this.skip()
+    })
+    it('should allow custom _id values', async function () {
       class School extends Document {
         constructor () {
           super()
@@ -53,13 +65,16 @@ describe.skip('MongoClient', () => {
     })
   })
 
-  describe('query', () => {
+  describe('query', function () {
+    before(function () {
+      if (!process.env.MONGO_HOSTNAME) this.skip()
+    })
     /*
          * The MongoClient should cast all IDs to ObjectIDs. If the objects
          * requested aren't properly returned, then the IDs were not
          * successfully cast.
          */
-    it('should automatically cast string ID in query to ObjectID', async () => {
+    it('should automatically cast string ID in query to ObjectID', async function () {
       let user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
@@ -76,7 +91,7 @@ describe.skip('MongoClient', () => {
          * Sanity check to make sure we didn't screw up the case
          * where user actually passes an ObjectId
          */
-    it('should automatically cast string ID in query to ObjectID', async () => {
+    it('should automatically cast string ID in query to ObjectID', async function () {
       let user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
@@ -92,7 +107,7 @@ describe.skip('MongoClient', () => {
          * Same as above, but we're testing out more complicated
          * queries. In this case we try it with '$in'.
          */
-    it('should automatically cast string IDs in \'$in\' operator to ObjectIDs', async () => {
+    it('should automatically cast string IDs in \'$in\' operator to ObjectIDs', async function () {
       let user1 = User.create()
       user1.firstName = 'Billy'
       user1.lastName = 'Bob'
@@ -121,7 +136,7 @@ describe.skip('MongoClient', () => {
       expect(String(u3._id)).to.be.equal(String(user3._id))
     })
 
-    it('should automatically cast string IDs in deep query objects', async () => {
+    it('should automatically cast string IDs in deep query objects', async function () {
       let user1 = User.create()
       user1.firstName = 'Billy'
       user1.lastName = 'Bob'
@@ -151,8 +166,11 @@ describe.skip('MongoClient', () => {
     })
   })
 
-  describe('indexes', () => {
-    it('should reject documents with duplicate values in unique-indexed fields', async () => {
+  describe('indexes', function () {
+    before(function () {
+      if (!process.env.MONGO_HOSTNAME) this.skip()
+    })
+    it('should reject documents with duplicate values in unique-indexed fields', async function () {
       class User extends Document {
         constructor () {
           super()
@@ -180,7 +198,7 @@ describe.skip('MongoClient', () => {
         .catch(error => expect(error instanceof Error).to.be.true())
     })
 
-    it('should accept documents with duplicate values in non-unique-indexed fields', async () => {
+    it('should accept documents with duplicate values in non-unique-indexed fields', async function () {
       class User extends Document {
         constructor () {
           super()

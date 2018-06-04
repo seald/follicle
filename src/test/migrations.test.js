@@ -3,7 +3,7 @@
 
 import { default as getData, getMigratedDataModel } from './data'
 import jetpack from 'fs-jetpack'
-import { connectNeDB } from '../lib/connectNeDB'
+import { connect } from '../lib/connect'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
 
@@ -24,7 +24,7 @@ describe('Migration', () => {
   })
 
   it('test', async () => {
-    let {Document, client: database} = await connectNeDB(url)
+    let {Document, client: database} = await connect(url)
     let Data = await getData(Document)
     await Data.clearCollection()
     let d = Data.create({
@@ -46,14 +46,14 @@ describe('Migration', () => {
     }
     await database.close();
 
-    ({Document, client: database} = await connectNeDB(url, undefined, migrations))
+    ({Document, client: database} = await connect(url, undefined, migrations))
 
     Data = getMigratedDataModel(Document)
     await Data._migrateCollection()
     let res = await Data.find({})
     expect(res.length).to.equal(1);
 
-    ({Document, client: database} = await connectNeDB(url, undefined, migrations))
+    ({Document, client: database} = await connect(url, undefined, migrations))
 
     Data = getMigratedDataModel(Document)
     await Data._migrateCollection()
