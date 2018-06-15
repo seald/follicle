@@ -74,7 +74,7 @@ export default class MongoClient extends DatabaseClient {
      * @param {Object} query Query
      * @returns {Promise}
      */
-  deleteOne (collection, query) {
+  deleteOne (collection, query = {}) {
     const that = this
     query = castQueryIds(query)
     return new Promise(function (resolve, reject) {
@@ -93,7 +93,7 @@ export default class MongoClient extends DatabaseClient {
      * @param {Object} query Query
      * @returns {Promise}
      */
-  deleteMany (collection, query) {
+  deleteMany (collection, query = {}) {
     const that = this
     query = castQueryIds(query)
     return new Promise(function (resolve, reject) {
@@ -112,7 +112,7 @@ export default class MongoClient extends DatabaseClient {
      * @param {Object} query Query
      * @returns {Promise}
      */
-  findOne (collection, query) {
+  findOne (collection, query = {}) {
     const that = this
     query = castQueryIds(query)
     return new Promise(function (resolve, reject) {
@@ -133,7 +133,7 @@ export default class MongoClient extends DatabaseClient {
      * @param {Object} options
      * @returns {Promise}
      */
-  findOneAndUpdate (collection, query, values, options) {
+  findOneAndUpdate (collection, query = {}, values, options) {
     const that = this
     query = castQueryIds(query)
     if (!options) {
@@ -168,7 +168,7 @@ export default class MongoClient extends DatabaseClient {
      * @param {Object} options
      * @returns {Promise}
      */
-  findOneAndDelete (collection, query, options) {
+  findOneAndDelete (collection, query = {}, options) {
     const that = this
     query = castQueryIds(query)
     if (!options) {
@@ -193,7 +193,7 @@ export default class MongoClient extends DatabaseClient {
      * @param {Object} options
      * @returns {Promise}
      */
-  find (collection, query, options) {
+  find (collection, query = {}, options) {
     const that = this
     query = castQueryIds(query)
     return new Promise(function (resolve, reject) {
@@ -238,7 +238,7 @@ export default class MongoClient extends DatabaseClient {
      * @param {Object} query Query
      * @returns {Promise}
      */
-  count (collection, query) {
+  count (collection, query = {}) {
     const that = this
     query = castQueryIds(query)
     return new Promise(function (resolve, reject) {
