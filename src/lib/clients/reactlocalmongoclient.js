@@ -62,7 +62,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   save (collection, id, values) {
     const that = this
     return new Promise(function (resolve, reject) {
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
 
       // TODO: I'd like to just use update with upsert:true, but I'm
       // note sure how the query will work if id == null. Seemed to
@@ -93,7 +93,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
     return new Promise(function (resolve, reject) {
       if (id === null) resolve(0)
 
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
       db.remove({_id: id}, function (error, numRemoved) {
         if (error) return reject(error)
         return resolve(numRemoved)
@@ -111,7 +111,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   deleteOne (collection, query) {
     const that = this
     return new Promise(function (resolve, reject) {
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
       db.remove(query, function (error, numRemoved) {
         if (error) return reject(error)
         return resolve(numRemoved)
@@ -129,7 +129,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   deleteMany (collection, query) {
     const that = this
     return new Promise(function (resolve, reject) {
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
       db.remove(query, {multi: true}, function (error, numRemoved) {
         if (error) return reject(error)
         return resolve(numRemoved)
@@ -147,7 +147,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   findOne (collection, query) {
     const that = this
     return new Promise(function (resolve, reject) {
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
       db.findOne(query, function (error, result) {
         if (error) return reject(error)
         return resolve(result)
@@ -176,7 +176,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
     options.multi = false
 
     return new Promise(function (resolve, reject) {
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
 
       // TODO: Would like to just use 'Collection.update' here, but
       // it doesn't return objects on update (but will on insert)...
@@ -230,7 +230,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
     options.multi = false
 
     return new Promise(function (resolve, reject) {
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
       db.remove(query, options, function (error, numRemoved) {
         if (error) return reject(error)
         return resolve(numRemoved)
@@ -249,7 +249,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   find (collection, query, options) {
     const that = this
     return new Promise(function (resolve, reject) {
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
       let cursor = db.find(query)
 
       if (options.sort && (_.isArray(options.sort) || _.isString(options.sort))) {
@@ -294,7 +294,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   count (collection, query) {
     const that = this
     return new Promise(function (resolve, reject) {
-      const db = getCollection(collection, that._collections, that._path, this.options)
+      const db = getCollection(collection, that._collections, that._path, that.options)
       db.count(query, function (error, count) {
         if (error) return reject(error)
         return resolve(count)
