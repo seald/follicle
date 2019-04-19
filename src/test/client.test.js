@@ -21,10 +21,10 @@ describe('Client', () => {
   let database = null
 
   before(async () => {
-    ({Document, validators, client: database} = await connect(url))
+    ({ Document, validators, client: database } = await connect(url))
     await database.dropDatabase()
     Data = await getData(Document);
-    ({data1: getData1, data2: getData2} = data(Document))
+    ({ data1: getData1, data2: getData2 } = data(Document))
 
     Address = class Address extends Document {
       constructor () {
@@ -98,7 +98,7 @@ describe('Client', () => {
       await data.save()
       validateId(data)
 
-      const d = await Data.findOne({item: 99})
+      const d = await Data.findOne({ item: 99 })
       validateId(d)
       validateData1(d)
     })
@@ -123,7 +123,7 @@ describe('Client', () => {
       await user.save()
 
       validateId(user)
-      const u = await User.findOne({_id: user._id}, {populate: true})
+      const u = await User.findOne({ _id: user._id }, { populate: true })
 
       expect(u.pet).to.be.an.instanceof(Pet)
       expect(u.address).to.be.an.instanceof(Address)
@@ -148,7 +148,7 @@ describe('Client', () => {
       await user.save()
 
       validateId(user)
-      const u = await User.findOne({_id: user._id}, {populate: false})
+      const u = await User.findOne({ _id: user._id }, { populate: false })
 
       expect(validators.isNativeId(u.pet)).to.be.true()
       expect(validators.isNativeId(u.address)).to.be.true()
@@ -173,7 +173,7 @@ describe('Client', () => {
       await user.save()
       validateId(user)
 
-      const u = await User.findOne({_id: user._id}, {populate: ['pet']})
+      const u = await User.findOne({ _id: user._id }, { populate: ['pet'] })
       expect(u.pet).to.be.an.instanceof(Pet)
       expect(validators.isNativeId(u.address)).to.be.true()
     })
@@ -185,7 +185,7 @@ describe('Client', () => {
 
       await data.save()
       validateId(data)
-      const d = await Data.findOneAndUpdate({number: 1}, {source: 'wired'})
+      const d = await Data.findOneAndUpdate({ number: 1 }, { source: 'wired' })
 
       validateId(d)
       expect(d.number).to.equal(1)
@@ -193,12 +193,12 @@ describe('Client', () => {
     })
 
     it('should insert a single object to the collection', async () => {
-      let d = await Data.findOne({number: 1})
+      let d = await Data.findOne({ number: 1 })
       expect(d).to.be.null()
-      const data = await Data.findOneAndUpdate({number: 1}, {number: 1}, {upsert: true})
+      const data = await Data.findOneAndUpdate({ number: 1 }, { number: 1 }, { upsert: true })
       validateId(data)
       expect(data.number).to.equal(1)
-      d = await Data.findOne({number: 1})
+      d = await Data.findOne({ number: 1 })
       validateId(d)
       expect(d.number).to.equal(1)
     })
@@ -210,11 +210,11 @@ describe('Client', () => {
 
       await data.save()
       validateId(data)
-      let count = await Data.count({number: 1})
+      let count = await Data.count({ number: 1 })
       expect(count).to.be.equal(1)
-      const numDeleted = await Data.findOneAndDelete({number: 1})
+      const numDeleted = await Data.findOneAndDelete({ number: 1 })
       expect(numDeleted).to.equal(1)
-      count = await Data.count({number: 1})
+      count = await Data.count({ number: 1 })
       expect(count).to.equal(0)
     })
   })
@@ -257,7 +257,7 @@ describe('Client', () => {
     })
 
     it('should sort results in ascending order', async () => {
-      const cities = await City.find({}, {sort: 'population'})
+      const cities = await City.find({}, { sort: 'population' })
       expect(cities).to.have.length(3)
       validateId(cities[0])
       validateId(cities[1])
@@ -268,7 +268,7 @@ describe('Client', () => {
     })
 
     it('should sort results in descending order', async () => {
-      const cities = await City.find({}, {sort: '-population'})
+      const cities = await City.find({}, { sort: '-population' })
       expect(cities).to.have.length(3)
       validateId(cities[0])
       validateId(cities[1])
@@ -288,7 +288,7 @@ describe('Client', () => {
       })
 
       await Promise.all([AlphaVille.save(), BetaTown.save()])
-      const cities = await City.find({}, {sort: ['population', '-name']})
+      const cities = await City.find({}, { sort: ['population', '-name'] })
       expect(cities).to.have.length(5)
       validateId(cities[0])
       validateId(cities[1])
@@ -308,14 +308,14 @@ describe('Client', () => {
     })
 
     it('should limit number of results returned', async () => {
-      const cities = await City.find({}, {limit: 2})
+      const cities = await City.find({}, { limit: 2 })
       expect(cities).to.have.length(2)
       validateId(cities[0])
       validateId(cities[1])
     })
 
     it('should skip given number of results', async () => {
-      const cities = await City.find({}, {sort: 'population', skip: 1})
+      const cities = await City.find({}, { sort: 'population', skip: 1 })
       expect(cities).to.have.length(2)
       validateId(cities[0])
       validateId(cities[1])
@@ -346,7 +346,7 @@ describe('Client', () => {
       await Promise.all([user1.save(), user2.save()])
       validateId(user1)
       validateId(user2)
-      const users = await User.find({}, {populate: true})
+      const users = await User.find({}, { populate: true })
 
       expect(users[0].pet).to.be.an.instanceof(Pet)
       expect(users[0].address).to.be.an.instanceof(Address)
@@ -378,7 +378,7 @@ describe('Client', () => {
 
       validateId(user1)
       validateId(user2)
-      const users = await User.find({}, {populate: false})
+      const users = await User.find({}, { populate: false })
       expect(validators.isNativeId(users[0].pet)).to.be.true()
       expect(validators.isNativeId(users[0].address)).to.be.true()
       expect(validators.isNativeId(users[1].pet)).to.be.true()
@@ -408,7 +408,7 @@ describe('Client', () => {
       await Promise.all([user1.save(), user2.save()])
       validateId(user1)
       validateId(user2)
-      const users = await User.find({}, {populate: ['pet']})
+      const users = await User.find({}, { populate: ['pet'] })
 
       expect(users[0].pet).to.be.an.instanceof(Pet)
       expect(validators.isNativeId(users[0].address)).to.be.true()
@@ -424,7 +424,7 @@ describe('Client', () => {
 
       await Promise.all([data1.save(), data2.save()])
       validateId(data2)
-      const count = await Data.count({number: 3})
+      const count = await Data.count({ number: 3 })
       expect(count).to.be.equal(0)
     })
 
@@ -448,7 +448,7 @@ describe('Client', () => {
       validateId(data)
       const numDeleted = await data.delete()
       expect(numDeleted).to.be.equal(1)
-      const d = await Data.findOne({item: 99})
+      const d = await Data.findOne({ item: 99 })
       expect(d).to.be.null()
     })
   })
@@ -459,9 +459,9 @@ describe('Client', () => {
 
       await data.save()
       validateId(data)
-      const numDeleted = await Data.deleteOne({number: 1})
+      const numDeleted = await Data.deleteOne({ number: 1 })
       expect(numDeleted).to.be.equal(1)
-      const d = await Data.findOne({number: 1})
+      const d = await Data.findOne({ number: 1 })
       expect(d).to.be.null()
     })
   })

@@ -20,7 +20,7 @@ describe('NeDbClient', () => {
   // this one always passes. Maybe some leftover files are still
   // floating around due to document.test.js?
   before(async () => {
-    ({Document, client: database} = await connect(url))
+    ({ Document, client: database } = await connect(url))
     await database.dropDatabase()
   })
 

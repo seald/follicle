@@ -3,7 +3,7 @@
 import _ from 'lodash'
 import { ValidationError } from './errors'
 
-export default ({client, validators}) => {
+export default ({ client, validators }) => {
   const {
     isArray,
     isDate,
@@ -31,7 +31,7 @@ export default ({client, validators}) => {
   return class BaseDocument {
     constructor () {
       this._schema = { // Defines document structure/properties
-        _id: {type: client.nativeIdType()} // Native ID to backend database
+        _id: { type: client.nativeIdType() } // Native ID to backend database
       }
 
       this._id = null
@@ -344,7 +344,7 @@ export default ({client, validators}) => {
         const type = isArray(anInstance._schema[key].type) ? anInstance._schema[key].type[0] : anInstance._schema[key].type
 
         // Bulk load dereferences
-        const dereferences = await type.find({'_id': {$in: keyIds}}, {populate: false})
+        const dereferences = await type.find({ '_id': { $in: keyIds } }, { populate: false })
         // Assign each dereferenced object to parent
 
         _.keys(ids[key]).forEach(k => {
@@ -394,7 +394,7 @@ export default ({client, validators}) => {
      * @returns {*}
      */
     toJSON () {
-      const values = this._toData({_id: true}, true)
+      const values = this._toData({ _id: true }, true)
       const schema = this._schema
       for (let key in schema) {
         if (schema.hasOwnProperty(key)) {

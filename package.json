@@ -50,21 +50,21 @@
     "react-native-local-mongodb": "^2.0.0"
   },
   "dependencies": {
-    "depd": "1.1.2",
-    "lodash": "4.17.10"
+    "depd": "2.0.0",
+    "lodash": "4.17.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.43",
-    "@babel/preset-env": "^7.0.0-beta.43",
-    "centimaitre": "^1.0.0",
-    "chai": "4.1.2",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "centimaitre": "^1.0.3",
+    "chai": "^4.2.0",
     "dirty-chai": "^2.0.1",
-    "fs-jetpack": "^1.3.0",
-    "mocha": "^5.0.5",
-    "mongodb": "^3.0.10",
-    "nedb": "1.8.0",
-    "nyc": "^12.0.2",
-    "source-map-support": "^0.5.4",
-    "standard": "^11.0.1"
+    "fs-jetpack": "^2.2.2",
+    "mocha": "^6.1.4",
+    "mongodb": "^3.2.3",
+    "nedb": "^1.8.0",
+    "nyc": "^14.0.0",
+    "source-map-support": "^0.5.12",
+    "standard": "^12.0.1"
   }
 }

@@ -60,7 +60,7 @@ export default class MongoClient extends DatabaseClient {
       if (id === null) resolve(0)
 
       const db = that._mongo.collection(collection)
-      db.deleteOne({ _id: id }, {w: 1}, function (error, result) {
+      db.deleteOne({ _id: id }, { w: 1 }, function (error, result) {
         if (error) return reject(error)
         return resolve(result.deletedCount)
       })
@@ -79,7 +79,7 @@ export default class MongoClient extends DatabaseClient {
     query = castQueryIds(query)
     return new Promise(function (resolve, reject) {
       const db = that._mongo.collection(collection)
-      db.deleteOne(query, {w: 1}, function (error, result) {
+      db.deleteOne(query, { w: 1 }, function (error, result) {
         if (error) return reject(error)
         return resolve(result.deletedCount)
       })
@@ -98,7 +98,7 @@ export default class MongoClient extends DatabaseClient {
     query = castQueryIds(query)
     return new Promise(function (resolve, reject) {
       const db = that._mongo.collection(collection)
-      db.deleteMany(query, {w: 1}, function (error, result) {
+      db.deleteMany(query, { w: 1 }, function (error, result) {
         if (error) return reject(error)
         return resolve(result.deletedCount)
       })
@@ -267,7 +267,7 @@ export default class MongoClient extends DatabaseClient {
 
     let keys = {}
     keys[field] = 1
-    db.createIndex(keys, {unique: options.unique, sparse: options.sparse})
+    db.createIndex(keys, { unique: options.unique, sparse: options.sparse })
   }
 
   /**

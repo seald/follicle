@@ -18,7 +18,7 @@ describe('Embedded', () => {
   let database = null
 
   before(async () => {
-    ({Document, EmbeddedDocument, client: database} = await connect(url))
+    ({ Document, EmbeddedDocument, client: database } = await connect(url))
     await database.dropDatabase()
   })
 
@@ -39,7 +39,7 @@ describe('Embedded', () => {
         constructor () {
           super()
           this.mod = EmbeddedModel
-          this.num = {type: Number}
+          this.num = { type: Number }
         }
       }
 
@@ -50,7 +50,7 @@ describe('Embedded', () => {
 
       await data.save()
       expect(data.mod._id).to.be.undefined()
-      const d = await DocumentModel.findOne({num: 1})
+      const d = await DocumentModel.findOne({ num: 1 })
       expect(d.mod._id).to.be.undefined()
     })
   })
@@ -68,7 +68,7 @@ describe('Embedded', () => {
         constructor () {
           super()
           this.mod = EmbeddedModel
-          this.num = {type: Number}
+          this.num = { type: Number }
         }
       }
 
@@ -79,7 +79,7 @@ describe('Embedded', () => {
 
       await data.save()
       validateId(data)
-      const d = await DocumentModel.findOne({num: 1})
+      const d = await DocumentModel.findOne({ num: 1 })
       validateId(d)
       expect(d.num).to.be.equal(1)
       expect(d.mod).to.be.a('object')
@@ -121,7 +121,7 @@ describe('Embedded', () => {
       await person.save()
       validateId(person)
       expect(person.limbs).to.have.length(4)
-      const p = await Person.findOne({name: 'Scott'})
+      const p = await Person.findOne({ name: 'Scott' })
       validateId(p)
       expect(p.name).to.be.equal('Scott')
       expect(p.limbs).to.be.a('array')
@@ -158,8 +158,8 @@ describe('Embedded', () => {
       let map = WorldMap.create()
       let polygon1 = Polygon.create()
       let polygon2 = Polygon.create()
-      let point1 = Point.create({x: 123.45, y: 678.90})
-      let point2 = Point.create({x: 543.21, y: 987.60})
+      let point1 = Point.create({ x: 123.45, y: 678.90 })
+      let point2 = Point.create({ x: 543.21, y: 987.60 })
 
       map.polygons.push(polygon1)
       map.polygons.push(polygon2)
@@ -256,7 +256,7 @@ describe('Embedded', () => {
       class EmbeddedModel extends EmbeddedDocument {
         constructor () {
           super()
-          this.str = {type: String, default: 'hello'}
+          this.str = { type: String, default: 'hello' }
         }
       }
 
@@ -264,7 +264,7 @@ describe('Embedded', () => {
         constructor () {
           super()
           this.emb = EmbeddedModel
-          this.num = {type: Number}
+          this.num = { type: Number }
         }
       }
 
@@ -274,7 +274,7 @@ describe('Embedded', () => {
 
       await data.save()
       validateId(data)
-      const d = await DocumentModel.findOne({num: 1})
+      const d = await DocumentModel.findOne({ num: 1 })
       validateId(d)
       expect(d.emb.str).to.be.equal('hello')
     })
@@ -283,7 +283,7 @@ describe('Embedded', () => {
       class Money extends EmbeddedDocument {
         constructor () {
           super()
-          this.value = {type: Number, default: 100}
+          this.value = { type: Number, default: 100 }
         }
       }
 
@@ -303,7 +303,7 @@ describe('Embedded', () => {
 
       await wallet.save()
       validateId(wallet)
-      const w = await Wallet.findOne({owner: 'Scott'})
+      const w = await Wallet.findOne({ owner: 'Scott' })
       validateId(w)
       expect(w.owner).to.be.equal('Scott')
       expect(w.contents[0].value).to.be.equal(100)
@@ -317,7 +317,7 @@ describe('Embedded', () => {
       class EmbeddedModel extends EmbeddedDocument {
         constructor () {
           super()
-          this.num = {type: Number, max: 10}
+          this.num = { type: Number, max: 10 }
         }
       }
 
@@ -344,7 +344,7 @@ describe('Embedded', () => {
       class Money extends EmbeddedDocument {
         constructor () {
           super()
-          this.value = {type: Number, choices: [1, 5, 10, 20, 50, 100]}
+          this.value = { type: Number, choices: [1, 5, 10, 20, 50, 100] }
         }
       }
 
@@ -356,7 +356,7 @@ describe('Embedded', () => {
       }
 
       expect(() => Wallet.create({
-        contents: [Money.create({value: 5}), Money.create({value: 26})]
+        contents: [Money.create({ value: 5 }), Money.create({ value: 26 })]
       })).to.throw(Error, /choices/)
     })
   })

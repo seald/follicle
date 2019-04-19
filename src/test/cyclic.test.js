@@ -19,9 +19,9 @@ describe('Cyclic', () => {
   let Foo, Bar
 
   before(async () => {
-    ({Document, client: database} = await connect(url))
+    ({ Document, client: database } = await connect(url))
     await database.dropDatabase();
-    ({Foo, Bar} = getFooBar(Document))
+    ({ Foo, Bar } = getFooBar(Document))
   })
 
   afterEach(() => database.dropDatabase())
@@ -39,12 +39,12 @@ describe('Cyclic', () => {
       let bar = await b.save()
       f.bar = bar
       await f.save()
-      foo = await Foo.findOne({num: 26})
+      foo = await Foo.findOne({ num: 26 })
       validateId(foo)
       validateId(foo.bar)
       expect(foo.num).to.be.equal(26)
       expect(foo.bar.num).to.be.equal(99)
-      bar = await Bar.findOne({num: 99})
+      bar = await Bar.findOne({ num: 99 })
       validateId(bar)
       validateId(bar.foo)
       expect(bar.num).to.be.equal(99)

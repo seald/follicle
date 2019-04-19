@@ -1,6 +1,6 @@
 'use strict'
 
-export default ({BaseDocument}) => {
+export default ({ BaseDocument }) => {
   return class EmbeddedDocument extends BaseDocument {
     constructor () {
       super()

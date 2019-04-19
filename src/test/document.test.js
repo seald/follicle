@@ -21,7 +21,7 @@ describe('Document', () => {
   let Data
 
   before(async () => {
-    ({Document, client: database} = await connect(url))
+    ({ Document, client: database } = await connect(url))
     await database.dropDatabase()
     Data = await getData(Document)
   })
@@ -111,7 +111,7 @@ describe('Document', () => {
       coffee.temp = 105
 
       await coffee.save()
-      let user = User.create({drinks: [coffee]})
+      let user = User.create({ drinks: [coffee] })
       expect(user.drinks).to.have.length(1)
     })
   })
@@ -296,7 +296,7 @@ describe('Document', () => {
         constructor () {
           super()
           this.ref = ReferenceeModel
-          this.num = {type: Number}
+          this.num = { type: Number }
         }
 
         static collectionName () {
@@ -313,7 +313,7 @@ describe('Document', () => {
       validateId(data.ref)
       await data.save()
       validateId(data)
-      const d = await ReferencerModel.findOne({num: 1})
+      const d = await ReferencerModel.findOne({ num: 1 })
       validateId(d)
       validateId(d.ref)
       expect(d.ref).to.be.an.instanceof(ReferenceeModel)
@@ -324,7 +324,7 @@ describe('Document', () => {
       class ReferenceeModel extends Document {
         constructor () {
           super()
-          this.schema({str: {type: String}})
+          this.schema({ str: { type: String } })
         }
 
         static collectionName () {
@@ -357,7 +357,7 @@ describe('Document', () => {
       validateId(data.refs[1])
       await data.save()
       validateId(data)
-      const d = await ReferencerModel.findOne({num: 1})
+      const d = await ReferencerModel.findOne({ num: 1 })
       validateId(d)
       validateId(d.refs[0])
       validateId(d.refs[1])
@@ -384,7 +384,7 @@ describe('Document', () => {
           super()
           this.ref1 = ReferenceeModel
           this.ref2 = ReferenceeModel
-          this.num = {type: Number}
+          this.num = { type: Number }
         }
 
         static collectionName () {
@@ -407,7 +407,7 @@ describe('Document', () => {
       validateId(ref2)
       data.ref2 = ref2._id
       await data.save()
-      const d = await ReferencerModel.findOne({num: 1})
+      const d = await ReferencerModel.findOne({ num: 1 })
       validateId(d.ref1)
       validateId(d.ref2)
       expect(d.ref1.str).to.be.equal('string1')
@@ -418,7 +418,7 @@ describe('Document', () => {
       class ReferenceeModel extends Document {
         constructor () {
           super()
-          this.schema({str: {type: String}})
+          this.schema({ str: { type: String } })
         }
 
         static collectionName () {
@@ -453,7 +453,7 @@ describe('Document', () => {
       validateId(ref2)
       data.refs.push(ref2._id)
       await data.save()
-      const d = await ReferencerModel.findOne({num: 1})
+      const d = await ReferencerModel.findOne({ num: 1 })
       validateId(d.refs[0])
       validateId(d.refs[1])
       expect(d.refs[1].str).to.be.equal('string2')
@@ -502,7 +502,7 @@ describe('Document', () => {
       validateId(boss.employees[0])
       validateId(boss.employees[0].boss)
 
-      const b = await Boss.findOne({salary: 10000000})
+      const b = await Boss.findOne({ salary: 10000000 })
       // If we had an issue with an infinite loop
       // of loading circular dependencies then the
       // test probably would have crashed by now,
@@ -524,7 +524,7 @@ describe('Document', () => {
       class StringModel extends Document {
         constructor () {
           super()
-          this.schema({str: {type: String}})
+          this.schema({ str: { type: String } })
         }
       }
 
@@ -540,7 +540,7 @@ describe('Document', () => {
       class NumberModel extends Document {
         constructor () {
           super()
-          this.schema({num: {type: Number}})
+          this.schema({ num: { type: Number } })
         }
 
         static collectionName () {
@@ -560,7 +560,7 @@ describe('Document', () => {
       class BooleanModel extends Document {
         constructor () {
           super()
-          this.schema({bool: {type: Boolean}})
+          this.schema({ bool: { type: Boolean } })
         }
       }
 
@@ -576,7 +576,7 @@ describe('Document', () => {
       class DateModel extends Document {
         constructor () {
           super()
-          this.schema({date: {type: Date}})
+          this.schema({ date: { type: Date } })
         }
       }
 
@@ -593,12 +593,12 @@ describe('Document', () => {
       class ObjectModel extends Document {
         constructor () {
           super()
-          this.schema({obj: {type: Object}})
+          this.schema({ obj: { type: Object } })
         }
       }
 
       let data = ObjectModel.create()
-      data.obj = {hi: 'bye'}
+      data.obj = { hi: 'bye' }
 
       await data.save()
       validateId(data)
@@ -610,7 +610,7 @@ describe('Document', () => {
       class BufferModel extends Document {
         constructor () {
           super()
-          this.schema({buf: {type: Buffer}})
+          this.schema({ buf: { type: Buffer } })
         }
       }
 
@@ -626,7 +626,7 @@ describe('Document', () => {
       class ArrayModel extends Document {
         constructor () {
           super()
-          this.schema({arr: {type: Array}})
+          this.schema({ arr: { type: Array } })
         }
       }
 
@@ -645,7 +645,7 @@ describe('Document', () => {
       class ArrayModel extends Document {
         constructor () {
           super()
-          this.schema({arr: {type: [String]}})
+          this.schema({ arr: { type: [String] } })
         }
       }
 
@@ -664,7 +664,7 @@ describe('Document', () => {
       class NumberModel extends Document {
         constructor () {
           super()
-          this.schema({num: {type: Number}})
+          this.schema({ num: { type: Number } })
         }
 
         static collectionName () {
@@ -684,7 +684,7 @@ describe('Document', () => {
       class ArrayModel extends Document {
         constructor () {
           super()
-          this.schema({arr: {type: [String]}})
+          this.schema({ arr: { type: [String] } })
         }
       }
 
@@ -733,7 +733,7 @@ describe('Document', () => {
 
       await person.save()
       validateId(person)
-      const p = await Person.findOne({name: 'Scott'})
+      const p = await Person.findOne({ name: 'Scott' })
       validateId(p)
       expect(p.name).to.be.equal('Scott')
       expect(p.age).to.be.undefined()

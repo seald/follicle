@@ -19,7 +19,7 @@ describe('MongoClient', function () {
   before(async function () {
     if (!process.env.MONGO_HOSTNAME) this.skip()
     else {
-      ({Document, client: database} = await connect(url))
+      ({ Document, client: database } = await connect(url))
       await database.dropDatabase()
       User = class extends Document {
         constructor () {
@@ -83,7 +83,7 @@ describe('MongoClient', function () {
       validateId(user)
 
       let id = String(user._id)
-      const u = await User.findOne({_id: id})
+      const u = await User.findOne({ _id: id })
       validateId(u)
     })
 
@@ -99,7 +99,7 @@ describe('MongoClient', function () {
       await user.save()
       validateId(user)
 
-      const u = await User.findOne({_id: user._id})
+      const u = await User.findOne({ _id: user._id })
       validateId(u)
     })
 
@@ -126,7 +126,7 @@ describe('MongoClient', function () {
 
       let id1 = String(user1._id)
       let id3 = String(user3._id)
-      const users = await User.find({_id: {'$in': [id1, id3]}})
+      const users = await User.find({ _id: { '$in': [id1, id3] } })
       expect(users).to.have.length(2)
 
       let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
@@ -155,7 +155,7 @@ describe('MongoClient', function () {
 
       let id1 = String(user1._id)
       let id3 = String(user3._id)
-      const users = await User.find({$or: [{_id: id1}, {_id: id3}]})
+      const users = await User.find({ $or: [{ _id: id1 }, { _id: id3 }] })
       expect(users).to.have.length(2)
 
       let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]

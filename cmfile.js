@@ -3,7 +3,7 @@
 const cm = require('centimaitre')
 const jetpack = require('fs-jetpack')
 const babel = require('@babel/core')
-const {promisify} = require('util')
+const { promisify } = require('util')
 const path = require('path')
 
 const babelTransform = promisify(babel.transformFile)
@@ -13,16 +13,16 @@ cm.setDefaultOptions({
 })
 
 cm.task('clean-build', () => {
-  jetpack.dir('./build/', {empty: true})
+  jetpack.dir('./build/', { empty: true })
   jetpack.dir('./build/lib')
   jetpack.dir('./build/test')
 })
 
-const buildJS = async (options, {srcDirPath, destDirPath, rootDirPath = jetpack.path(), matching}) => {
+const buildJS = async (options, { srcDirPath, destDirPath, rootDirPath = jetpack.path(), matching }) => {
   const srcDir = jetpack.cwd(srcDirPath)
   const destDir = jetpack.cwd(destDirPath)
 
-  for (const file of srcDir.find({matching})) {
+  for (const file of srcDir.find({ matching })) {
     const res = await babelTransform(srcDir.path(file), {
       sourceMaps: options.sourceMaps,
       sourceFileName: path.relative(rootDirPath, srcDir.path(file)),

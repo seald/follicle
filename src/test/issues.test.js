@@ -18,7 +18,7 @@ describe('Issues', function () {
   let database = null
 
   before(async () => {
-    ({Document, EmbeddedDocument, client: database} = await connect(url))
+    ({ Document, EmbeddedDocument, client: database } = await connect(url))
     await database.dropDatabase()
   })
 
@@ -54,8 +54,8 @@ describe('Issues', function () {
 
       let user1 = User.create()
       let user2 = User.create()
-      let eye1 = Eye.create({color: 'blue'})
-      let eye2 = Eye.create({color: 'brown'})
+      let eye1 = Eye.create({ color: 'blue' })
+      let eye2 = Eye.create({ color: 'brown' })
 
       let e = await eye1.save()
       validateId(e)
@@ -112,7 +112,7 @@ describe('Issues', function () {
       }
 
       let user = User.create()
-      let eye = Eye.create({color: 'blue'})
+      let eye = Eye.create({ color: 'blue' })
 
       const e = await eye.save()
       validateId(e)
@@ -194,11 +194,11 @@ describe('Issues', function () {
       expect(user._id).to.exist()
 
       // Should NOT be able to use 'id' to query
-      let u = await User.findOne({id: user._id})
+      let u = await User.findOne({ id: user._id })
       expect(u).to.not.exist()
 
       // SHOULD be able to use '_id' to query
-      u = await User.findOne({_id: user._id})
+      u = await User.findOne({ _id: user._id })
       // expect(u.id).to.not.exist;
       expect(u).to.exist()
       validateId(user)
@@ -256,7 +256,7 @@ describe('Issues', function () {
 
       await person.save()
       validateId(person)
-      const p = await Person.findOne({_id: person._id}, {populate: true})
+      const p = await Person.findOne({ _id: person._id }, { populate: true })
 
       expect(p.postValidateChange).to.be.equal(true)
       expect(p.pet.postValidateChange).to.be.equal(true)
@@ -310,7 +310,7 @@ describe('Issues', function () {
 
       await person.save()
       validateId(person)
-      const p = await Person.findOne({_id: person._id}, {populate: true})
+      const p = await Person.findOne({ _id: person._id }, { populate: true })
       expect(p.preSaveChange).to.be.equal(true)
       expect(p.pet.preSaveChange).to.be.equal(true)
       expect(p.pets[0].preSaveChange).to.be.equal(true)
@@ -336,7 +336,7 @@ describe('Issues', function () {
         }
       }
 
-      let foo = Foo.create({bar: [1, 2, 3]})
+      let foo = Foo.create({ bar: [1, 2, 3] })
 
       const f = await foo.save()
       expect(f.bar).to.have.length(3)
@@ -359,7 +359,7 @@ describe('Issues', function () {
         }
       }
 
-      let foo = Foo.create({bar: [1, 2, 3]})
+      let foo = Foo.create({ bar: [1, 2, 3] })
 
       const f = await foo.save()
       expect(f.bar).to.have.length(3)
@@ -414,7 +414,7 @@ describe('Issues', function () {
       })
 
       person = await person.save()
-      person = await Person.findOneAndUpdate({_id: person._id}, {name: 'John Derp', 'contact.phone': '0123456789'})
+      person = await Person.findOneAndUpdate({ _id: person._id }, { name: 'John Derp', 'contact.phone': '0123456789' })
       expect(person.name).to.be.equal('John Derp')
       expect(person.contact.email).to.be.equal('john@doe.info')
       expect(person.contact.phone).to.be.equal('0123456789')
@@ -443,7 +443,7 @@ describe('Issues', function () {
         }
       }
 
-      await Foo.create({bar: 'bar'}).save()
+      await Foo.create({ bar: 'bar' }).save()
         .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
         .catch(error => expect(error).to.have.property('message', 'DO NOT SAVE'))
     })

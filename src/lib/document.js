@@ -3,12 +3,12 @@
 import _ from 'lodash'
 import depd from 'depd'
 import { migrateDocument } from './util'
-import {CamoError} from './errors'
+import { CamoError } from './errors'
 
 const deprecate = depd('camo')
 
-export default ({client, BaseDocument, validators, migrations = {}}) => {
-  const {isArray, isEmbeddedDocument, isReferenceable} = validators
+export default ({ client, BaseDocument, validators, migrations = {} }) => {
+  const { isArray, isEmbeddedDocument, isReferenceable } = validators
 
   return class Document extends BaseDocument {
     constructor (name) {
@@ -70,7 +70,7 @@ export default ({client, BaseDocument, validators, migrations = {}}) => {
       // object to do this.
       // Also, this might be really slow for objects with
       // lots of references. Figure out a better way.
-      let toUpdate = this._toData({_id: false})
+      let toUpdate = this._toData({ _id: false })
 
       // Reference our objects
       _.keys(this._schema).forEach(key => {
@@ -216,7 +216,7 @@ export default ({client, BaseDocument, validators, migrations = {}}) => {
       if (options === undefined || options === null) {
         // Populate by default
         // TODO: if options is set, populate isn't true by default, is that the expected behaviour ?
-        options = {populate: true}
+        options = { populate: true }
       }
 
       const datas = await client.find(this.collectionName(), query, options)
@@ -246,7 +246,7 @@ export default ({client, BaseDocument, validators, migrations = {}}) => {
       let instance = this._instantiate()
 
       _.keys(instance._schema).forEach(k => {
-        if (instance._schema[k].unique) client.createIndex(this.collectionName(), k, {unique: true})
+        if (instance._schema[k].unique) client.createIndex(this.collectionName(), k, { unique: true })
       })
 
       this._indexesCreated = true
@@ -286,7 +286,7 @@ export default ({client, BaseDocument, validators, migrations = {}}) => {
     }
 
     static async _migrateCollection () {
-      const data = await client.find(this.collectionName(), {_version: {$ne: this._getDocumentVersion()}}, {})
+      const data = await client.find(this.collectionName(), { _version: { $ne: this._getDocumentVersion() } }, {})
       const migrate = migrateDocument(this._getMigrations())
       await Promise.all(data
         .map(entry => {

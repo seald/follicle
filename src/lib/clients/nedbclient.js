@@ -22,10 +22,10 @@ const getCollectionPath = function (dbLocation, collection) {
 
 const createCollection = function (collectionName, url) {
   if (url === 'memory') {
-    return new Datastore({inMemoryOnly: true})
+    return new Datastore({ inMemoryOnly: true })
   }
   let collectionPath = getCollectionPath(url, collectionName)
-  return new Datastore({filename: collectionPath, autoload: true})
+  return new Datastore({ filename: collectionPath, autoload: true })
 }
 
 const getCollection = function (name, collections, path) {
@@ -199,7 +199,7 @@ export default class NeDbClient extends DatabaseClient {
             if (error) return reject(error)
 
             // Fixes issue #55. Remove when NeDB is updated to v1.8+
-            db.findOne({_id: data._id}, function (error, doc) {
+            db.findOne({ _id: data._id }, function (error, doc) {
               if (error) return reject(error)
               resolve(doc)
             })
@@ -315,7 +315,7 @@ export default class NeDbClient extends DatabaseClient {
     options.sparse = options.sparse || false
 
     const db = getCollection(collection, this._collections, this._path)
-    db.ensureIndex({fieldName: field, unique: options.unique, sparse: options.sparse})
+    db.ensureIndex({ fieldName: field, unique: options.unique, sparse: options.sparse })
   }
 
   /**

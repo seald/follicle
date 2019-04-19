@@ -22,10 +22,10 @@ const getCollectionPath = function (dbLocation, collection) {
 
 const createCollection = function (collectionName, url, options) {
   if (url === 'memory') {
-    return new Datastore({inMemoryOnly: true})
+    return new Datastore({ inMemoryOnly: true })
   }
   let collectionPath = getCollectionPath(url, collectionName)
-  return new Datastore({...options, filename: collectionPath, autoload: true})
+  return new Datastore({ ...options, filename: collectionPath, autoload: true })
 }
 
 const getCollection = function (name, collections, path, options) {
@@ -73,7 +73,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
           return resolve(result._id)
         })
       } else {
-        db.update({_id: id}, {$set: values}, {upsert: true}, function (error, result) {
+        db.update({ _id: id }, { $set: values }, { upsert: true }, function (error, result) {
           if (error) return reject(error)
           return resolve(result)
         })
@@ -94,7 +94,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
       if (id === null) resolve(0)
 
       const db = getCollection(collection, that._collections, that._path, that.options)
-      db.remove({_id: id}, function (error, numRemoved) {
+      db.remove({ _id: id }, function (error, numRemoved) {
         if (error) return reject(error)
         return resolve(numRemoved)
       })
@@ -130,7 +130,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
     const that = this
     return new Promise(function (resolve, reject) {
       const db = getCollection(collection, that._collections, that._path, that.options)
-      db.remove(query, {multi: true}, function (error, numRemoved) {
+      db.remove(query, { multi: true }, function (error, numRemoved) {
         if (error) return reject(error)
         return resolve(numRemoved)
       })
@@ -196,11 +196,11 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
             return resolve(null)
           }
         } else {
-          return db.update(query, {$set: values}, function (error, result) {
+          return db.update(query, { $set: values }, function (error, result) {
             if (error) return reject(error)
 
             // Fixes issue #55. Remove when NeDB is updated to v1.8+
-            db.findOne({_id: data._id}, function (error, doc) {
+            db.findOne({ _id: data._id }, function (error, doc) {
               if (error) return reject(error)
               resolve(doc)
             })
@@ -316,7 +316,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
     options.sparse = options.sparse || false
 
     const db = getCollection(collection, this._collections, this._path, this.options)
-    db.ensureIndex({fieldName: field, unique: options.unique, sparse: options.sparse})
+    db.ensureIndex({ fieldName: field, unique: options.unique, sparse: options.sparse })
   }
 
   /**

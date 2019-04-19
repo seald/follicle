@@ -24,7 +24,7 @@ export const isEmptyValue = value =>
   (value === '') ||
   (!(typeof value === 'number' || value instanceof Date || typeof value === 'boolean' || typeof value === 'string') && (Object.keys(value).length === 0))
 
-export default ({client}) => {
+export default ({ client }) => {
   const isNativeId = n => client.isNativeId(n)
   const isReferenceable = r => isDocument(r) || isNativeId(r)
   const isType = (value, type) => {
