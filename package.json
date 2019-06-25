@@ -37,7 +37,7 @@
     "build": "cm build",
     "pretest": "cm pretest",
     "posttest": "standard",
-    "test": "mocha build/test/*.test.js",
+    "test": "mocha  --require source-map-support/register build/test/*.test.js",
     "precoverage": "rm -rf coverage/ .nyc_output/",
     "coverage": "nyc npm test"
   },
@@ -51,19 +51,20 @@
   },
   "dependencies": {
     "depd": "2.0.0",
-    "lodash": "4.17.11"
+    "lodash": "4.17.11",
+    "tmp": "^0.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
     "centimaitre": "^1.0.3",
     "chai": "^4.2.0",
     "dirty-chai": "^2.0.1",
     "fs-jetpack": "^2.2.2",
     "mocha": "^6.1.4",
-    "mongodb": "^3.2.3",
+    "mongodb": "^3.2.7",
     "nedb": "^1.8.0",
-    "nyc": "^14.0.0",
+    "nyc": "^14.1.1",
     "source-map-support": "^0.5.12",
     "standard": "^12.0.1"
   }
