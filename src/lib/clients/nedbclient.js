@@ -5,7 +5,9 @@ import * as fs from 'fs'
 import _ from 'lodash'
 import Datastore from 'nedb'
 import DatabaseClient from './client'
-import tmp from 'tmp'
+import temp from 'temp'
+
+temp.track()
 
 const urlToPath = url => {
   if (url.indexOf('nedb://') > -1) {
@@ -31,14 +33,10 @@ const createCollection = async (collectionName, url, options, readOnly) => {
     // Once we have the instance of nedb on-disk, we only need to get all documents from it and insert them into a
     // read-only instance
     const collectionPath = getCollectionPath(url, collectionName)
-    const { path: tmpDir, cleanupBackup } = await new Promise((resolve, reject) => {
-      // Setting the `unsafeCleanup` option to `true` allows to delete a directory even if it contains items when
-      // calling the `cleanupCallback`
-      tmp.dir({ unsafeCleanup: true }, (err, path, cleanupBackup) => {
+    const tmpDir = await new Promise((resolve, reject) => {
+      temp.mkdir(('temp-database'), (err, path) => {
         if (err) reject(err)
-        else {
-          resolve({ path, cleanupBackup })
-        }
+        else resolve(path)
       })
     })
     const tmpFile = path.join(tmpDir, collectionName)
@@ -63,7 +61,12 @@ const createCollection = async (collectionName, url, options, readOnly) => {
         else resolve(docs)
       })
     })
-    cleanupBackup() // cleanup intermediary datastore
+    await new Promise((resolve, reject) => {
+      temp.cleanup((err, stats) => {
+        if (err) reject(err)
+        else resolve(stats)
+      })
+    }) // cleanup intermediary datastore
     return finalDataStore
   } else {
     const collectionPath = getCollectionPath(url, collectionName)
