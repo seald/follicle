@@ -49,10 +49,11 @@ const createCollection = async (collectionName, url, options, readOnly) => {
     // We set a corruptAlertThreshold to 0 in order to alert when database corruption occurs rather than trying to repare it
     const intermediaryDataStore = new Datastore({ ...options, filename: tmpFile, autoload: false, corruptAlertThreshold: 0 })
     await new Promise((resolve, reject) => {
-      intermediaryDataStore.loadDatabase(function(err) {
-      if (err) reject(err)
-      else resolve()
-    })})
+      intermediaryDataStore.loadDatabase(function (err) {
+        if (err) reject(err)
+        else resolve()
+      })
+    })
     const data = await new Promise((resolve, reject) => {
       intermediaryDataStore.find({}, (err, results) => {
         if (err) reject(err)
@@ -77,10 +78,11 @@ const createCollection = async (collectionName, url, options, readOnly) => {
     const collectionPath = getCollectionPath(url, collectionName)
     const dataStore = new Datastore({ ...options, filename: collectionPath, autoload: false })
     await new Promise((resolve, reject) => {
-      dataStore.loadDatabase(function(err) {
-      if (err) reject(err)
-      else resolve()
-    })})
+      dataStore.loadDatabase(function (err) {
+        if (err) reject(err)
+        else resolve()
+      })
+    })
     return dataStore
   }
 }
