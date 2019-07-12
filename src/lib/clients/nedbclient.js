@@ -48,6 +48,11 @@ const createCollection = async (collectionName, url, options, readOnly) => {
     })
     // We set a corruptAlertThreshold to 0 in order to alert when database corruption occurs rather than trying to repare it
     const intermediaryDataStore = new Datastore({ ...options, filename: tmpFile, autoload: false, corruptAlertThreshold: 0 })
+    await new Promise((resolve, reject) => {
+      intermediaryDataStore.loadDatabase(function(err) {
+      if (err) reject(err)
+      else resolve()
+    })})
     const data = await new Promise((resolve, reject) => {
       intermediaryDataStore.find({}, (err, results) => {
         if (err) reject(err)
@@ -70,7 +75,13 @@ const createCollection = async (collectionName, url, options, readOnly) => {
     return finalDataStore
   } else {
     const collectionPath = getCollectionPath(url, collectionName)
-    return new Datastore({ ...options, filename: collectionPath, autoload: false })
+    const dataStore = new Datastore({ ...options, filename: collectionPath, autoload: false })
+    await new Promise((resolve, reject) => {
+      dataStore.loadDatabase(function(err) {
+      if (err) reject(err)
+      else resolve()
+    })})
+    return dataStore
   }
 }
 
@@ -79,11 +90,6 @@ const getCollection = async (name, collections, path, options, readOnly) => {
     // there is a bit of trickery here to avoid race conditions, take 1g of acetaminophen if necessary
     collections[name] = createCollection(name, path, options, readOnly)
     collections[name] = await collections[name]
-    await new Promise((resolve, reject) => {
-      collections[name].loadDatabase(function(err) {
-      if (err) reject(err)
-      else resolve()
-    })})
     return collections[name]
   }
 
