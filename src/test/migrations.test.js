@@ -5,16 +5,17 @@ import getData, { getMigratedDataModel } from './data'
 import jetpack from 'fs-jetpack'
 import { connect } from '../lib/connect'
 import chai from 'chai'
-import dirtyChai from 'dirty-chai'
+import chaiAsPromised from 'chai-as-promised'
 
-chai.use(dirtyChai)
+chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('Migration', () => {
+describe('Migration', async () => {
   const tmpDir = jetpack.cwd('tmp')
   const path = tmpDir.path('nedb')
+  const crashedDataDirPath = jetpack.cwd('src/test/nedbdata').path()
   const url = 'nedb://' + path
-
+  const url2 = 'nedb://' + crashedDataDirPath
   beforeEach(() => {
     tmpDir.dir('.')
   })
@@ -59,5 +60,12 @@ describe('Migration', () => {
     await Data._migrateCollection()
     res = await Data.find({})
     expect(res.length).to.equal(1)
+  })
+
+  it('nedb crash', async () => {
+    let { Document, client: database } = await connect(url2)
+    let Data = await getData(Document)
+    await expect(Data._migrateCollection()).to.be.rejectedWith(Error)
+    await database.close()
   })
 })
