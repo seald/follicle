@@ -2,10 +2,10 @@
 
 import * as path from 'path'
 import * as fs from 'fs'
-import _ from 'lodash'
 import Datastore from 'nedb'
 import DatabaseClient from './client'
 import temp from 'temp'
+import util from 'util'
 
 temp.track()
 
@@ -33,40 +33,24 @@ const createCollection = async (collectionName, url, options, readOnly) => {
     // Once we have the instance of nedb on-disk, we only need to get all documents from it and insert them into a
     // read-only instance
     const collectionPath = getCollectionPath(url, collectionName)
-    const tmpDir = await new Promise((resolve, reject) => {
-      temp.mkdir(('temp-database'), (err, path) => {
-        if (err) reject(err)
-        else resolve(path)
-      })
-    })
+
+    const tmpDir = await util.promisify(temp.mkdir)('temp-database')
     const tmpFile = path.join(tmpDir, collectionName)
-    await new Promise((resolve, reject) => {
-      fs.copyFile(collectionPath, tmpFile, (err) => {
-        if (err) reject(err)
-        else resolve()
-      })
-    })
+    await util.promisify(fs.copyFile)(collectionPath, tmpFile)
     // We set a corruptAlertThreshold to 0 in order to alert when database corruption occurs rather than trying to repare it
-    const intermediaryDataStore = new Datastore({ ...options, filename: tmpFile, autoload: true, corruptAlertThreshold: 0 })
-    const data = await new Promise((resolve, reject) => {
-      intermediaryDataStore.find({}, (err, results) => {
-        if (err) reject(err)
-        else resolve(results)
-      })
+    const intermediaryDataStore = new Datastore({
+      ...options,
+      filename: tmpFile,
+      autoload: true,
+      corruptAlertThreshold: 0
     })
+
+    const data = await util.promisify(intermediaryDataStore.find.bind(intermediaryDataStore))({})
     const finalDataStore = new Datastore({ ...options, inMemoryOnly: true })
-    await new Promise((resolve, reject) => {
-      finalDataStore.insert(data, (err, docs) => {
-        if (err) reject(err)
-        else resolve(docs)
-      })
-    })
-    await new Promise((resolve, reject) => {
-      temp.cleanup((err, stats) => {
-        if (err) reject(err)
-        else resolve(stats)
-      })
-    }) // cleanup intermediary datastore
+
+    await util.promisify(finalDataStore.insert.bind(finalDataStore))(data)
+
+    await util.promisify(temp.cleanup)()
     return finalDataStore
   } else {
     const collectionPath = getCollectionPath(url, collectionName)
@@ -75,13 +59,7 @@ const createCollection = async (collectionName, url, options, readOnly) => {
 }
 
 const getCollection = async (name, collections, path, options, readOnly) => {
-  if (!(name in collections)) {
-    // there is a bit of trickery here to avoid race conditions, take 1g of acetaminophen if necessary
-    collections[name] = createCollection(name, path, options, readOnly)
-    collections[name] = await collections[name]
-    return collections[name]
-  }
-
+  if (!(name in collections)) collections[name] = createCollection(name, path, options, readOnly)
   return collections[name]
 }
 
@@ -114,21 +92,8 @@ export default class NeDbClient extends DatabaseClient {
     // TODO: I'd like to just use update with upsert:true, but I'm
     // note sure how the query will work if id == null. Seemed to
     // have some problems before with passing null ids.
-    if (id === null) {
-      return new Promise((resolve, reject) => {
-        db.insert(values, (error, result) => {
-          if (error) reject(error)
-          else resolve(result._id)
-        })
-      })
-    } else {
-      return new Promise((resolve, reject) => {
-        db.update({ _id: id }, { $set: values }, { upsert: true }, (error, result) => {
-          if (error) reject(error)
-          else resolve(result)
-        })
-      })
-    }
+    if (id === null) return (await util.promisify(db.insert.bind(db))(values))._id
+    else return util.promisify(db.update.bind(db))({ _id: id }, { $set: values }, { upsert: true })
   }
 
   /**
@@ -141,12 +106,7 @@ export default class NeDbClient extends DatabaseClient {
   async delete (collection, id) {
     if (id === null) return 0
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return new Promise((resolve, reject) => {
-      db.remove({ _id: id }, (error, numRemoved) => {
-        if (error) reject(error)
-        else resolve(numRemoved)
-      })
-    })
+    return util.promisify(db.remove.bind(db))({ _id: id })
   }
 
   /**
@@ -158,12 +118,7 @@ export default class NeDbClient extends DatabaseClient {
    */
   async deleteOne (collection, query) {
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return new Promise((resolve, reject) => {
-      db.remove(query, (error, numRemoved) => {
-        if (error) reject(error)
-        else resolve(numRemoved)
-      })
-    })
+    return util.promisify(db.remove.bind(db))(query)
   }
 
   /**
@@ -175,12 +130,7 @@ export default class NeDbClient extends DatabaseClient {
    */
   async deleteMany (collection, query) {
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return new Promise((resolve, reject) => {
-      db.remove(query, { multi: true }, (error, numRemoved) => {
-        if (error) reject(error)
-        else resolve(numRemoved)
-      })
-    })
+    return util.promisify(db.remove.bind(db))(query, { multi: true })
   }
 
   /**
@@ -192,12 +142,7 @@ export default class NeDbClient extends DatabaseClient {
    */
   async findOne (collection, query) {
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return new Promise((resolve, reject) => {
-      db.findOne(query, (error, result) => {
-        if (error) reject(error)
-        else resolve(result)
-      })
-    })
+    return util.promisify(db.findOne.bind(db))(query)
   }
 
   /**
@@ -209,11 +154,7 @@ export default class NeDbClient extends DatabaseClient {
    * @param {Object} options
    * @returns {Promise}
    */
-  async findOneAndUpdate (collection, query, values, options) {
-    if (!options) {
-      options = {}
-    }
-
+  async findOneAndUpdate (collection, query, values, options = {}) {
     // Since this is 'findOne...' we'll only allow user to update
     // one document at a time
     options.multi = false
@@ -228,21 +169,11 @@ export default class NeDbClient extends DatabaseClient {
 
     const data = await this.findOne(collection, query)
     if (!data) {
-      if (options.upsert) {
-        return new Promise((resolve, reject) => {
-          db.insert(values, (error, result) => {
-            if (error) reject(error)
-            else resolve(result)
-          })
-        })
-      } else return null
+      if (options.upsert) return util.promisify(db.insert.bind(db))(values)
+      else return null
     } else {
-      await new Promise((resolve, reject) => {
-        db.update(query, { $set: values }, (error, result) => {
-          if (error) reject(error)
-          else resolve(result) // Fixes issue #55. Remove when NeDB is updated to v1.8+
-        })
-      })
+      await util.promisify(db.update.bind(db))(query, { $set: values })
+      // Fixes issue camo#55. Remove when NeDB is updated to v1.8+
       return this.findOne(collection, { _id: data._id })
     }
   }
@@ -255,21 +186,12 @@ export default class NeDbClient extends DatabaseClient {
    * @param {Object} options
    * @returns {Promise}
    */
-  async findOneAndDelete (collection, query, options) {
-    if (!options) {
-      options = {}
-    }
-
+  async findOneAndDelete (collection, query, options = {}) {
     // Since this is 'findOne...' we'll only allow user to update
     // one document at a time
     options.multi = false
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return new Promise((resolve, reject) => {
-      db.remove(query, options, (error, numRemoved) => {
-        if (error) reject(error)
-        else resolve(numRemoved)
-      })
-    })
+    return util.promisify(db.remove.bind(db))(query, options)
   }
 
   /**
@@ -284,12 +206,12 @@ export default class NeDbClient extends DatabaseClient {
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
     let cursor = db.find(query)
 
-    if (options.sort && (_.isArray(options.sort) || _.isString(options.sort))) {
+    if (options.sort && (Array.isArray(options.sort) || typeof options.sort === 'string' || options.sort instanceof String)) {
       const sortOptions = {}
-      if (!_.isArray(options.sort)) options.sort = [options.sort]
+      if (!Array.isArray(options.sort)) options.sort = [options.sort]
 
       options.sort.forEach(s => {
-        if (!_.isString(s)) return
+        if (typeof s !== 'string' && !(s instanceof String)) return
 
         let sortOrder = 1
         if (s[0] === '-') {
@@ -304,12 +226,7 @@ export default class NeDbClient extends DatabaseClient {
 
     if (typeof options.skip === 'number') cursor = cursor.skip(options.skip)
     if (typeof options.limit === 'number') cursor = cursor.limit(options.limit)
-    return new Promise((resolve, reject) => {
-      cursor.exec((error, result) => {
-        if (error) reject(error)
-        else resolve(result)
-      })
-    })
+    return util.promisify(cursor.exec.bind(cursor))()
   }
 
   /**
@@ -321,12 +238,7 @@ export default class NeDbClient extends DatabaseClient {
    */
   async count (collection, query) {
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return new Promise((resolve, reject) => {
-      db.count(query, (error, count) => {
-        if (error) reject(error)
-        else resolve(count)
-      })
-    })
+    return util.promisify(db.count.bind(db))(query)
   }
 
   /**
@@ -343,7 +255,7 @@ export default class NeDbClient extends DatabaseClient {
     options.sparse = options.sparse || false
 
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    db.ensureIndex({ fieldName: field, unique: options.unique, sparse: options.sparse })
+    await util.promisify(db.ensureIndex.bind(db))({ fieldName: field, unique: options.unique, sparse: options.sparse })
   }
 
   /**
@@ -356,28 +268,7 @@ export default class NeDbClient extends DatabaseClient {
   static connect (url, options = {}) {
     // Could be directory path or 'memory'
     const dbLocation = urlToPath(url)
-
-    return new Promise(resolve => {
-      const collections = {}
-
-      // TODO: Load all data upfront or on-demand?
-      // Maybe give user the option to load upfront.
-      // But which should we do by default?
-      /* fs.readdir(dbLocation, function(error, files) {
-                files.forEach(function(file) {
-                    let extname = path.extname(file);
-                    let filename = file.split('.')[0];
-                    if (extname === '.db' && filename.length > 0) {
-                        let collectionName = filename;
-                        collections[collectionName] = createCollection(collectionName, dbLocation);
-                    }
-                });
-                global.CLIENT = new NeDbClient(dbLocation, collections);
-                resolve(global.CLIENT);
-            }); */
-      // global.CLIENT = new NeDbClient(dbLocation, collections);
-      resolve(new NeDbClient(dbLocation, collections, options))
-    })
+    return Promise.resolve(new NeDbClient(dbLocation, {}, options))
   }
 
   /**
@@ -404,35 +295,21 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   // TODO: this must be carefully used, will drop database known at this point in runtime. If no instance of a model has been created, the collection of this model won't be dropped.
-  dropDatabase () {
-    const clearPromises = []
-    _.keys(this._collections).forEach(key => {
-      const p = new Promise((resolve, reject) => {
-        const dbLocation = getCollectionPath(this._path, key)
-
-        if (dbLocation === 'memory') {
-          // Only exists in memory, so just delete the 'Datastore'
-          delete this._collections[key]
-          resolve()
-        } else {
-          // Delete the file, but only if it exists
-          fs.stat(dbLocation, err => {
-            if (err === null) {
-              fs.unlink(dbLocation, err => {
-                if (err) reject(err)
-                else {
-                  delete this._collections[key]
-                  resolve()
-                }
-              })
-            } else resolve()
-          })
+  async dropDatabase () {
+    return Promise.all(Object.keys(this._collections).map(async key => {
+      const dbLocation = getCollectionPath(this._path, key)
+      // Only exists in memory, so just delete the 'Datastore'
+      if (dbLocation !== 'memory') {
+        // Delete the file, but only if it exists
+        try {
+          await util.promisify(fs.access)(dbLocation, fs.constants.F_OK)
+          await util.promisify(fs.unlink)(dbLocation)
+        } catch (error) {
+          // pass, there is no one error code on all platforms that indicates the file does not exist
         }
-      })
-      clearPromises.push(p)
-    })
-
-    return Promise.all(clearPromises)
+      }
+      delete this._collections[key]
+    }))
   }
 
   toCanonicalId (id) {

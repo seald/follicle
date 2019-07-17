@@ -57,6 +57,28 @@ describe('Read only', () => {
     validateId(d2)
     validateData2(d2)
   })
+
+  it('concurrently access database', async () => {
+    const connectAndFind = async (...args) => {
+      const { Document } = await connect(...args)
+      Data = await getData(Document)
+      return Data.find({}) // we need to await the find operation, because the database is loaded in the background
+    }
+
+    // The problem in concurrent access resides in the temp file nedb creates which is the filename appended with '~'.
+    // The fact that this does not crash is enough to prove that concurrent access works, since a collision on this temp
+    // file causes a crash.
+    // We could think that simply not writing in the database is enough, but we have no guarantee that nedb won't
+    // compact the database, which would trigger a file write, hence a collision on the temp file.
+    // Nedb does not provide a way to disable auto-compaction.
+    await Promise.all([
+      connectAndFind(url),
+      connectAndFind(url, { readOnly: true }),
+      connectAndFind(url, { readOnly: true }),
+      connectAndFind(url, { readOnly: true }),
+      connectAndFind(url, { readOnly: true })
+    ])
+  })
 })
 
 describe('Client', () => {
