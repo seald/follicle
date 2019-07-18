@@ -265,10 +265,10 @@ export default class NeDbClient extends DatabaseClient {
    * @param {Object} options
    * @returns {Promise}
    */
-  static connect (url, options = {}) {
+  static async connect (url, options = {}) {
     // Could be directory path or 'memory'
     const dbLocation = urlToPath(url)
-    return Promise.resolve(new NeDbClient(dbLocation, {}, options))
+    return new NeDbClient(dbLocation, {}, options)
   }
 
   /**
@@ -296,20 +296,19 @@ export default class NeDbClient extends DatabaseClient {
    */
   // TODO: this must be carefully used, will drop database known at this point in runtime. If no instance of a model has been created, the collection of this model won't be dropped.
   async dropDatabase () {
-    return Promise.all(Object.keys(this._collections).map(async key => {
-      const dbLocation = getCollectionPath(this._path, key)
+    for (const collection in this._collections) {
+      const dbLocation = getCollectionPath(this._path, collection)
       // Only exists in memory, so just delete the 'Datastore'
       if (dbLocation !== 'memory') {
         // Delete the file, but only if it exists
         try {
-          await util.promisify(fs.access)(dbLocation, fs.constants.F_OK)
           await util.promisify(fs.unlink)(dbLocation)
         } catch (error) {
           // pass, there is no one error code on all platforms that indicates the file does not exist
         }
       }
-      delete this._collections[key]
-    }))
+      delete this._collections[collection]
+    }
   }
 
   toCanonicalId (id) {
