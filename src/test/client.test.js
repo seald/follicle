@@ -61,7 +61,7 @@ describe('Read only', () => {
   it('concurrently access database', async () => {
     const connectAndFind = async (...args) => {
       const { Document } = await connect(...args)
-      Data = await getData(Document)
+      const Data = await getData(Document)
       return Data.find({}) // we need to await the find operation, because the database is loaded in the background
     }
 

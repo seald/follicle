@@ -50,7 +50,7 @@ const createCollection = async (collectionName, url, options, readOnly) => {
 
     await util.promisify(finalDataStore.insert.bind(finalDataStore))(data)
 
-    await util.promisify(temp.cleanup)()
+    await util.promisify(fs.unlink)(tmpFile)
     return finalDataStore
   } else {
     const collectionPath = getCollectionPath(url, collectionName)
