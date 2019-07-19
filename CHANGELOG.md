@@ -1,12 +1,37 @@
 #Changelog
 
-## 0.0.1
+## 0.0.4 (xxx)
+
+Features:
+ - add way to give custom nedb options to `nedbclient`  to match `reactlocalmongoclient` signature;
+ - add a `readOnly` option to `nedbclient`;
+
+Cleanup: 
+ - _asyncify_ all functions in `nedbclient`;
+ - convert `that` to `this` in `nedbclient` by switching to arrow functions;
+ - switch `.gitlab-ci.yml` to `node:10` instead of `node:latest`;
+ - convert useless `let` to `const` in `nedbclient`;
+ - bump `devDependencies`;
+
+Bug fixes:
+ - fix bug in `dropDatabase` when not in memory which would crash when removing file (because of a `this` improperly used inside of a `function`);
+ 
+## 0.0.3 (2019-04-19)
+
+Features:
+ - add a way to give custom `react-native-nedb` options to `reactlocalmongoclient` such as `AsyncStorage`
+
+## 0.0.2 (2018-06-15)
+
+Bug fixes:
+ - added default empty queries to `mongoclient`.
+
+## 0.0.1 (2018-06-04)
 
 Features:
  - **[BREAKING]** dynamically connect to a database rather than a static connection (mostly to improve testing) with a factory function pattern;
  - added migrations
  - **[BREAKING]** changed how the collections are stored with NeDB: rather than giving a file path, a directory path is given and the name of each collection is given by the name of the class;
-
 
 #Old changelog (camo)
 
