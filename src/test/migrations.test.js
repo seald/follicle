@@ -9,12 +9,14 @@ import dirtyChai from 'dirty-chai'
 
 chai.use(dirtyChai)
 const expect = chai.expect
+const assert = chai.assert
 
 describe('Migration', () => {
   const tmpDir = jetpack.cwd('tmp')
   const path = tmpDir.path('nedb')
+  const crashedDataDirPath = jetpack.cwd('src/test/nedbdata').path()
   const url = 'nedb://' + path
-
+  const url2 = 'nedb://' + crashedDataDirPath
   beforeEach(() => {
     tmpDir.dir('.')
   })
@@ -59,5 +61,16 @@ describe('Migration', () => {
     await Data._migrateCollection()
     res = await Data.find({})
     expect(res.length).to.equal(1)
+  })
+  it('nedb crash', async () => {
+    const { Document, client: database } = await connect(url2)
+    const Data = await getData(Document)
+    try {
+      await Data._migrateCollection()
+      return Promise.reject(new Error('Should have failed'))
+    } catch (error) {
+      assert.instanceOf(error, Error)
+    }
+    await database.close()
   })
 })

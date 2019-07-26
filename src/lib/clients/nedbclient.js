@@ -38,12 +38,9 @@ const createCollection = async (collectionName, url, options, readOnly) => {
     const tmpFile = path.join(tmpDir, collectionName)
     await util.promisify(fs.copyFile)(collectionPath, tmpFile)
     // We set a corruptAlertThreshold to 0 in order to alert when database corruption occurs rather than trying to repare it
-    const intermediaryDataStore = new Datastore({
-      ...options,
-      filename: tmpFile,
-      autoload: true,
-      corruptAlertThreshold: 0
-    })
+    const intermediaryDataStore = new Datastore({ ...options, filename: tmpFile, autoload: false, corruptAlertThreshold: 0 })
+
+    await util.promisify(intermediaryDataStore.loadDatabase.bind(intermediaryDataStore))()
 
     const data = await util.promisify(intermediaryDataStore.find.bind(intermediaryDataStore))({})
     const finalDataStore = new Datastore({ ...options, inMemoryOnly: true })
@@ -54,7 +51,9 @@ const createCollection = async (collectionName, url, options, readOnly) => {
     return finalDataStore
   } else {
     const collectionPath = getCollectionPath(url, collectionName)
-    return new Datastore({ ...options, filename: collectionPath, autoload: true })
+    const dataStore = new Datastore({ ...options, filename: collectionPath, autoload: false })
+    await util.promisify(dataStore.loadDatabase.bind(dataStore))()
+    return dataStore
   }
 }
 
