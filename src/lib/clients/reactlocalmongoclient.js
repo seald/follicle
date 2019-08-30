@@ -24,13 +24,13 @@ const createCollection = function (collectionName, url, options) {
   if (url === 'memory') {
     return new Datastore({ inMemoryOnly: true })
   }
-  let collectionPath = getCollectionPath(url, collectionName)
+  const collectionPath = getCollectionPath(url, collectionName)
   return new Datastore({ ...options, filename: collectionPath, autoload: true })
 }
 
 const getCollection = function (name, collections, path, options) {
   if (!(name in collections)) {
-    let collection = createCollection(name, path, options)
+    const collection = createCollection(name, path, options)
     collections[name] = collection
     return collection
   }
@@ -253,7 +253,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
       let cursor = db.find(query)
 
       if (options.sort && (_.isArray(options.sort) || _.isString(options.sort))) {
-        let sortOptions = {}
+        const sortOptions = {}
         if (!_.isArray(options.sort)) {
           options.sort = [options.sort]
         }
@@ -328,10 +328,10 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    */
   static connect (url, options) {
     // Could be directory path or 'memory'
-    let dbLocation = urlToPath(url)
+    const dbLocation = urlToPath(url)
 
     return new Promise(function (resolve, reject) {
-      let collections = {}
+      const collections = {}
 
       // TODO: Load all data upfront or on-demand?
       // Maybe give user the option to load upfront.
@@ -378,10 +378,10 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    */
   // TODO: this must be carefully used, will drop database known at this point in runtime. If no instance of a model has been created, the collection of this model won't be dropped.
   dropDatabase () {
-    let clearPromises = []
+    const clearPromises = []
     _.keys(this._collections).forEach(key => {
-      let p = new Promise((resolve, reject) => {
-        let dbLocation = getCollectionPath(this._path, key)
+      const p = new Promise((resolve, reject) => {
+        const dbLocation = getCollectionPath(this._path, key)
 
         if (dbLocation === 'memory') {
           // Only exists in memory, so just delete the 'Datastore'

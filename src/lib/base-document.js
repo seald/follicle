@@ -224,7 +224,7 @@ export default ({ client, validators }) => {
      * @private
      */
     static _instantiate () {
-      let instance = new this()
+      const instance = new this()
       instance.generateSchema()
       return instance
     }
@@ -329,7 +329,7 @@ export default ({ client, validators }) => {
 
       // ...then for each array of ids, load them all...
 
-      for (let key of _.keys(ids)) {
+      for (const key of _.keys(ids)) {
         let keyIds = []
         _.keys(ids[key]).forEach(k => {
           // Before adding to list, we convert id to the
@@ -344,7 +344,7 @@ export default ({ client, validators }) => {
         const type = isArray(anInstance._schema[key].type) ? anInstance._schema[key].type[0] : anInstance._schema[key].type
 
         // Bulk load dereferences
-        const dereferences = await type.find({ '_id': { $in: keyIds } }, { populate: false })
+        const dereferences = await type.find({ _id: { $in: keyIds } }, { populate: false })
         // Assign each dereferenced object to parent
 
         _.keys(ids[key]).forEach(k => {
@@ -396,8 +396,8 @@ export default ({ client, validators }) => {
     toJSON () {
       const values = this._toData({ _id: true }, true)
       const schema = this._schema
-      for (let key in schema) {
-        if (schema.hasOwnProperty(key)) {
+      for (const key in schema) {
+        if (Object.prototype.hasOwnProperty.call(schema, key)) {
           if (schema[key].private) delete values[key]
           else if (values[key] && values[key].toJSON) values[key] = values[key].toJSON()
           else if (isArray(values[key])) {

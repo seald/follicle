@@ -43,7 +43,7 @@ describe('Embedded', () => {
         }
       }
 
-      let data = DocumentModel.create()
+      const data = DocumentModel.create()
       data.mod = EmbeddedModel.create()
       data.mod.str = 'some data'
       data.num = 1
@@ -72,7 +72,7 @@ describe('Embedded', () => {
         }
       }
 
-      let data = DocumentModel.create()
+      const data = DocumentModel.create()
       data.mod = EmbeddedModel.create()
       data.mod.str = 'some data'
       data.num = 1
@@ -107,7 +107,7 @@ describe('Embedded', () => {
         }
       }
 
-      let person = Person.create()
+      const person = Person.create()
       person.name = 'Scott'
       person.limbs.push(Limb.create())
       person.limbs[0].type = 'left arm'
@@ -155,11 +155,11 @@ describe('Embedded', () => {
         }
       }
 
-      let map = WorldMap.create()
-      let polygon1 = Polygon.create()
-      let polygon2 = Polygon.create()
-      let point1 = Point.create({ x: 123.45, y: 678.90 })
-      let point2 = Point.create({ x: 543.21, y: 987.60 })
+      const map = WorldMap.create()
+      const polygon1 = Polygon.create()
+      const polygon2 = Polygon.create()
+      const point1 = Point.create({ x: 123.45, y: 678.90 })
+      const point2 = Point.create({ x: 543.21, y: 987.60 })
 
       map.polygons.push(polygon1)
       map.polygons.push(polygon2)
@@ -193,7 +193,7 @@ describe('Embedded', () => {
         }
       }
 
-      let product = Product.create({
+      const product = Product.create({
         name: 'bike',
         discount: {
           authorized: true,
@@ -227,7 +227,7 @@ describe('Embedded', () => {
         }
       }
 
-      let product = Product.create({
+      const product = Product.create({
         name: 'bike',
         discounts: [{
           authorized: true,
@@ -268,7 +268,7 @@ describe('Embedded', () => {
         }
       }
 
-      let data = DocumentModel.create()
+      const data = DocumentModel.create()
       data.emb = EmbeddedModel.create()
       data.num = 1
 
@@ -295,7 +295,7 @@ describe('Embedded', () => {
         }
       }
 
-      let wallet = Wallet.create()
+      const wallet = Wallet.create()
       wallet.owner = 'Scott'
       wallet.contents.push(Money.create())
       wallet.contents.push(Money.create())
@@ -328,7 +328,7 @@ describe('Embedded', () => {
         }
       }
 
-      let data = DocumentModel.create()
+      const data = DocumentModel.create()
       data.emb = EmbeddedModel.create()
       data.emb.num = 26
 
@@ -389,9 +389,9 @@ describe('Embedded', () => {
         }
       }
 
-      let now = new Date()
+      const now = new Date()
 
-      let person = Person.create({
+      const person = Person.create({
         gradSchool: {
           school: 'CMU',
           major: 'ECE',
@@ -454,7 +454,7 @@ describe('Embedded', () => {
         }
       }
 
-      let cup = Cup.create()
+      const cup = Cup.create()
       cup.contents = Coffee.create()
 
       await cup.save()
@@ -520,7 +520,7 @@ describe('Embedded', () => {
         }
       }
 
-      let wallet = Wallet.create()
+      const wallet = Wallet.create()
       wallet.contents.push(Money.create())
       wallet.contents.push(Money.create())
 
@@ -574,7 +574,7 @@ describe('Embedded', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: 'Scott',
         address: {
           street: '123 Fake St.',
@@ -593,7 +593,7 @@ describe('Embedded', () => {
       expect(person.address.zipCode).to.be.equal(12345)
       expect(person.address.isPoBox).to.be.equal(false)
 
-      let json = person.toJSON()
+      const json = person.toJSON()
 
       expect(json.name).to.be.equal('Scott')
       expect(json.address).to.not.be.an.instanceof(Address)
@@ -632,14 +632,14 @@ describe('Embedded', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: 'Scott',
         address: {
           street: 'Bar street'
         }
       })
 
-      let json = person.toJSON()
+      const json = person.toJSON()
       expect(json).to.have.keys(['_id', 'name', 'address'])
       expect(json.address).to.have.keys(['street'])
     })

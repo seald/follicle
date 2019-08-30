@@ -153,7 +153,7 @@ describe('Client', () => {
 
   describe('#save()', () => {
     it('should persist the object and its members to the database', async () => {
-      let data = getData1()
+      const data = getData1()
 
       await data.save()
       validateId(data)
@@ -163,7 +163,7 @@ describe('Client', () => {
 
   describe('#findOne()', () => {
     it('should load a single object from the collection', async () => {
-      let data = getData1()
+      const data = getData1()
 
       await data.save()
       validateId(data)
@@ -174,15 +174,15 @@ describe('Client', () => {
     })
 
     it('should populate all fields', async () => {
-      let address = Address.create({
+      const address = Address.create({
         street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
-      let dog = Pet.create({
+      const dog = Pet.create({
         type: 'dog', name: 'Fido'
       })
 
-      let user = User.create({
+      const user = User.create({
         firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
@@ -200,15 +200,15 @@ describe('Client', () => {
     })
 
     it('should not populate any fields', async () => {
-      let address = Address.create({
+      const address = Address.create({
         street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
-      let dog = Pet.create({
+      const dog = Pet.create({
         type: 'dog', name: 'Fido'
       })
 
-      let user = User.create({
+      const user = User.create({
         firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
@@ -225,15 +225,15 @@ describe('Client', () => {
     })
 
     it('should populate specified fields', async () => {
-      let address = Address.create({
+      const address = Address.create({
         street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
-      let dog = Pet.create({
+      const dog = Pet.create({
         type: 'dog', name: 'Fido'
       })
 
-      let user = User.create({
+      const user = User.create({
         firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
@@ -251,7 +251,7 @@ describe('Client', () => {
 
   describe('#findOneAndUpdate()', () => {
     it('should load and update a single object from the collection', async () => {
-      let data = getData1()
+      const data = getData1()
 
       await data.save()
       validateId(data)
@@ -276,7 +276,7 @@ describe('Client', () => {
 
   describe('#findOneAndDelete()', () => {
     it('should load and delete a single object from the collection', async () => {
-      let data = getData1()
+      const data = getData1()
 
       await data.save()
       validateId(data)
@@ -349,11 +349,11 @@ describe('Client', () => {
     })
 
     it('should sort results using multiple keys', async () => {
-      let AlphaVille = City.create({
+      const AlphaVille = City.create({
         name: 'Alphaville', population: 4388
       })
 
-      let BetaTown = City.create({
+      const BetaTown = City.create({
         name: 'Beta Town', population: 4388
       })
 
@@ -394,19 +394,19 @@ describe('Client', () => {
     })
 
     it('should populate all fields', async () => {
-      let address = Address.create({
+      const address = Address.create({
         street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
-      let dog = Pet.create({
+      const dog = Pet.create({
         type: 'dog', name: 'Fido'
       })
 
-      let user1 = User.create({
+      const user1 = User.create({
         firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
-      let user2 = User.create({
+      const user2 = User.create({
         firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
       })
 
@@ -425,19 +425,19 @@ describe('Client', () => {
     })
 
     it('should not populate any fields', async () => {
-      let address = Address.create({
+      const address = Address.create({
         street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
-      let dog = Pet.create({
+      const dog = Pet.create({
         type: 'dog', name: 'Fido'
       })
 
-      let user1 = User.create({
+      const user1 = User.create({
         firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
-      let user2 = User.create({
+      const user2 = User.create({
         firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
       })
 
@@ -456,19 +456,19 @@ describe('Client', () => {
     })
 
     it('should populate specified fields', async () => {
-      let address = Address.create({
+      const address = Address.create({
         street: '123 Fake St.', city: 'Cityville', zipCode: 12345
       })
 
-      let dog = Pet.create({
+      const dog = Pet.create({
         type: 'dog', name: 'Fido'
       })
 
-      let user1 = User.create({
+      const user1 = User.create({
         firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
       })
 
-      let user2 = User.create({
+      const user2 = User.create({
         firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
       })
 
@@ -489,8 +489,8 @@ describe('Client', () => {
 
   describe('#count()', () => {
     it('should return 0 objects from the collection', async () => {
-      let data1 = getData1()
-      let data2 = getData2()
+      const data1 = getData1()
+      const data2 = getData2()
 
       await Promise.all([data1.save(), data2.save()])
       validateId(data2)
@@ -499,8 +499,8 @@ describe('Client', () => {
     })
 
     it('should return 2 matching objects from the collection', async () => {
-      let data1 = getData1()
-      let data2 = getData2()
+      const data1 = getData1()
+      const data2 = getData2()
 
       await Promise.all([data1.save(), data2.save()])
       validateId(data1)
@@ -512,7 +512,7 @@ describe('Client', () => {
 
   describe('#delete()', () => {
     it('should remove instance from the collection', async () => {
-      let data = getData1()
+      const data = getData1()
 
       await data.save()
       validateId(data)
@@ -525,7 +525,7 @@ describe('Client', () => {
 
   describe('#deleteOne()', () => {
     it('should remove the object from the collection', async () => {
-      let data = getData1()
+      const data = getData1()
 
       await data.save()
       validateId(data)
@@ -538,8 +538,8 @@ describe('Client', () => {
 
   describe('#deleteMany()', () => {
     it('should remove multiple objects from the collection', async () => {
-      let data1 = getData1()
-      let data2 = getData2()
+      const data1 = getData1()
+      const data2 = getData2()
 
       await Promise.all([data1.save(), data2.save()])
       validateId(data1)
@@ -551,8 +551,8 @@ describe('Client', () => {
     })
 
     it('should remove all objects when query is not provided', async () => {
-      let data1 = getData1()
-      let data2 = getData2()
+      const data1 = getData1()
+      const data2 = getData2()
 
       await Promise.all([data1.save(), data2.save()])
       validateId(data1)
@@ -566,8 +566,8 @@ describe('Client', () => {
 
   describe('#clearCollection()', () => {
     it('should remove all objects from the collection', async () => {
-      let data1 = getData1()
-      let data2 = getData2()
+      const data1 = getData1()
+      const data2 = getData2()
 
       await Promise.all([data1.save(), data2.save()])
       validateId(data1)

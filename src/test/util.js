@@ -19,7 +19,7 @@ export const data = Document => {
 
   return {
     data1 () {
-      let data = Data.create()
+      const data = Data.create()
       data.number = 1
       data.source = 'arstechnica'
       data.item = 99
@@ -28,7 +28,7 @@ export const data = Document => {
       return data
     },
     data2 () {
-      let data = Data.create()
+      const data = Data.create()
       data.number = 2
       data.source = 'reddit'
       data.item = 26

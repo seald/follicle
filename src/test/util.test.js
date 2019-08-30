@@ -11,11 +11,11 @@ const expect = chai.expect
 describe('Util', () => {
   describe('deepTraverse()', () => {
     it('should iterate over all keys nested in an object', () => {
-      let object = { 'a': [{ 'b': { 'c': 3 } }] }
+      const object = { a: [{ b: { c: 3 } }] }
 
-      let keysSeen = []
-      let valsSeen = []
-      let parentsSeen = []
+      const keysSeen = []
+      const valsSeen = []
+      const parentsSeen = []
 
       deepTraverse(object, function (key, value, parent) {
         keysSeen.push(key)

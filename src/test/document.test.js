@@ -40,7 +40,7 @@ describe('Document', () => {
         }
       }
 
-      let user = User.create()
+      const user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
 
@@ -60,7 +60,7 @@ describe('Document', () => {
         }
       }
 
-      let user = User.create()
+      const user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
 
@@ -78,7 +78,7 @@ describe('Document', () => {
         }
       }
 
-      let user = User.create({
+      const user = User.create({
         firstName: 'Billy',
         lastName: 'Bob',
         nicknames: ['Bill', 'William', 'Will']
@@ -107,11 +107,11 @@ describe('Document', () => {
         }
       }
 
-      let coffee = Coffee.create()
+      const coffee = Coffee.create()
       coffee.temp = 105
 
       await coffee.save()
-      let user = User.create({ drinks: [coffee] })
+      const user = User.create({ drinks: [coffee] })
       expect(user.drinks).to.have.length(1)
     })
   })
@@ -130,7 +130,7 @@ describe('Document', () => {
         }
       }
 
-      let user = User.create()
+      const user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
 
@@ -152,13 +152,13 @@ describe('Document', () => {
         }
 
         set fullName (name) {
-          let nameArr = name.split(' ')
+          const nameArr = name.split(' ')
           this.firstName = nameArr[0]
           this.lastName = nameArr[1]
         }
       }
 
-      let user = User.create()
+      const user = User.create()
       user.fullName = 'Billy Bob'
 
       await user.save()
@@ -180,7 +180,7 @@ describe('Document', () => {
         }
       }
 
-      let user = User.create()
+      const user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
 
@@ -205,7 +205,7 @@ describe('Document', () => {
         }
       }
 
-      let user = ProUser.create()
+      const user = ProUser.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
       user.paymentMethod = 'cash'
@@ -238,7 +238,7 @@ describe('Document', () => {
         }
       }
 
-      let bike = Motorcycle.create()
+      const bike = Motorcycle.create()
 
       await bike.save()
       validateId(bike)
@@ -248,7 +248,7 @@ describe('Document', () => {
     it('should provide default collection name based on class name', () => {
       class User extends Document {}
 
-      let user = User.create()
+      const user = User.create()
 
       expect(user.collectionName()).to.be.equal('User')
       expect(User.collectionName()).to.be.equal('User')
@@ -259,7 +259,7 @@ describe('Document', () => {
 
       class ProUser extends User {}
 
-      let pro = ProUser.create()
+      const pro = ProUser.create()
 
       expect(pro.collectionName()).to.be.equal('ProUser')
       expect(ProUser.collectionName()).to.be.equal('ProUser')
@@ -272,7 +272,7 @@ describe('Document', () => {
         }
       }
 
-      let user = User.create()
+      const user = User.create()
 
       expect(user.collectionName()).to.be.equal('sheeple')
       expect(User.collectionName()).to.be.equal('sheeple')
@@ -304,7 +304,7 @@ describe('Document', () => {
         }
       }
 
-      let data = ReferencerModel.create()
+      const data = ReferencerModel.create()
       data.ref = ReferenceeModel.create()
       data.ref.str = 'some data'
       data.num = 1
@@ -344,7 +344,7 @@ describe('Document', () => {
         }
       }
 
-      let data = ReferencerModel.create()
+      const data = ReferencerModel.create()
       data.refs.push(ReferenceeModel.create())
       data.refs.push(ReferenceeModel.create())
       data.refs[0].str = 'string1'
@@ -392,9 +392,9 @@ describe('Document', () => {
         }
       }
 
-      let data = ReferencerModel.create()
+      const data = ReferencerModel.create()
       data.ref1 = ReferenceeModel.create()
-      let ref2 = ReferenceeModel.create()
+      const ref2 = ReferenceeModel.create()
       data.ref1.str = 'string1'
       ref2.str = 'string2'
       data.num = 1
@@ -438,9 +438,9 @@ describe('Document', () => {
         }
       }
 
-      let data = ReferencerModel.create()
+      const data = ReferencerModel.create()
       data.refs.push(ReferenceeModel.create())
-      let ref2 = ReferenceeModel.create()
+      const ref2 = ReferenceeModel.create()
       data.refs[0].str = 'string1'
       ref2.str = 'string2'
       data.num = 1
@@ -480,10 +480,10 @@ describe('Document', () => {
         }
       }
 
-      let employee = Employee.create()
+      const employee = Employee.create()
       employee.name = 'Scott'
 
-      let boss = Boss.create()
+      const boss = Boss.create()
       boss.salary = 10000000
 
       employee.boss = boss
@@ -528,7 +528,7 @@ describe('Document', () => {
         }
       }
 
-      let data = StringModel.create()
+      const data = StringModel.create()
       data.str = 'hello'
 
       await data.save()
@@ -548,7 +548,7 @@ describe('Document', () => {
         }
       }
 
-      let data = NumberModel.create()
+      const data = NumberModel.create()
       data.num = 26
 
       await data.save()
@@ -564,7 +564,7 @@ describe('Document', () => {
         }
       }
 
-      let data = BooleanModel.create()
+      const data = BooleanModel.create()
       data.bool = true
 
       await data.save()
@@ -580,8 +580,8 @@ describe('Document', () => {
         }
       }
 
-      let data = DateModel.create()
-      let date = new Date()
+      const data = DateModel.create()
+      const date = new Date()
       data.date = date
 
       await data.save()
@@ -597,7 +597,7 @@ describe('Document', () => {
         }
       }
 
-      let data = ObjectModel.create()
+      const data = ObjectModel.create()
       data.obj = { hi: 'bye' }
 
       await data.save()
@@ -614,7 +614,7 @@ describe('Document', () => {
         }
       }
 
-      let data = BufferModel.create()
+      const data = BufferModel.create()
       data.buf = Buffer.from('hello')
 
       await data.save()
@@ -630,7 +630,7 @@ describe('Document', () => {
         }
       }
 
-      let data = ArrayModel.create()
+      const data = ArrayModel.create()
       data.arr = [1, 'number', true]
 
       await data.save()
@@ -649,7 +649,7 @@ describe('Document', () => {
         }
       }
 
-      let data = ArrayModel.create()
+      const data = ArrayModel.create()
       data.arr = ['1', '2', '3']
 
       await data.save()
@@ -672,7 +672,7 @@ describe('Document', () => {
         }
       }
 
-      let data = NumberModel.create()
+      const data = NumberModel.create()
       data.num = '1'
 
       await data.save()
@@ -688,7 +688,7 @@ describe('Document', () => {
         }
       }
 
-      let data = ArrayModel.create()
+      const data = ArrayModel.create()
       data.arr = [1, 2, 3]
 
       await data.save()
@@ -699,7 +699,7 @@ describe('Document', () => {
 
   describe('defaults', function () {
     it('should assign default value if unassigned', async () => {
-      let data = Data.create()
+      const data = Data.create()
 
       await data.save()
       validateId(data)
@@ -707,7 +707,7 @@ describe('Document', () => {
     })
 
     it('should assign default value via function if unassigned', async () => {
-      let data = Data.create()
+      const data = Data.create()
 
       await data.save()
       validateId(data)
@@ -727,7 +727,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: 'Scott'
       })
 
@@ -742,7 +742,7 @@ describe('Document', () => {
 
   describe('choices', () => {
     it('should accept value specified in choices', async () => {
-      let data = Data.create()
+      const data = Data.create()
       data.source = 'wired'
 
       await data.save()
@@ -751,7 +751,7 @@ describe('Document', () => {
     })
 
     it('should reject values not specified in choices', async () => {
-      let data = Data.create()
+      const data = Data.create()
       data.source = 'google'
 
       await data.save()
@@ -762,7 +762,7 @@ describe('Document', () => {
 
   describe('min', () => {
     it('should accept value > min', async () => {
-      let data = Data.create()
+      const data = Data.create()
       data.item = 1
 
       await data.save()
@@ -771,7 +771,7 @@ describe('Document', () => {
     })
 
     it('should accept value == min', async () => {
-      let data = Data.create()
+      const data = Data.create()
       data.item = 0
 
       await data.save()
@@ -780,7 +780,7 @@ describe('Document', () => {
     })
 
     it('should reject value < min', async () => {
-      let data = Data.create()
+      const data = Data.create()
       data.item = -1
 
       await data.save()
@@ -791,7 +791,7 @@ describe('Document', () => {
 
   describe('max', () => {
     it('should accept value < max', async () => {
-      let data = Data.create()
+      const data = Data.create()
       data.item = 99
 
       await data.save()
@@ -800,7 +800,7 @@ describe('Document', () => {
     })
 
     it('should accept value == max', async () => {
-      let data = Data.create()
+      const data = Data.create()
       data.item = 100
 
       await data.save()
@@ -809,7 +809,7 @@ describe('Document', () => {
     })
 
     it('should reject value > max', async () => {
-      let data = Data.create()
+      const data = Data.create()
       data.item = 101
 
       await data.save()
@@ -831,7 +831,7 @@ describe('Document', () => {
         }
       }
 
-      let product = Product.create()
+      const product = Product.create()
       product.name = 'Dark Roast Coffee'
       product.cost = '$1.39'
 
@@ -853,7 +853,7 @@ describe('Document', () => {
         }
       }
 
-      let product = Product.create()
+      const product = Product.create()
       product.name = 'Light Roast Coffee'
       product.cost = '$1..39'
 
@@ -882,7 +882,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: 'Scott'
       })
 
@@ -929,9 +929,9 @@ describe('Document', () => {
         }
       }
 
-      let now = new Date()
+      const now = new Date()
 
-      let person = Person.create({
+      const person = Person.create({
         birthday: now
       })
 
@@ -959,11 +959,11 @@ describe('Document', () => {
         }
       }
 
-      let birthday = new Date(Date.UTC(2016, 1, 17, 5, 6, 8, 0))
-      let graduationDate = new Date(2016, 1, 17, 0, 0, 0, 0)
-      let weddingDate = new Date(2016, 1, 17, 0, 0, 0, 0)
+      const birthday = new Date(Date.UTC(2016, 1, 17, 5, 6, 8, 0))
+      const graduationDate = new Date(2016, 1, 17, 0, 0, 0, 0)
+      const weddingDate = new Date(2016, 1, 17, 0, 0, 0, 0)
 
-      let person = Person.create({
+      const person = Person.create({
         birthday: '2016-02-17T05:06:08+00:00',
         graduationDate: 'February 17, 2016',
         weddingDate: '2016/02/17'
@@ -1003,7 +1003,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: ''
       })
 
@@ -1028,7 +1028,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: 'Scott'
       })
 
@@ -1054,7 +1054,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create()
+      const person = Person.create()
 
       await person.save()
       validateId(person)
@@ -1081,7 +1081,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         isMerried: true,
         isSingle: false
       })
@@ -1108,9 +1108,9 @@ describe('Document', () => {
         }
       }
 
-      let myBirthDate = new Date()
+      const myBirthDate = new Date()
 
-      let person = Person.create({
+      const person = Person.create({
         birthDate: myBirthDate
       })
 
@@ -1139,7 +1139,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         age: 21,
         level: 0
       })
@@ -1314,7 +1314,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create()
+      const person = Person.create()
 
       await person.save()
       validateId(person)
@@ -1358,7 +1358,7 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: 'Scott',
         age: 28,
         isAlive: true,
@@ -1374,7 +1374,7 @@ describe('Document', () => {
       expect(person.children).to.have.length(2)
       expect(person.spouse).to.be.null()
 
-      let json = person.toJSON()
+      const json = person.toJSON()
 
       expect(json.name).to.be.equal('Scott')
       expect(json.age).to.be.equal(28)
@@ -1402,19 +1402,19 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: 'Scott'
       })
 
-      let spouse = Person.create({
+      const spouse = Person.create({
         name: 'Jane'
       })
 
-      let kid1 = Person.create({
+      const kid1 = Person.create({
         name: 'Billy'
       })
 
-      let kid2 = Person.create({
+      const kid2 = Person.create({
         name: 'Timmy'
       })
 
@@ -1441,7 +1441,7 @@ describe('Document', () => {
       expect(person.children[0]).to.be.an.instanceof(Person)
       expect(person.children[1]).to.be.an.instanceof(Person)
 
-      let json = person.toJSON()
+      const json = person.toJSON()
 
       expect(json.name).to.be.equal('Scott')
       expect(json.children).to.have.length(2)
@@ -1470,11 +1470,11 @@ describe('Document', () => {
         }
       }
 
-      let person = Person.create({
+      const person = Person.create({
         name: 'Scott'
       })
 
-      let json = person.toJSON()
+      const json = person.toJSON()
       expect(json).to.have.keys(['_id', 'name'])
     })
   })

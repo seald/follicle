@@ -70,7 +70,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       // object to do this.
       // Also, this might be really slow for objects with
       // lots of references. Figure out a better way.
-      let toUpdate = this._toData({ _id: false })
+      const toUpdate = this._toData({ _id: false })
 
       // Reference our objects
       _.keys(this._schema).forEach(key => {
@@ -120,12 +120,12 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @returns {Promise}
      */
     async delete () {
-      let preDeletePromises = this._getHookPromises('preDelete')
+      const preDeletePromises = this._getHookPromises('preDelete')
 
       await Promise.all(preDeletePromises)
       const deleteReturn = await client.delete(this.collectionName(), this._id)
       // TODO: hack?
-      let postDeletePromises = [deleteReturn].concat(this._getHookPromises('postDelete'))
+      const postDeletePromises = [deleteReturn].concat(this._getHookPromises('postDelete'))
       const prevData = await Promise.all(postDeletePromises)
       return prevData[0]
     }
@@ -161,7 +161,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @returns {Promise}
      */
     static async findOne (query, options = {}) {
-      const populate = options.hasOwnProperty('populate') ? options.populate : true
+      const populate = Object.prototype.hasOwnProperty.call(options, 'populate') ? options.populate : true
 
       const data = await client.findOne(this.collectionName(), query)
       if (!data) return null
@@ -180,7 +180,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @returns {Promise}
      */
     static async findOneAndUpdate (query, values, options = {}) {
-      const populate = options.hasOwnProperty('populate') ? options.populate : true
+      const populate = Object.prototype.hasOwnProperty.call(options, 'populate') ? options.populate : true
 
       const data = await client.findOneAndUpdate(this.collectionName(), query, values, options)
       if (!data) {
@@ -243,7 +243,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      */
     static createIndexes () {
       if (this._indexesCreated) return
-      let instance = this._instantiate()
+      const instance = this._instantiate()
 
       _.keys(instance._schema).forEach(k => {
         if (instance._schema[k].unique) client.createIndex(this.collectionName(), k, { unique: true })
@@ -255,7 +255,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
     static _fromData (datas) {
       if (!isArray(datas)) datas = [datas]
       const documentVersion = this._getDocumentVersion()
-      if (datas.some(data => data.hasOwnProperty('_version') && data._version !== documentVersion)) throw new CamoError('💩')
+      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new CamoError('💩')
 
       const instances = super._fromData(datas)
       // This way we preserve the original structure of the data. Data

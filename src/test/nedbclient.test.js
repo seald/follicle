@@ -36,7 +36,7 @@ describe('NeDbClient', () => {
         }
       }
 
-      let school = School.create()
+      const school = School.create()
       school._id = '1234567890abcdef'
       school.name = 'South Park Elementary'
 
@@ -65,11 +65,11 @@ describe('NeDbClient', () => {
         }
       }
 
-      let user1 = User.create()
+      const user1 = User.create()
       user1.name = 'Bill'
       user1.email = 'billy@example.com'
 
-      let user2 = User.create()
+      const user2 = User.create()
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
 
@@ -93,11 +93,11 @@ describe('NeDbClient', () => {
         }
       }
 
-      let user1 = User.create()
+      const user1 = User.create()
       user1.name = 'Bill'
       user1.email = 'billy@example.com'
 
-      let user2 = User.create()
+      const user2 = User.create()
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
 

@@ -52,10 +52,10 @@ describe('Issues', function () {
         }
       }
 
-      let user1 = User.create()
-      let user2 = User.create()
-      let eye1 = Eye.create({ color: 'blue' })
-      let eye2 = Eye.create({ color: 'brown' })
+      const user1 = User.create()
+      const user2 = User.create()
+      const eye1 = Eye.create({ color: 'blue' })
+      const eye2 = Eye.create({ color: 'brown' })
 
       let e = await eye1.save()
       validateId(e)
@@ -71,13 +71,13 @@ describe('Issues', function () {
       expect(users).to.have.length(2)
 
       // Get user1
-      let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
+      const u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
 
       // Ensure we have correct number of eyes...
       expect(u1.eyes).to.have.length(2)
 
-      let e1 = String(u1.eyes[0]._id) === String(eye1._id) ? u1.eyes[0] : u1.eyes[1]
-      let e2 = String(u1.eyes[1]._id) === String(eye2._id) ? u1.eyes[1] : u1.eyes[0]
+      const e1 = String(u1.eyes[0]._id) === String(eye1._id) ? u1.eyes[0] : u1.eyes[1]
+      const e2 = String(u1.eyes[1]._id) === String(eye2._id) ? u1.eyes[1] : u1.eyes[0]
 
       // ...and that we have the correct eyes
       expect(String(e1._id)).to.be.equal(String(eye1._id))
@@ -111,8 +111,8 @@ describe('Issues', function () {
         }
       }
 
-      let user = User.create()
-      let eye = Eye.create({ color: 'blue' })
+      const user = User.create()
+      const eye = Eye.create({ color: 'blue' })
 
       const e = await eye.save()
       validateId(e)
@@ -123,7 +123,7 @@ describe('Issues', function () {
       expect(users).to.have.length(1)
       expect(users[0].eyes).to.have.length(2)
 
-      let eyeRefs = users[0].eyes.map(function (e) { return e._id })
+      const eyeRefs = users[0].eyes.map(function (e) { return e._id })
 
       expect(eyeRefs).to.include(eye._id)
     })
@@ -146,7 +146,7 @@ describe('Issues', function () {
         }
 
         set fullName (name) {
-          let split = name.split(' ')
+          const split = name.split(' ')
           this.firstName = split[0]
           this.lastName = split[1]
         }
@@ -156,7 +156,7 @@ describe('Issues', function () {
         }
       }
 
-      let user = User.create({
+      const user = User.create({
         fullName: 'Billy Bob'
       })
 
@@ -183,7 +183,7 @@ describe('Issues', function () {
         }
       }
 
-      let user = User.create({
+      const user = User.create({
         name: 'Billy Bob'
       })
 
@@ -250,7 +250,7 @@ describe('Issues', function () {
         }
       }
 
-      let person = Person.create()
+      const person = Person.create()
       person.pet = Pet.create()
       person.pets.push(Pet.create())
 
@@ -304,7 +304,7 @@ describe('Issues', function () {
         }
       }
 
-      let person = Person.create()
+      const person = Person.create()
       person.pet = Pet.create()
       person.pets.push(Pet.create())
 
@@ -336,7 +336,7 @@ describe('Issues', function () {
         }
       }
 
-      let foo = Foo.create({ bar: [1, 2, 3] })
+      const foo = Foo.create({ bar: [1, 2, 3] })
 
       const f = await foo.save()
       expect(f.bar).to.have.length(3)
@@ -359,7 +359,7 @@ describe('Issues', function () {
         }
       }
 
-      let foo = Foo.create({ bar: [1, 2, 3] })
+      const foo = Foo.create({ bar: [1, 2, 3] })
 
       const f = await foo.save()
       expect(f.bar).to.have.length(3)

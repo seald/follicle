@@ -20,7 +20,7 @@ export class CamoError extends Error {
       value: this.constructor.name
     })
 
-    if (Error.hasOwnProperty('captureStackTrace')) {
+    if (Object.prototype.hasOwnProperty.call(Error, 'captureStackTrace')) {
       Error.captureStackTrace(this, this.constructor)
       return
     }

@@ -1,6 +1,6 @@
 #Changelog
 
-## 0.0.4 (xxx)
+## 1.1.0 (xxx)
 
 Features:
  - add way to give custom nedb options to `nedbclient`  to match `reactlocalmongoclient` signature;
@@ -16,17 +16,17 @@ Cleanup:
 Bug fixes:
  - fix bug in `dropDatabase` when not in memory which would crash when removing file (because of a `this` improperly used inside of a `function`);
  
-## 0.0.3 (2019-04-19)
+## 1.0.3 (2019-04-19)
 
 Features:
  - add a way to give custom `react-native-nedb` options to `reactlocalmongoclient` such as `AsyncStorage`
 
-## 0.0.2 (2018-06-15)
+## 1.0.2 (2018-06-15)
 
 Bug fixes:
  - added default empty queries to `mongoclient`.
 
-## 0.0.1 (2018-06-04)
+## 1.0.1 (2018-06-04)
 
 Features:
  - **[BREAKING]** dynamically connect to a database rather than a static connection (mostly to improve testing) with a factory function pattern;

@@ -29,7 +29,7 @@ describe('Migration', () => {
     let { Document, client: database } = await connect(url)
     let Data = await getData(Document)
     await Data.clearCollection()
-    let d = Data.create({
+    const d = Data.create({
       number: 3,
       item: 32,
       values: [1, 2, 3, 4]

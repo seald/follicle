@@ -30,7 +30,7 @@ const buildJS = async (options, { srcDirPath, destDirPath, rootDirPath = jetpack
       presets: [
         ['@babel/preset-env', {
           targets: {
-            'node': '9'
+            node: '9'
           },
           useBuiltIns: false
         }]

@@ -4,12 +4,12 @@ import DatabaseClient from './client'
 import { MongoClient as MDBClient, ObjectId } from 'mongodb'
 import { isObject } from '../validate'
 import { deepTraverse } from '../util'
-import * as URL from 'url'
+import { URL } from 'url'
 
 export default class MongoClient extends DatabaseClient {
   constructor (url, mongo) {
     super(url)
-    this._mongo = mongo.db(URL.parse(url).pathname.slice(1))
+    this._mongo = mongo.db(new URL(url).pathname.slice(1))
     this._client = mongo
   }
 
@@ -32,7 +32,7 @@ export default class MongoClient extends DatabaseClient {
       if (id === null) {
         db.insertOne(values, function (error, result) {
           if (error) return reject(error)
-          if (!result.hasOwnProperty('insertedId') || result.insertedId === null) {
+          if (!Object.prototype.hasOwnProperty.call(result, 'insertedId') || result.insertedId === null) {
             return reject(new Error('Save failed to generate ID for object.'))
           }
 
@@ -200,7 +200,7 @@ export default class MongoClient extends DatabaseClient {
       const db = that._mongo.collection(collection)
       let cursor = db.find(query)
       if (options.sort && (_.isArray(options.sort) || _.isString(options.sort))) {
-        let sortOptions = {}
+        const sortOptions = {}
         if (!_.isArray(options.sort)) {
           options.sort = [options.sort]
         }
@@ -265,7 +265,7 @@ export default class MongoClient extends DatabaseClient {
 
     const db = this._mongo.collection(collection)
 
-    let keys = {}
+    const keys = {}
     keys[field] = 1
     db.createIndex(keys, { unique: options.unique, sparse: options.sparse })
   }

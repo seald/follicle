@@ -30,9 +30,9 @@ describe('Cyclic', () => {
 
   describe('schema', () => {
     it('should allow cyclic dependencies', async () => {
-      let f = Foo.create()
+      const f = Foo.create()
       f.num = 26
-      let b = Bar.create()
+      const b = Bar.create()
       b.num = 99
       let foo = await f.save()
       b.foo = foo

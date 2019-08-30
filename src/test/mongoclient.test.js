@@ -52,7 +52,7 @@ describe('MongoClient', function () {
         }
       }
 
-      let school = School.create()
+      const school = School.create()
       school._id = new ObjectId('1234567890abcdef12345678')
       school.name = 'Springfield Elementary'
 
@@ -75,14 +75,14 @@ describe('MongoClient', function () {
          * successfully cast.
          */
     it('should automatically cast string ID in query to ObjectID', async function () {
-      let user = User.create()
+      const user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
 
       await user.save()
       validateId(user)
 
-      let id = String(user._id)
+      const id = String(user._id)
       const u = await User.findOne({ _id: id })
       validateId(u)
     })
@@ -92,7 +92,7 @@ describe('MongoClient', function () {
          * where user actually passes an ObjectId
          */
     it('should automatically cast string ID in query to ObjectID', async function () {
-      let user = User.create()
+      const user = User.create()
       user.firstName = 'Billy'
       user.lastName = 'Bob'
 
@@ -108,15 +108,15 @@ describe('MongoClient', function () {
          * queries. In this case we try it with '$in'.
          */
     it('should automatically cast string IDs in \'$in\' operator to ObjectIDs', async function () {
-      let user1 = User.create()
+      const user1 = User.create()
       user1.firstName = 'Billy'
       user1.lastName = 'Bob'
 
-      let user2 = User.create()
+      const user2 = User.create()
       user2.firstName = 'Jenny'
       user2.lastName = 'Jane'
 
-      let user3 = User.create()
+      const user3 = User.create()
       user3.firstName = 'Danny'
       user3.lastName = 'David'
 
@@ -124,28 +124,28 @@ describe('MongoClient', function () {
       validateId(user1)
       validateId(user2)
 
-      let id1 = String(user1._id)
-      let id3 = String(user3._id)
-      const users = await User.find({ _id: { '$in': [id1, id3] } })
+      const id1 = String(user1._id)
+      const id3 = String(user3._id)
+      const users = await User.find({ _id: { $in: [id1, id3] } })
       expect(users).to.have.length(2)
 
-      let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
-      let u3 = String(users[1]._id) === String(user3._id) ? users[1] : users[0]
+      const u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
+      const u3 = String(users[1]._id) === String(user3._id) ? users[1] : users[0]
 
       expect(String(u1._id)).to.be.equal(String(user1._id))
       expect(String(u3._id)).to.be.equal(String(user3._id))
     })
 
     it('should automatically cast string IDs in deep query objects', async function () {
-      let user1 = User.create()
+      const user1 = User.create()
       user1.firstName = 'Billy'
       user1.lastName = 'Bob'
 
-      let user2 = User.create()
+      const user2 = User.create()
       user2.firstName = 'Jenny'
       user2.lastName = 'Jane'
 
-      let user3 = User.create()
+      const user3 = User.create()
       user3.firstName = 'Danny'
       user3.lastName = 'David'
 
@@ -153,13 +153,13 @@ describe('MongoClient', function () {
       validateId(user1)
       validateId(user2)
 
-      let id1 = String(user1._id)
-      let id3 = String(user3._id)
+      const id1 = String(user1._id)
+      const id3 = String(user3._id)
       const users = await User.find({ $or: [{ _id: id1 }, { _id: id3 }] })
       expect(users).to.have.length(2)
 
-      let u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
-      let u3 = String(users[1]._id) === String(user3._id) ? users[1] : users[0]
+      const u1 = String(users[0]._id) === String(user1._id) ? users[0] : users[1]
+      const u3 = String(users[1]._id) === String(user3._id) ? users[1] : users[0]
 
       expect(String(u1._id)).to.be.equal(String(user1._id))
       expect(String(u3._id)).to.be.equal(String(user3._id))
@@ -185,11 +185,11 @@ describe('MongoClient', function () {
         }
       }
 
-      let user1 = User.create()
+      const user1 = User.create()
       user1.name = 'Bill'
       user1.email = 'billy@example.com'
 
-      let user2 = User.create()
+      const user2 = User.create()
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
 
@@ -213,11 +213,11 @@ describe('MongoClient', function () {
         }
       }
 
-      let user1 = User.create()
+      const user1 = User.create()
       user1.name = 'Bill'
       user1.email = 'billy@example.com'
 
-      let user2 = User.create()
+      const user2 = User.create()
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
 
