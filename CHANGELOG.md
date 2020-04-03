@@ -8,9 +8,14 @@
      - stop further compactions (done via stopAutocompaction);
      - remove references to datastores so that they cannot be used without being re-loaded.
 
+### Cleanup: 
+ - bump `dependencies` & `devDependencies`;
+
 ### Bug fixes:
   - a call to `save` in nedbclient would only `$set` the additions using nedb's modifiers (https://github.com/louischatriot/nedb#updating-documents), now it saves the whole document again.
   - migrations now allow to rename a field without leaving the old field lying in the Datastore
+
+
 ## 1.1.0 (2019-09-04)
 
 ### Features:
@@ -32,10 +37,12 @@
 ### Features:
  - add a way to give custom `react-native-nedb` options to `reactlocalmongoclient` such as `AsyncStorage`
 
+
 ## 1.0.2 (2018-06-15)
 
 ### Bug fixes:
  - added default empty queries to `mongoclient`.
+
 
 ## 1.0.1 (2018-06-04)
 
@@ -43,6 +50,7 @@
  - **[BREAKING]** dynamically connect to a database rather than a static connection (mostly to improve testing) with a factory function pattern;
  - added migrations
  - **[BREAKING]** changed how the collections are stored with NeDB: rather than giving a file path, a directory path is given and the name of each collection is given by the name of the class;
+
 
 #Old changelog (camo)
 

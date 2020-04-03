@@ -45,27 +45,27 @@
     "node": ">=2.0.0"
   },
   "peerDependencies": {
-    "mongodb": "^3.3.2",
+    "mongodb": "^3.5.5",
     "nedb": "^1.8.0",
     "react-native-local-mongodb": "^2.2.9"
   },
   "dependencies": {
     "depd": "^2.0.0",
     "lodash": "^4.17.15",
-    "temp": "^0.9.0"
+    "temp": "^0.9.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
     "centimaitre": "^1.0.3",
     "chai": "^4.2.0",
     "dirty-chai": "^2.0.1",
-    "fs-jetpack": "^2.2.2",
-    "mocha": "^6.2.0",
+    "fs-jetpack": "^2.2.3",
+    "mocha": "^7.1.1",
     "mongodb": "^3.2.7",
     "nedb": "^1.8.0",
-    "nyc": "^14.1.1",
-    "source-map-support": "^0.5.13",
-    "standard": "^14.1.0"
+    "nyc": "^15.0.0",
+    "source-map-support": "^0.5.16",
+    "standard": "^14.3.3"
   }
 }
