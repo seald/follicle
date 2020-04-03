@@ -286,7 +286,7 @@ export default class NeDbClient extends DatabaseClient {
       try {
         db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
         db.persistence.stopAutocompaction()
-        await util.promisify(db.persistence.persistCachedDatabase.bind(db.persistence))
+        await util.promisify(db.persistence.persistCachedDatabase.bind(db.persistence))()
       } catch (error) {
         console.warn(`Collection ${collection} cannot be loaded because of ${error}.
         Skipping`)
