@@ -291,8 +291,8 @@ export default class NeDbClient extends DatabaseClient {
         console.warn(`Collection ${collection} cannot be loaded because of ${error}.
         Skipping`)
       }
-      delete this._collections[collection]
     }
+    this._collections = {}
   }
 
   /**
