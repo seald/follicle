@@ -92,7 +92,7 @@ export default class NeDbClient extends DatabaseClient {
     // note sure how the query will work if id == null. Seemed to
     // have some problems before with passing null ids.
     if (id === null) return (await util.promisify(db.insert.bind(db))(values))._id
-    else return util.promisify(db.update.bind(db))({ _id: id }, { _id: id, ...values }, { upsert: true })
+    else return util.promisify(db.update.bind(db))({ _id: id }, { _id: id, ...values }, { upsert: true }) // Yes, we have to put the id both in the query and in the actual document, or custom IDs fail
   }
 
   /**
