@@ -289,10 +289,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       const data = await client.find(this.collectionName(), { _version: { $ne: this._getDocumentVersion() } }, {})
       const migrate = migrateDocument(this._getMigrations())
       await Promise.all(data
-        .map(entry => {
-          const _e = migrate(entry)
-          return _e
-        })
+        .map(entry => migrate(entry))
         .map(async entry => client.save(this.collectionName(), entry._id, entry))
       )
     }

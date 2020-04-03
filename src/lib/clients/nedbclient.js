@@ -92,7 +92,7 @@ export default class NeDbClient extends DatabaseClient {
     // note sure how the query will work if id == null. Seemed to
     // have some problems before with passing null ids.
     if (id === null) return (await util.promisify(db.insert.bind(db))(values))._id
-    else return util.promisify(db.update.bind(db))({ _id: id }, { $set: values }, { upsert: true })
+    else return util.promisify(db.update.bind(db))({ _id: id }, { _id: id, ...values }, { upsert: true })
   }
 
   /**
@@ -272,11 +272,27 @@ export default class NeDbClient extends DatabaseClient {
 
   /**
    * Close current connection
+   * Camo didn't close anything in its implementation, nedb does not expose any API to close anything.
+   * It is a good idea to:
+   *   - persist cached database & compact (done via persistCachedDatabase);
+   *   - stop further compactions (doen via stopAutocompaction);
+   *   - remove references to datastores so that they cannot be used without being re-loaded.
    *
    * @returns {Promise}
    */
-  close () {
-    // Nothing to do for NeDB
+  async close () {
+    for (const collection in this._collections) {
+      let db
+      try {
+        db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
+        db.persistence.stopAutocompaction()
+        await util.promisify(db.persistence.persistCachedDatabase.bind(db.persistence))
+      } catch (error) {
+        console.warn(`Collection ${collection} cannot be loaded because of ${error}.
+        Skipping`)
+      }
+      delete this._collections[collection]
+    }
   }
 
   /**
