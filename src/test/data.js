@@ -42,7 +42,7 @@ export const getMigratedDataModel = Document => class Data extends Document {
         choices: ['redit', 'hacker-news', 'wired', 'arstechnica'],
         default: 'redit'
       },
-      item: {
+      fluffykin: { // renaming model field item to fluffykin
         type: Number,
         min: 0,
         max: 100
