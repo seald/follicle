@@ -1,7 +1,4 @@
-'use strict'
-
 import * as path from 'path'
-import _ from 'lodash'
 import Datastore from 'react-native-local-mongodb'
 import DatabaseClient from './client'
 import { AsyncStorage } from 'react-native'
@@ -252,14 +249,14 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
       const db = getCollection(collection, that._collections, that._path, that.options)
       let cursor = db.find(query)
 
-      if (options.sort && (_.isArray(options.sort) || _.isString(options.sort))) {
+      if (options.sort && (Array.isArray(options.sort) || typeof options.sort === 'string')) {
         const sortOptions = {}
-        if (!_.isArray(options.sort)) {
+        if (!Array.isArray(options.sort)) {
           options.sort = [options.sort]
         }
 
         options.sort.forEach(function (s) {
-          if (!_.isString(s)) return
+          if (typeof s !== 'string') return
 
           let sortOrder = 1
           if (s[0] === '-') {
@@ -379,7 +376,7 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   // TODO: this must be carefully used, will drop database known at this point in runtime. If no instance of a model has been created, the collection of this model won't be dropped.
   dropDatabase () {
     const clearPromises = []
-    _.keys(this._collections).forEach(key => {
+    Object.keys(this._collections).forEach(key => {
       const p = new Promise((resolve, reject) => {
         const dbLocation = getCollectionPath(this._path, key)
 

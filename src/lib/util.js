@@ -1,5 +1,3 @@
-'use strict'
-
 import { CamoError } from './errors'
 
 export const deepTraverse = function (obj, func) {

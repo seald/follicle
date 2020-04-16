@@ -1,4 +1,3 @@
-'use strict'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
 import { inherits } from 'util'

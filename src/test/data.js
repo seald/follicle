@@ -1,5 +1,3 @@
-'use strict'
-
 export default Document => class Data extends Document {
   constructor () {
     super()

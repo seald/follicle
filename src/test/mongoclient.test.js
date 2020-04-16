@@ -1,6 +1,5 @@
-/* global describe, it, before, after, afterEach */
+/* eslint-env mocha */
 
-'use strict'
 import dirtyChai from 'dirty-chai'
 import chai from 'chai'
 import { ObjectId } from 'mongodb'

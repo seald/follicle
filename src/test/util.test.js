@@ -1,6 +1,5 @@
-/* global describe, it */
+/* eslint-env mocha */
 
-'use strict'
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
 import { deepTraverse } from '../lib/util'

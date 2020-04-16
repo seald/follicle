@@ -1,6 +1,3 @@
-'use strict'
-
-import _ from 'lodash'
 import { ValidationError } from './errors'
 
 export default ({ client, validators }) => {
@@ -80,7 +77,7 @@ export default ({ client, validators }) => {
     schema (extension) {
       if (!extension) return
 
-      _.keys(extension).forEach(k => {
+      Object.keys(extension).forEach(k => {
         this[k] = extension[k]
       })
     }
@@ -113,9 +110,9 @@ export default ({ client, validators }) => {
     generateSchema () {
       const that = this
 
-      _.keys(this).forEach(k => {
+      Object.keys(this).forEach(k => {
         // Ignore private variables
-        if (_.startsWith(k, '_')) {
+        if (k.startsWith('_')) {
           return
         }
 
@@ -136,7 +133,7 @@ export default ({ client, validators }) => {
      * TODO: This is not the right approach. The method needs to collect all errors in array and return them.
      */
     validate () {
-      _.keys(this._schema).forEach(key => {
+      Object.keys(this._schema).forEach(key => {
         const value = this[key]
 
         // TODO: This should probably be in Document, not BaseDocument
@@ -191,7 +188,7 @@ export default ({ client, validators }) => {
      * same for strings (UTF, Unicode, ASCII, etc)?
      */
     canonicalize () {
-      _.keys(this._schema).forEach(key => {
+      Object.keys(this._schema).forEach(key => {
         const value = this[key]
 
         if (this._schema[key].type === Date && isDate(value)) this[key] = new Date(value)
@@ -236,7 +233,7 @@ export default ({ client, validators }) => {
       const documents = []
       datas.forEach(d => {
         const instance = this._instantiate()
-        _.keys(d).forEach(key => {
+        Object.keys(d).forEach(key => {
           const value = d[key] === null ? instance.getDefault(key) : d[key]
           // If its not in the schema, we don't care about it... right?
           if (key in instance._schema) {
@@ -288,7 +285,7 @@ export default ({ client, validators }) => {
       // Hmm, if this is true, thats an error on the user. Right?
       const anInstance = documents[0]
 
-      _.keys(anInstance._schema).forEach(key => {
+      Object.keys(anInstance._schema).forEach(key => {
         // Only populate specified fields
         if (isArray(fields) && fields.indexOf(key) < 0) return
 
@@ -329,16 +326,16 @@ export default ({ client, validators }) => {
 
       // ...then for each array of ids, load them all...
 
-      for (const key of _.keys(ids)) {
+      for (const key of Object.keys(ids)) {
         let keyIds = []
-        _.keys(ids[key]).forEach(k => {
+        Object.keys(ids[key]).forEach(k => {
           // Before adding to list, we convert id to the
           // backend database's native ID format.
           keyIds = keyIds.concat(ids[key][k])
         })
 
         // Only want to load each reference once
-        keyIds = _.uniq(keyIds)
+        keyIds = [...new Set(keyIds)]
 
         // Handle array of references (like [MyObject])
         const type = isArray(anInstance._schema[key].type) ? anInstance._schema[key].type[0] : anInstance._schema[key].type
@@ -347,7 +344,7 @@ export default ({ client, validators }) => {
         const dereferences = await type.find({ _id: { $in: keyIds } }, { populate: false })
         // Assign each dereferenced object to parent
 
-        _.keys(ids[key]).forEach(k => {
+        Object.keys(ids[key]).forEach(k => {
           // TODO: Replace with documents.find when able
           // Find the document to assign the derefs to
           let doc
@@ -416,6 +413,7 @@ export default ({ client, validators }) => {
     /**
      *
      * @param keep
+     * @param {boolean} toJSON
      * @returns {{}}
      * @private
      */
@@ -424,8 +422,8 @@ export default ({ client, validators }) => {
       else if (keep._id === undefined) keep._id = true
 
       const values = {}
-      _.keys(this).forEach((k) => {
-        if (_.startsWith(k, '_')) {
+      Object.keys(this).forEach((k) => {
+        if (k.startsWith('_')) {
           if (k === '_id' && keep._id) values[k] = this[k]
         } else if (isEmbeddedDocument(this[k])) values[k] = this[k]._toData(null, toJSON)
         else if (isArray(this[k]) && this[k].length > 0 && isEmbeddedDocument(this[k][0])) {
@@ -444,7 +442,7 @@ export default ({ client, validators }) => {
 
     _getEmbeddeds () {
       let embeddeds = []
-      _.keys(this._schema).forEach(v => {
+      Object.keys(this._schema).forEach(v => {
         if (isEmbeddedDocument(this._schema[v].type) || (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0]))) { embeddeds = embeddeds.concat(this[v]) }
       })
       return embeddeds
@@ -453,7 +451,7 @@ export default ({ client, validators }) => {
     _getHookPromises (hookName) {
       const embeddeds = this._getEmbeddeds()
       let hookPromises = []
-      hookPromises = hookPromises.concat(_.invokeMap(embeddeds, hookName))
+      hookPromises = hookPromises.concat(embeddeds.map(e => e[hookName]()))
       hookPromises.push(this[hookName]())
       return hookPromises
     }

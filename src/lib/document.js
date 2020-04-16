@@ -1,6 +1,3 @@
-'use strict'
-
-import _ from 'lodash'
 import depd from 'depd'
 import { migrateDocument } from './util'
 import { CamoError } from './errors'
@@ -53,7 +50,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       // Ensure we at least have defaults set
 
       // TODO: We already do this on .create(), so should it really be done again?
-      _.keys(this._schema).forEach(key => {
+      Object.keys(this._schema).forEach(key => {
         if (!(key in this._schema)) this[key] = this.getDefault(key)
       })
 
@@ -73,7 +70,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       const toUpdate = this._toData({ _id: false })
 
       // Reference our objects
-      _.keys(this._schema).forEach(key => {
+      Object.keys(this._schema).forEach(key => {
         // Never care about _id
         if (key === '_id') return
         // isReferenceable OR ( isArray AND contains value AND value isReferenceable )
@@ -93,7 +90,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       })
 
       // Replace EmbeddedDocument references with just their data
-      _.keys(this._schema).forEach(key => {
+      Object.keys(this._schema).forEach(key => {
         // isEmbeddedDocument OR ( isArray AND contains value AND value isEmbeddedDocument )
         if (isEmbeddedDocument(this[key]) || (isArray(this[key]) && this[key].length > 0 && isEmbeddedDocument(this[key][0]))) {
           // Handle array of references (ex: { type: [MyObject] })
@@ -245,7 +242,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       if (this._indexesCreated) return
       const instance = this._instantiate()
 
-      _.keys(instance._schema).forEach(k => {
+      Object.keys(instance._schema).forEach(k => {
         if (instance._schema[k].unique) client.createIndex(this.collectionName(), k, { unique: true })
       })
 
