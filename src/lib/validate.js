@@ -1,7 +1,7 @@
 export const isString = s => typeof s === 'string'
 export const isNumber = n => typeof n === 'number' && isFinite(n)
 export const isBoolean = b => b === true || b === false
-export const isDate = d => isNumber(d) || (isObject(d) && d.toString() === '[object Date]') || isNumber(Date.parse(d))
+export const isDate = d => isNumber(d) || d instanceof Date || isNumber(Date.parse(d))
 export const isBuffer = b => typeof b === 'object' || b instanceof Buffer
 export const isObject = o => typeof o === 'object' && o != null
 export const isArray = a => Array.isArray(a)
