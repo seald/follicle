@@ -1,6 +1,4 @@
-/* global describe, it, before, afterEach */
-
-'use strict'
+/* eslint-env mocha */
 
 import dirtyChai from 'dirty-chai'
 import chai from 'chai'

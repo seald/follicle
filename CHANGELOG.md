@@ -1,5 +1,11 @@
 #Changelog
 
+## Unreleased
+
+### Cleanup
+  - remove lodash as a dependency
+
+
 ## 1.1.1 (2020-04-03)
 
 ### Features:
@@ -31,6 +37,7 @@
 
 ### Bug fixes:
  - fix bug in `dropDatabase` when not in memory which would crash when removing file (because of a `this` improperly used inside of a `function`);
+ 
  
 ## 1.0.3 (2019-04-19)
 

@@ -1,5 +1,3 @@
-'use strict'
-import _ from 'lodash'
 import DatabaseClient from './client'
 import { MongoClient as MDBClient, ObjectId } from 'mongodb'
 import { isObject } from '../validate'
@@ -199,14 +197,14 @@ export default class MongoClient extends DatabaseClient {
     return new Promise(function (resolve, reject) {
       const db = that._mongo.collection(collection)
       let cursor = db.find(query)
-      if (options.sort && (_.isArray(options.sort) || _.isString(options.sort))) {
+      if (options.sort && (Array.isArray(options.sort) || typeof options.sort === 'string')) {
         const sortOptions = {}
-        if (!_.isArray(options.sort)) {
+        if (!Array.isArray(options.sort)) {
           options.sort = [options.sort]
         }
 
         options.sort.forEach(function (s) {
-          if (!_.isString(s)) return
+          if (typeof s !== 'string') return
 
           let sortOrder = 1
           if (s[0] === '-') {
@@ -387,10 +385,10 @@ const castQueryIds = function (query) {
     if (key === '_id') {
       if (String(parent[key]).match(/^[a-fA-F0-9]{24}$/)) {
         parent[key] = castId(parent[key])
-      } else if (isObject(parent[key]) && _.has(parent[key], '$in')) {
+      } else if (isObject(parent[key]) && Object.hasOwnProperty.call(parent[key], '$in')) {
         // { _id: { '$in': [ 'K1cbMk7T8A0OU83IAT4dFa91', 'Y1cbak7T8A1OU83IBT6aPq11' ] } }
         parent[key].$in = castIdArray(parent[key].$in)
-      } else if (isObject(parent[key]) && _.has(parent[key], '$nin')) {
+      } else if (isObject(parent[key]) && Object.hasOwnProperty.call(parent[key], '$nin')) {
         // { _id: { '$nin': [ 'K1cbMk7T8A0OU83IAT4dFa91', 'Y1cbak7T8A1OU83IBT6aPq11' ] } }
         parent[key].$nin = castIdArray(parent[key].$nin)
       }

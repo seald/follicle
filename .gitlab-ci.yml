@@ -13,7 +13,12 @@ before_script:
   - echo "registry=https://nexus.tardis.seald.io/repository/npm/" >> .npmrc
   - echo "@seald:registry=https://nexus.tardis.seald.io/repository/npm-hosted/" >> .npmrc
   - echo "always-auth=true" >> .npmrc
-  - npm install --silent
+  - npm ci --cache .npm --prefer-offline
+
+cache:
+  key: "follicle" # universal cache
+  paths:
+    - .npm/
 
 test:
   stage: test

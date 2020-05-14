@@ -1,6 +1,4 @@
-/* global describe, it, beforeEach, afterEach */
-'use strict'
-
+/* eslint-env mocha */
 import getData, { getMigratedDataModel } from './data'
 import jetpack from 'fs-jetpack'
 import { connect } from '../lib/connect'

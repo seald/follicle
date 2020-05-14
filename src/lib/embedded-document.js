@@ -1,5 +1,3 @@
-'use strict'
-
 export default ({ BaseDocument }) => {
   return class EmbeddedDocument extends BaseDocument {
     constructor () {

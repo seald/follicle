@@ -1,14 +1,10 @@
-'use strict'
-
-import _ from 'lodash'
-
-export const isString = s => _.isString(s)
-export const isNumber = n => _.isNumber(n) && _.isFinite(n) && !isString(n)
-export const isBoolean = b => _.isBoolean(b)
-export const isDate = d => isNumber(d) || _.isDate(d) || isNumber(Date.parse(d))
+export const isString = s => typeof s === 'string'
+export const isNumber = n => typeof n === 'number' && isFinite(n)
+export const isBoolean = b => b === true || b === false
+export const isDate = d => isNumber(d) || d instanceof Date || isNumber(Date.parse(d))
 export const isBuffer = b => typeof b === 'object' || b instanceof Buffer
-export const isObject = o => _.isObject(o)
-export const isArray = a => _.isArray(a)
+export const isObject = o => typeof o === 'object' && o != null
+export const isArray = a => Array.isArray(a)
 export const isDocument = m => m && m.documentClass && m.documentClass() === 'document'
 export const isEmbeddedDocument = e => e && e.documentClass && e.documentClass() === 'embedded'
 export const isSupportedType = t => (t === String || t === Number || t === Boolean ||
