@@ -1,6 +1,6 @@
 #Changelog
 
-## Unreleased
+## 1.1.2 (2020-05-14)
 
 ### Cleanup
   - remove lodash as a dependency
