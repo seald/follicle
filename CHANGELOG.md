@@ -1,5 +1,10 @@
 #Changelog
 
+## Unreleased (2020-05-20)
+
+### Cleanup
+  - update dependencies
+
 ## 1.1.2 (2020-05-14)
 
 ### Cleanup
