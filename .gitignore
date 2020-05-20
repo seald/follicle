@@ -1,7 +1,19 @@
-build/
-node_modules/
+# IDE related
 .idea/
-coverage/
-.nyc_output/
-npm-debug.log
+
+# OS related
 .DS_Store
+
+# NPM related
+node_modules/
+
+# Build process related
+coverage/
+tmp/
+build/
+.nyc_output/
+report.xml
+
+.vscode/
+
+.npm/

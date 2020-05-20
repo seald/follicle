@@ -4,6 +4,7 @@
 
 ### Cleanup
   - update dependencies
+  - less useless files in package
 
 ## 1.1.2 (2020-05-14)
 
