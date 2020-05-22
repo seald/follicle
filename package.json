@@ -2,6 +2,13 @@
   "name": "@seald/follicle",
   "main": "build/index.js",
   "module": "src/index.js",
+  "files": [
+    "/src/index.js",
+    "/src/lib/**",
+    "/build/index.js",
+    "/build/lib/**.js",
+    "!/**/*.spec.js"
+  ],
   "version": "1.1.2",
   "description": "A class-based ES6 ODM for Mongo-like databases.",
   "author": {
@@ -56,12 +63,12 @@
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
-    "centimaitre": "^1.0.3",
+    "centimaitre": "^1.0.4",
     "chai": "^4.2.0",
     "dirty-chai": "^2.0.1",
-    "fs-jetpack": "^2.3.0",
+    "fs-jetpack": "^2.4.0",
     "mocha": "^7.1.2",
-    "mongodb": "^3.2.7",
+    "mongodb": "^3.5.7",
     "nedb": "^1.8.0",
     "nyc": "^15.0.1",
     "source-map-support": "^0.5.19",
