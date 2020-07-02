@@ -1,10 +1,17 @@
 #Changelog
 
-## 1.1.3 (2020-07-02)
+## 1.1.4 (2020-07-02)
+
+### Bug fixes:
+  - fix package build
+
+
+## 1.1.3 (2020-07-02) /!\ Broken
 
 ### Cleanup
   - update dependencies
   - less useless files in package
+
 
 ## 1.1.2 (2020-05-14)
 
