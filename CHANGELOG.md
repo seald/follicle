@@ -1,6 +1,6 @@
 #Changelog
 
-## Unreleased (2020-05-20)
+## 1.1.3 (2020-07-02)
 
 ### Cleanup
   - update dependencies

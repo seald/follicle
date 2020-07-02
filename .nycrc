@@ -10,7 +10,8 @@
   "reporter": [
     "html",
     "text",
-    "text-summary"
+    "text-summary",
+    "cobertura"
   ],
   "excludeAfterRemap": false
 }
