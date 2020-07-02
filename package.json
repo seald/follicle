@@ -6,7 +6,7 @@
     "/src/index.js",
     "/src/lib/**",
     "/build/index.js",
-    "/build/lib/**.js",
+    "/build/lib/**",
     "!/**/*.spec.js"
   ],
   "version": "1.1.3",
