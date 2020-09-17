@@ -20,7 +20,7 @@ export default ({ client, validators }) => {
     let typeDeclaration = {}
     if (property.type) typeDeclaration = property
     else if (isSupportedType(property)) typeDeclaration.type = property
-    else throw new Error('Unsupported type or bad variable. Remembuer, non-persisted objects must start with an underscore (_). Got:', property)
+    else throw new Error('Unsupported type or bad variable. Remember, non-persisted objects must start with an underscore (_). Got:', property)
 
     return typeDeclaration
   }

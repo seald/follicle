@@ -360,7 +360,7 @@ describe('Embedded', () => {
       })).to.throw(Error, /choices/)
     })
 
-    it('should not crash when embedded is not required', async () => {
+    it('should save when embedded is not required', async () => {
       class Money extends EmbeddedDocument {
         constructor () {
           super()
@@ -371,7 +371,7 @@ describe('Embedded', () => {
       class Wallet extends Document {
         constructor () {
           super()
-          this.contents = { type: Money, required: false }
+          this.contents = Money // not required by default
         }
       }
 
@@ -381,6 +381,24 @@ describe('Embedded', () => {
       assert.strictEqual(result.length, 1)
       assert.isTrue(Object.hasOwnProperty.call(result[0], 'contents'))
       assert.strictEqual(result[0].contents, undefined)
+    })
+
+    it('should throw when embedded is required', async () => {
+      class Money extends EmbeddedDocument {
+        constructor () {
+          super()
+          this.value = { type: String, default: 'hello' }
+        }
+      }
+
+      class Wallet extends Document {
+        constructor () {
+          super()
+          this.contents = { type: Money, required: true }
+        }
+      }
+
+      expect(() => Wallet.create({})).to.throw(Error, /required/)
     })
   })
 
