@@ -8,6 +8,7 @@ import { validateId } from './util'
 
 chai.use(dirtyChai)
 const expect = chai.expect
+const assert = chai.assert
 
 describe('Embedded', () => {
   // TODO: Should probably use mock database client...
@@ -357,6 +358,47 @@ describe('Embedded', () => {
       expect(() => Wallet.create({
         contents: [Money.create({ value: 5 }), Money.create({ value: 26 })]
       })).to.throw(Error, /choices/)
+    })
+
+    it('should save when embedded is not required', async () => {
+      class Money extends EmbeddedDocument {
+        constructor () {
+          super()
+          this.value = { type: String, default: 'hello' }
+        }
+      }
+
+      class Wallet extends Document {
+        constructor () {
+          super()
+          this.contents = Money // not required by default
+        }
+      }
+
+      await Wallet.create({}).save()
+
+      const result = await Wallet.find({})
+      assert.strictEqual(result.length, 1)
+      assert.isTrue(Object.hasOwnProperty.call(result[0], 'contents'))
+      assert.strictEqual(result[0].contents, undefined)
+    })
+
+    it('should throw when embedded is required', async () => {
+      class Money extends EmbeddedDocument {
+        constructor () {
+          super()
+          this.value = { type: String, default: 'hello' }
+        }
+      }
+
+      class Wallet extends Document {
+        constructor () {
+          super()
+          this.contents = { type: Money, required: true }
+        }
+      }
+
+      expect(() => Wallet.create({})).to.throw(Error, /required/)
     })
   })
 
