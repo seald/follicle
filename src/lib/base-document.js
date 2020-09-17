@@ -239,8 +239,10 @@ export default ({ client, validators }) => {
           if (key in instance._schema) {
             const type = instance._schema[key].type
             // Initialize EmbeddedDocument
-            if (type.documentClass && type.documentClass() === 'embedded') instance[key] = type._fromData(value)
-            else if (isArray(type) && type.length > 0 && type[0].documentClass && type[0].documentClass() === 'embedded') {
+            if (type.documentClass && type.documentClass() === 'embedded') {
+              if (isEmptyValue(value)) instance[key] = value
+              else instance[key] = type._fromData(value)
+            } else if (isArray(type) && type.length > 0 && type[0].documentClass && type[0].documentClass() === 'embedded') {
               // Initialize array of EmbeddedDocuments
               instance[key] = []
               value.forEach((v, i) => {
@@ -443,7 +445,7 @@ export default ({ client, validators }) => {
     _getEmbeddeds () {
       let embeddeds = []
       Object.keys(this._schema).forEach(v => {
-        if (isEmbeddedDocument(this._schema[v].type) || (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0]))) { embeddeds = embeddeds.concat(this[v]) }
+        if ((isEmbeddedDocument(this._schema[v].type) && !isEmptyValue(this[v])) || (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0]))) { embeddeds = embeddeds.concat(this[v]) }
       })
       return embeddeds
     }
