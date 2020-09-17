@@ -1,5 +1,8 @@
 #Changelog
 
+## 1.1.5 (2020-09-17)
+  - fix crash when an EmbeddedDocument is directly a non-required property of a Document
+
 ## 1.1.4 (2020-07-02)
 
 ### Bug fixes:
