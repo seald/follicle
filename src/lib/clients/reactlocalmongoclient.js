@@ -1,7 +1,7 @@
 import * as path from 'path'
 import Datastore from 'react-native-local-mongodb'
 import DatabaseClient from './client'
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage } from '@react-native-community/async-storage'
 
 const urlToPath = function (url) {
   if (url.indexOf('reactnedb://') > -1) {
