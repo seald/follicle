@@ -1,5 +1,8 @@
 #Changelog
 
+## 1.1.6 (2020-10-06)
+  - fix deprecated import of react-native async-storage
+
 ## 1.1.5 (2020-09-17)
   - fix crash when an EmbeddedDocument is directly a non-required property of a Document
 
