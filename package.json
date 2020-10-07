@@ -9,7 +9,7 @@
     "/build/lib/**",
     "!/**/*.spec.js"
   ],
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "A class-based ES6 ODM for Mongo-like databases.",
   "author": {
     "name": "Timothée Rebours",
