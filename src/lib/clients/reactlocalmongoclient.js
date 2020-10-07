@@ -1,7 +1,7 @@
 import * as path from 'path'
 import Datastore from 'react-native-local-mongodb'
 import DatabaseClient from './client'
-import { AsyncStorage } from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const urlToPath = function (url) {
   if (url.indexOf('reactnedb://') > -1) {
@@ -19,10 +19,10 @@ const getCollectionPath = function (dbLocation, collection) {
 
 const createCollection = function (collectionName, url, options) {
   if (url === 'memory') {
-    return new Datastore({ inMemoryOnly: true })
+    return new Datastore({ inMemoryOnly: true, storage: AsyncStorage })
   }
   const collectionPath = getCollectionPath(url, collectionName)
-  return new Datastore({ ...options, filename: collectionPath, autoload: true })
+  return new Datastore({ ...options, filename: collectionPath, autoload: true, storage: AsyncStorage })
 }
 
 const getCollection = function (name, collections, path, options) {

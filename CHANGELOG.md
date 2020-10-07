@@ -1,5 +1,8 @@
 #Changelog
 
+## 1.1.7 (2020-10-07)
+  - actually fix deprecated import of react-native async-storage
+
 ## 1.1.6 (2020-10-06)
   - fix deprecated import of react-native async-storage
 
