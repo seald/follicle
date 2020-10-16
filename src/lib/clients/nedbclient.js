@@ -338,11 +338,10 @@ export default class NeDbClient extends DatabaseClient {
    */
   async close () {
     await this._waitForTasks()
-    for (const collection in this._collections) {
+    for (const collection of Object.keys(this._collections)) {
       let db
       try {
-        db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-        delete this._collections[db]
+        db = this._collections[collection]
         db.persistence.stopAutocompaction()
         const queueDrained = new Promise(resolve => { db.executor.queue.drain = resolve })
         // Since Collections are always loaded manually (not with nedb's `autoload`), and db is a properly loaded

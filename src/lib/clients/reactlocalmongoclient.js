@@ -307,11 +307,11 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async close () {
-    for (const collection in this._collections) {
+    await this._waitForTasks()
+    for (const collection of Object.keys(this._collections)) {
       let db
       try {
-        db = await getCollection(collection, this._collections, this._path, this._options)
-        delete this._collections[db]
+        db = this._collections[collection]
         db.persistence.stopAutocompaction()
         const queueDrained = new Promise(resolve => { db.executor.queue.drain = resolve })
         // Since Collections are always loaded manually (not with nedb's `autoload`), and db is a properly loaded
