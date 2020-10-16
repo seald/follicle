@@ -4,9 +4,12 @@ import dirtyChai from 'dirty-chai'
 import chai from 'chai'
 import { connect } from '../lib/connect'
 import { validateId } from './util'
+import jetpack from 'fs-jetpack'
 
 chai.use(dirtyChai)
 const expect = chai.expect
+
+const wd = jetpack.cwd('test_dir')
 
 describe('NeDbClient', () => {
   const url = 'nedb://memory'
@@ -68,7 +71,7 @@ describe('NeDbClient', () => {
       user1.email = 'billy@example.com'
 
       const user2 = User.create()
-      user1.name = 'Billy'
+      user2.name = 'Billy'
       user2.email = 'billy@example.com'
 
       await Promise.all([user1.save(), user2.save()])
@@ -96,7 +99,7 @@ describe('NeDbClient', () => {
       user1.email = 'billy@example.com'
 
       const user2 = User.create()
-      user1.name = 'Billy'
+      user2.name = 'Billy'
       user2.email = 'billy@example.com'
 
       await Promise.all([user1.save(), user2.save()])
@@ -105,5 +108,43 @@ describe('NeDbClient', () => {
       expect(user1.email).to.be.equal('billy@example.com')
       expect(user2.email).to.be.equal('billy@example.com')
     })
+  })
+})
+
+describe('NeDbClient on disk', () => {
+  const url = 'nedb://' + wd.path('.')
+  let database = null
+  let Document
+
+  before(async () => {
+    await wd.dirAsync('.', { empty: true });
+    ({ Document, client: database } = await connect(url))
+    await database.dropDatabase()
+  })
+
+  after(async () => {
+    await wd.removeAsync('.', { recursive: true })
+  })
+
+  afterEach(() => database.dropDatabase())
+
+  it('should execute all operations before closing', async () => {
+    class School extends Document {
+      constructor () {
+        super()
+
+        this.name = String
+      }
+    }
+    const makeElement = async () => {
+      const school = School.create()
+      school.name = 'South Park Elementary'
+
+      await school.save()
+    }
+    (new Array(1000)).fill(null).map(() => makeElement())
+    await database.close();
+    ({ Document, client: database } = await connect(url))
+    expect(await School.count({})).to.be.equal(1000)
   })
 })

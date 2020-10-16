@@ -1,5 +1,14 @@
 #Changelog
 
+## Unreleased
+  - NeDBClient & ReactNativeLocalMongoClient:
+    - add a layer to track if there are still ongoing tasks;
+    - wait for those tasks to be executed before closing the database;
+    - queue `persistCachedDatabase` in database's built-in executor to avoid internal race conditions;
+    - wait for the database's built-in executor to be drained.
+  - ReactNativeLocalMongoClient: _asyncify_
+  - update dependencies
+
 ## 1.1.7 (2020-10-07)
   - actually fix deprecated import of react-native async-storage
 
