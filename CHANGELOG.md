@@ -1,6 +1,15 @@
 #Changelog
 
-## Unreleased
+## 1.1.9 (unreleased)
+  - fix bug in the layer to track if there are still ongoing tasks which threw at close time if one of the tasks failed;
+  - fix bug in the layer to track if there are still ongoing tasks which generated uncaught rejections;
+  - move layer to track if there are still ongoing tasks to the Client class;
+  - define the *tasks* as methods of the Document class rather than methods of the various Client classes, because there
+   are `async` pre-hook and post-hooks in the Document class which were previously ignored which induced race conditions.
+  - fix `Document#createIndex` method which is actually `async`;
+  - fix `DatabaseClient#dropDatabase` which didn't work with NeDB and ReactNativeLocalMongo;
+
+## *broken* 1.1.8 (2020-10-16)
   - NeDBClient & ReactNativeLocalMongoClient:
     - add a layer to track if there are still ongoing tasks;
     - wait for those tasks to be executed before closing the database;

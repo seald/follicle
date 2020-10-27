@@ -61,7 +61,15 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
     return Promise.all(this._tasks.values())
   }
 
-  async _save (collection, id, values) {
+  /**
+   * Save (upsert) document
+   *
+   * @param {String} collection Collection's name
+   * @param {ObjectId?} id Document's id
+   * @param {Object} values Data for save
+   * @returns {Promise} Promise with result insert or update query
+   */
+  async save (collection, id, values) {
     const db = await getCollection(collection, this._collections, this._path, this._options)
 
     // TODO: I'd like to just use update with upsert:true, but I'm
@@ -72,24 +80,6 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   }
 
   /**
-   * Save (upsert) document
-   *
-   * @param {String} collection Collection's name
-   * @param {ObjectId?} id Document's id
-   * @param {Object} values Data for save
-   * @returns {Promise} Promise with result insert or update query
-   */
-  async save (collection, id, values) {
-    return this._startTask(this._save(collection, id, values))
-  }
-
-  async _delete (collection, id) {
-    if (id === null) return 0
-    const db = await getCollection(collection, this._collections, this._path, this._options)
-    return util.promisify(db.remove.bind(db))({ _id: id })
-  }
-
-  /**
    * Delete document
    *
    * @param {String} collection Collection's name
@@ -97,12 +87,9 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async delete (collection, id) {
-    return this._startTask(this._delete(collection, id))
-  }
-
-  async _deleteOne (collection, query) {
+    if (id === null) return 0
     const db = await getCollection(collection, this._collections, this._path, this._options)
-    return util.promisify(db.remove.bind(db))(query)
+    return util.promisify(db.remove.bind(db))({ _id: id })
   }
 
   /**
@@ -113,12 +100,8 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async deleteOne (collection, query) {
-    return this._startTask(this._deleteOne(collection, query))
-  }
-
-  async _deleteMany (collection, query) {
     const db = await getCollection(collection, this._collections, this._path, this._options)
-    return util.promisify(db.remove.bind(db))(query, { multi: true })
+    return util.promisify(db.remove.bind(db))(query)
   }
 
   /**
@@ -129,12 +112,8 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async deleteMany (collection, query) {
-    return this._startTask(this._deleteMany(collection, query))
-  }
-
-  async _findOne (collection, query) {
     const db = await getCollection(collection, this._collections, this._path, this._options)
-    return util.promisify(db.findOne.bind(db))(query)
+    return util.promisify(db.remove.bind(db))(query, { multi: true })
   }
 
   /**
@@ -145,31 +124,8 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async findOne (collection, query) {
-    return this._startTask(this._findOne(collection, query))
-  }
-
-  async _findOneAndUpdate (collection, query, values, options = {}) {
-    // Since this is 'findOne...' we'll only allow user to update
-    // one document at a time
-    options.multi = false
     const db = await getCollection(collection, this._collections, this._path, this._options)
-
-    // TODO: Would like to just use 'Collection.update' here, but
-    // it doesn't return objects on update (but will on insert)...
-    /* db.update(query, values, options, function(error, numReplaced, newDoc) {
-              if (error) return reject(error);
-              resolve(newDoc);
-          }); */
-
-    const data = await this._findOne(collection, query)
-    if (!data) {
-      if (options.upsert) return util.promisify(db.insert.bind(db))(values)
-      else return null
-    } else {
-      await util.promisify(db.update.bind(db))(query, { $set: values })
-      // Fixes issue camo#55. Remove when NeDB is updated to v1.8+
-      return this._findOne(collection, { _id: data._id })
-    }
+    return util.promisify(db.findOne.bind(db))(query)
   }
 
   /**
@@ -182,15 +138,27 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async findOneAndUpdate (collection, query, values, options = {}) {
-    return this._startTask(this._findOneAndUpdate(collection, query, values, options))
-  }
-
-  async _findOneAndDelete (collection, query, options = {}) {
     // Since this is 'findOne...' we'll only allow user to update
     // one document at a time
     options.multi = false
     const db = await getCollection(collection, this._collections, this._path, this._options)
-    return util.promisify(db.remove.bind(db))(query, options)
+
+    // TODO: Would like to just use 'Collection.update' here, but
+    // it doesn't return objects on update (but will on insert)...
+    /* db.update(query, values, options, function(error, numReplaced, newDoc) {
+              if (error) return reject(error);
+              resolve(newDoc);
+          }); */
+
+    const data = await this.findOne(collection, query)
+    if (!data) {
+      if (options.upsert) return util.promisify(db.insert.bind(db))(values)
+      else return null
+    } else {
+      await util.promisify(db.update.bind(db))(query, { $set: values })
+      // Fixes issue camo#55. Remove when NeDB is updated to v1.8+
+      return this.findOne(collection, { _id: data._id })
+    }
   }
 
   /**
@@ -202,10 +170,22 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async findOneAndDelete (collection, query, options = {}) {
-    return this._startTask(this._findOneAndDelete(collection, query, options))
+    // Since this is 'findOne...' we'll only allow user to update
+    // one document at a time
+    options.multi = false
+    const db = await getCollection(collection, this._collections, this._path, this._options)
+    return util.promisify(db.remove.bind(db))(query, options)
   }
 
-  async _find (collection, query, options) {
+  /**
+   * Find documents
+   *
+   * @param {String} collection Collection's name
+   * @param {Object} query Query
+   * @param {Object} options
+   * @returns {Promise}
+   */
+  async find (collection, query, options) {
     const db = await getCollection(collection, this._collections, this._path, this._options)
     let cursor = db.find(query)
 
@@ -233,30 +213,6 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
   }
 
   /**
-   * Find documents
-   *
-   * @param {String} collection Collection's name
-   * @param {Object} query Query
-   * @param {Object} options
-   * @returns {Promise}
-   */
-  async find (collection, query, options) {
-    return this._startTask(this._find(collection, query, options))
-  }
-
-  /**
-   * Get count of collection by query
-   *
-   * @param {String} collection Collection's name
-   * @param {Object} query Query
-   * @returns {Promise}
-   */
-  async _count (collection, query) {
-    const db = await getCollection(collection, this._collections, this._path, this._options)
-    return util.promisify(db.count.bind(db))(query)
-  }
-
-  /**
    * Get count of collection by query
    *
    * @param {String} collection Collection's name
@@ -264,16 +220,8 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async count (collection, query) {
-    return this._startTask(this._count(collection, query))
-  }
-
-  async _createIndex (collection, field, options) {
-    options = options || {}
-    options.unique = options.unique || false
-    options.sparse = options.sparse || false
-
     const db = await getCollection(collection, this._collections, this._path, this._options)
-    await util.promisify(db.ensureIndex.bind(db))({ fieldName: field, unique: options.unique, sparse: options.sparse })
+    return util.promisify(db.count.bind(db))(query)
   }
 
   /**
@@ -285,7 +233,12 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async createIndex (collection, field, options) {
-    return this._startTask(this._createIndex(collection, field, options))
+    options = options || {}
+    options.unique = options.unique || false
+    options.sparse = options.sparse || false
+
+    const db = await getCollection(collection, this._collections, this._path, this._options)
+    await util.promisify(db.ensureIndex.bind(db))({ fieldName: field, unique: options.unique, sparse: options.sparse })
   }
 
   /**
@@ -344,20 +297,22 @@ export default class ReactNativeLocalMongoClient extends DatabaseClient {
    */
   // TODO: this must be carefully used, will drop database known at this point in runtime. If no instance of a model has been created, the collection of this model won't be dropped.
   async dropDatabase () {
-    for (const collection in this._collections) {
-      const dbLocation = getCollectionPath(this._path, collection)
+    await this._waitForTasks()
+    const locations = Object.keys(this._collections).map(collection => getCollectionPath(this._path, collection))
+    await this.close()
+    for (const location of locations) {
       // Only exists in memory, so just delete the 'Datastore'
-      if (dbLocation !== 'memory') {
+      if (location !== 'memory') {
         // Delete the file, but only if it exists
         try {
           // Delete the file, but only if it exists
-          const result = await AsyncStorage.getItem(dbLocation)
-          if (result) await AsyncStorage.removeItem(dbLocation)
+          const result = await AsyncStorage.getItem(location)
+          if (result) await AsyncStorage.removeItem(location)
         } catch (error) {
+          console.error('deletion errored with error', error)
           // pass, there is no one error code on all platforms that indicates the file does not exist
         }
       }
-      delete this._collections[collection]
     }
   }
 

@@ -40,11 +40,19 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
 
     /**
      * Save (upsert) current document
+     * @returns {Promise}
+     */
+    save () {
+      return client._startTask(this._save())
+    }
+
+    /**
+     * Save (upsert) current document
      *
      * TODO: The method is too long and complex, it is necessary to divide...
      * @returns {Promise}
      */
-    async save () {
+    async _save () {
       await Promise.all(this._getHookPromises('preValidate'))
 
       // Ensure we at least have defaults set
@@ -113,10 +121,18 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
 
     /**
      * Delete current document
+     * @returns {Promise}
+     */
+    delete () {
+      return client._startTask(this._delete())
+    }
+
+    /**
+     * Delete current document
      *
      * @returns {Promise}
      */
-    async delete () {
+    async _delete () {
       const preDeletePromises = this._getHookPromises('preDelete')
 
       await Promise.all(preDeletePromises)
@@ -133,7 +149,17 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @param {Object} query Query
      * @returns {Promise}
      */
-    static async deleteOne (query) {
+    static deleteOne (query) {
+      return client._startTask(this._deleteOne(query))
+    }
+
+    /**
+     * Delete one document in current collection
+     *
+     * @param {Object} query Query
+     * @returns {Promise}
+     */
+    static async _deleteOne (query) {
       return client.deleteOne(this.collectionName(), query)
     }
 
@@ -143,7 +169,17 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @param {Object} query Query
      * @returns {Promise}
      */
-    static async deleteMany (query = {}) {
+    static deleteMany (query = {}) {
+      return client._startTask(this._deleteMany(query))
+    }
+
+    /**
+     * Delete many documents in current collection
+     *
+     * @param {Object} query Query
+     * @returns {Promise}
+     */
+    static async _deleteMany (query = {}) {
       if (query === null) query = {}
 
       return client.deleteMany(this.collectionName(), query)
@@ -155,11 +191,25 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * TODO: Need options to specify whether references should be loaded
      *
      * @param {Object} query Query
+     * @param {Object} [options = {}]
+     * @param {boolean|Array<string>>} [options.populate = true]
      * @returns {Promise}
      */
-    static async findOne (query, options = {}) {
-      const populate = Object.prototype.hasOwnProperty.call(options, 'populate') ? options.populate : true
+    static findOne (query, options) {
+      return client._startTask(this._findOne(query, options))
+    }
 
+    /**
+     * Find one document in current collection
+     *
+     * TODO: Need options to specify whether references should be loaded
+     *
+     * @param {Object} query Query
+     * @param {Object} [options = {}]
+     * @param {boolean|Array<string>>} [options.populate = true]
+     * @returns {Promise}
+     */
+    static async _findOne (query, { populate = true } = {}) {
       const data = await client.findOne(this.collectionName(), query)
       if (!data) return null
 
@@ -176,7 +226,20 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @param {Object} options
      * @returns {Promise}
      */
-    static async findOneAndUpdate (query, values, options = {}) {
+    static findOneAndUpdate (query, values, options) {
+      return client._startTask(this._findOneAndUpdate(query, values, options))
+    }
+
+    /**
+     * Find one document and update it in current collection
+     *
+     * @param {Object} query Query
+     * @param {Object} values
+     * @param {Object} [options = {}]
+     * @param {boolean|Array<string>>} [options.populate = true]
+     * @returns {Promise}
+     */
+    static async _findOneAndUpdate (query, values, options = {}) {
       const populate = Object.prototype.hasOwnProperty.call(options, 'populate') ? options.populate : true
 
       const data = await client.findOneAndUpdate(this.collectionName(), query, values, options)
@@ -196,7 +259,18 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @param {Object} options
      * @returns {Promise}
      */
-    static async findOneAndDelete (query, options = {}) {
+    static findOneAndDelete (query, options = {}) {
+      return client._startTask(this._findOneAndDelete(query, options))
+    }
+
+    /**
+     * Find one document and delete it in current collection
+     *
+     * @param {Object} query Query
+     * @param {Object} options
+     * @returns {Promise}
+     */
+    static async _findOneAndDelete (query, options = {}) {
       return client.findOneAndDelete(this.collectionName(), query, options)
     }
 
@@ -209,7 +283,20 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @param {Object} options
      * @returns {Promise}
      */
-    static async find (query = {}, options) {
+    static find (query, options) {
+      return client._startTask(this._find(query, options))
+    }
+
+    /**
+     * Find documents
+     *
+     * TODO: Need options to specify whether references should be loaded
+     *
+     * @param {Object} query Query
+     * @param {Object} options
+     * @returns {Promise}
+     */
+    static async _find (query = {}, options) {
       if (options === undefined || options === null) {
         // Populate by default
         // TODO: if options is set, populate isn't true by default, is that the expected behaviour ?
@@ -229,8 +316,22 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * @param {Object} query Query
      * @returns {Promise}
      */
-    static async count (query) {
+    static count (query) {
+      return client._startTask(this._count(query))
+    }
+
+    /**
+     * Get count documents in current collection by query
+     *
+     * @param {Object} query Query
+     * @returns {Promise}
+     */
+    static async _count (query) {
       return client.count(this.collectionName(), query)
+    }
+
+    static createIndexes () {
+      return client._startTask(this._createIndexes())
     }
 
     /**
@@ -238,13 +339,13 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      *
      * @returns {Promise}
      */
-    static createIndexes () {
+    static async _createIndexes () {
       if (this._indexesCreated) return
       const instance = this._instantiate()
 
-      Object.keys(instance._schema).forEach(k => {
-        if (instance._schema[k].unique) client.createIndex(this.collectionName(), k, { unique: true })
-      })
+      for (const k of Object.keys(instance._schema)) {
+        if (instance._schema[k].unique) await client.createIndex(this.collectionName(), k, { unique: true })
+      }
 
       this._indexesCreated = true
     }
@@ -254,7 +355,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       const documentVersion = this._getDocumentVersion()
       if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new CamoError('💩')
 
-      const instances = super._fromData(datas)
+      return super._fromData(datas)
       // This way we preserve the original structure of the data. Data
       // that was passed as an array is returned as an array, and data
       // passes as a single object is returned as single object
@@ -270,8 +371,6 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
         }
       })
       */
-
-      return instances
     }
 
     static _getDocumentVersion () {
@@ -282,7 +381,11 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       return migrations[this.collectionName()] || []
     }
 
-    static async _migrateCollection () {
+    static _migrateCollection () {
+      return client._startTask(this.__migrateCollection())
+    }
+
+    static async __migrateCollection () {
       const data = await client.find(this.collectionName(), { _version: { $ne: this._getDocumentVersion() } }, {})
       const migrate = migrateDocument(this._getMigrations())
       await Promise.all(data
@@ -296,7 +399,16 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      *
      * @returns {Promise}
      */
-    static async clearCollection () {
+    static clearCollection () {
+      return client._startTask(this._clearCollection())
+    }
+
+    /**
+     * Clear current collection
+     *
+     * @returns {Promise}
+     */
+    static async _clearCollection () {
       return client.clearCollection(this.collectionName())
     }
   }

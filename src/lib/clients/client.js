@@ -1,6 +1,17 @@
 export default class DatabaseClient {
   constructor (url) {
     this._url = url
+    this._tasks = new Set()
+  }
+
+  _startTask (promise) {
+    const p = promise.finally(() => this._tasks.delete(p)).catch(() => {})
+    this._tasks.add(p)
+    return promise
+  }
+
+  async _waitForTasks () {
+    return Promise.all(this._tasks.values())
   }
 
   save (collection, query, values) {
