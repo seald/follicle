@@ -180,12 +180,31 @@ describe('NeDbClient on disk', () => {
         }
       }
     }
+    let unhandled = false
+
+    process.on('unhandledRejection', () => {
+      unhandled = true
+    })
 
     for (let i = 0; i < 10; i++) {
       const school = School.create()
       school.email = 'test@test.com'
-      school.save() // not awaiting — 9 out of 10 of those will be rejected because of the `unique` constraint
+      school.save() // not handled — 9 out of 10 of those will be rejected because of the `unique` constraint
     }
     await database.close() // should not throw
+
+    expect(unhandled).to.be.equal(true)
+    unhandled = false
+    const school = School.create()
+    school.email = 'test@test.com'
+    let error = false
+    try {
+      await school.save() // should reject but is correctly handled
+    } catch (err) {
+      error = true
+    }
+    await database.close()
+    expect(unhandled).to.be.equal(false)
+    expect(error).to.be.equal(true)
   })
 })

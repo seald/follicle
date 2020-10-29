@@ -7,7 +7,7 @@ export default class DatabaseClient {
   _startTask (promise) {
     const p = promise.finally(() => this._tasks.delete(p)).catch(() => {})
     this._tasks.add(p)
-    return promise
+    return promise.then(x => x) // this "creates" a new promise so that it triggers an 'unhandledRejection' event if `promise` fails and is unhandled
   }
 
   async _waitForTasks () {

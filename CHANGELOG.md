@@ -2,7 +2,7 @@
 
 ## 1.1.9 (unreleased)
   - fix bug in the layer to track if there are still ongoing tasks which threw at close time if one of the tasks failed;
-  - fix bug in the layer to track if there are still ongoing tasks which generated uncaught rejections;
+  - fix bug in the layer to track if there are still ongoing tasks which triggered unhandled rejections;
   - move layer to track if there are still ongoing tasks to the Client class;
   - define the *tasks* as methods of the Document class rather than methods of the various Client classes, because there
    are `async` pre-hook and post-hooks in the Document class which were previously ignored which induced race conditions.
