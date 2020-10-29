@@ -294,7 +294,7 @@ export default class MongoClient extends DatabaseClient {
      */
   async close () {
     const that = this
-    await this._client._waitForTasks()
+    await this._waitForTasks()
     return new Promise(function (resolve, reject) {
       that._client.close(function (error) {
         if (error) return reject(error)
@@ -326,7 +326,7 @@ export default class MongoClient extends DatabaseClient {
      */
   async dropDatabase () {
     const that = this
-    await this._client._waitForTasks()
+    await this._waitForTasks()
     return new Promise(function (resolve, reject) {
       that._mongo.dropDatabase(function (error, result) {
         if (error) return reject(error)
