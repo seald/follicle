@@ -1,6 +1,33 @@
 export default class DatabaseClient {
   constructor (url) {
     this._url = url
+    /**
+     * Set of the ongoing tasks
+     * @type {Set<Promise>}
+     * @private
+     */
+    this._tasks = new Set()
+  }
+
+  /**
+   * Adds an ongoing task
+   * Should be used for each task involving the database from the Document class
+   * @param {Promise<*>} promise
+   * @returns {Promise<*>}
+   */
+  _startTask (promise) {
+    const p = promise.finally(() => this._tasks.delete(p)).catch(() => {})
+    this._tasks.add(p)
+    return promise.then(x => x) // this "creates" a new promise so that it triggers an 'unhandledRejection' event if `promise` fails and is unhandled
+  }
+
+  /**
+   * Waits for all ongoing tasks to finish (fail or succeed)
+   * Can be awaited at any time when you want to ensure all ongoing tasks are over.
+   * @returns {Promise<[*]>}
+   */
+  async _waitForTasks () {
+    return Promise.all(this._tasks.values())
   }
 
   save (collection, query, values) {

@@ -113,13 +113,13 @@ describe('NeDbClient', () => {
 
 describe('NeDbClient on disk', () => {
   const url = 'nedb://' + wd.path('.')
-  let database = null
+  /** @type {NeDbClient} */
+  let database
   let Document
 
   before(async () => {
     await wd.dirAsync('.', { empty: true });
     ({ Document, client: database } = await connect(url))
-    await database.dropDatabase()
   })
 
   after(async () => {
@@ -128,7 +128,7 @@ describe('NeDbClient on disk', () => {
 
   afterEach(() => database.dropDatabase())
 
-  it('should execute all operations before closing', async () => {
+  it('drop database should work', async () => {
     class School extends Document {
       constructor () {
         super()
@@ -136,15 +136,75 @@ describe('NeDbClient on disk', () => {
         this.name = String
       }
     }
-    const makeElement = async () => {
+
+    const school = School.create()
+    school.name = 'South Park Elementary'
+
+    await school.save()
+    expect(database._collections).to.have.own.property('School')
+    let stat = await wd.inspectAsync('School.fdb')
+    expect(stat).to.have.property('size')
+    expect(stat.size).to.be.above(1)
+    await database.dropDatabase()
+    expect(database._collections).to.deep.equal({})
+    stat = await wd.inspectAsync('School.fdb')
+    expect(stat).to.equal(undefined)
+  })
+
+  it('should execute all operations before closing', async () => {
+    class School extends Document {
+      constructor () {
+        super()
+        this.name = String
+      }
+    }
+    for (let i = 0; i < 1000; i++) {
       const school = School.create()
       school.name = 'South Park Elementary'
-
-      await school.save()
+      school.save() // not awaiting
     }
-    (new Array(1000)).fill(null).map(() => makeElement())
-    await database.close();
-    ({ Document, client: database } = await connect(url))
+    await database.close()
+    expect(database._collections).to.be.deep.equal({}) // proves that database is closed
     expect(await School.count({})).to.be.equal(1000)
+    expect(Object.keys(database._collections)).to.have.members(['School'])
+  })
+
+  it('should not fail at closing if a task failed', async () => {
+    class School extends Document {
+      constructor () {
+        super()
+
+        this.email = {
+          type: String,
+          unique: true
+        }
+      }
+    }
+    let unhandled = false
+
+    process.on('unhandledRejection', () => {
+      unhandled = true
+    })
+
+    for (let i = 0; i < 10; i++) {
+      const school = School.create()
+      school.email = 'test@test.com'
+      school.save() // not handled — 9 out of 10 of those will be rejected because of the `unique` constraint
+    }
+    await database.close() // should not throw
+
+    expect(unhandled).to.be.equal(true)
+    unhandled = false
+    const school = School.create()
+    school.email = 'test@test.com'
+    let error = false
+    try {
+      await school.save() // should reject but is correctly handled
+    } catch (err) {
+      error = true
+    }
+    await database.close()
+    expect(unhandled).to.be.equal(false)
+    expect(error).to.be.equal(true)
   })
 })

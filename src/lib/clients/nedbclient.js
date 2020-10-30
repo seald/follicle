@@ -67,33 +67,12 @@ export default class NeDbClient extends DatabaseClient {
     this._readOnly = options.readOnly || false
     delete options.readOnly
     this._options = options
-    this._tasks = new Set()
 
     if (collections) {
       this._collections = collections
     } else {
       this._collections = {}
     }
-  }
-
-  _startTask (promise) {
-    this._tasks.add(promise)
-    promise.finally(() => this._tasks.delete(promise))
-    return promise
-  }
-
-  async _waitForTasks () {
-    return Promise.all(this._tasks.values())
-  }
-
-  async _save (collection, id, values) {
-    const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-
-    // TODO: I'd like to just use update with upsert:true, but I'm
-    // note sure how the query will work if id == null. Seemed to
-    // have some problems before with passing null ids.
-    if (id === null) return (await util.promisify(db.insert.bind(db))(values))._id
-    else return util.promisify(db.update.bind(db))({ _id: id }, { _id: id, ...values }, { upsert: true }) // Yes, we have to put the id both in the query and in the actual document, or custom IDs fail
   }
 
   /**
@@ -105,13 +84,13 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise} Promise with result insert or update query
    */
   async save (collection, id, values) {
-    return this._startTask(this._save(collection, id, values))
-  }
-
-  async _delete (collection, id) {
-    if (id === null) return 0
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return util.promisify(db.remove.bind(db))({ _id: id })
+
+    // TODO: I'd like to just use update with upsert:true, but I'm
+    // note sure how the query will work if id == null. Seemed to
+    // have some problems before with passing null ids.
+    if (id === null) return (await util.promisify(db.insert.bind(db))(values))._id
+    else return util.promisify(db.update.bind(db))({ _id: id }, { _id: id, ...values }, { upsert: true }) // Yes, we have to put the id both in the query and in the actual document, or custom IDs fail
   }
 
   /**
@@ -122,12 +101,9 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async delete (collection, id) {
-    return this._startTask(this._delete(collection, id))
-  }
-
-  async _deleteOne (collection, query) {
+    if (id === null) return 0
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return util.promisify(db.remove.bind(db))(query)
+    return util.promisify(db.remove.bind(db))({ _id: id })
   }
 
   /**
@@ -138,12 +114,8 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async deleteOne (collection, query) {
-    return this._startTask(this._deleteOne(collection, query))
-  }
-
-  async _deleteMany (collection, query) {
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return util.promisify(db.remove.bind(db))(query, { multi: true })
+    return util.promisify(db.remove.bind(db))(query)
   }
 
   /**
@@ -154,12 +126,8 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async deleteMany (collection, query) {
-    return this._startTask(this._deleteMany(collection, query))
-  }
-
-  async _findOne (collection, query) {
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return util.promisify(db.findOne.bind(db))(query)
+    return util.promisify(db.remove.bind(db))(query, { multi: true })
   }
 
   /**
@@ -170,31 +138,8 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async findOne (collection, query) {
-    return this._startTask(this._findOne(collection, query))
-  }
-
-  async _findOneAndUpdate (collection, query, values, options = {}) {
-    // Since this is 'findOne...' we'll only allow user to update
-    // one document at a time
-    options.multi = false
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-
-    // TODO: Would like to just use 'Collection.update' here, but
-    // it doesn't return objects on update (but will on insert)...
-    /* db.update(query, values, options, function(error, numReplaced, newDoc) {
-              if (error) return reject(error);
-              resolve(newDoc);
-          }); */
-
-    const data = await this._findOne(collection, query)
-    if (!data) {
-      if (options.upsert) return util.promisify(db.insert.bind(db))(values)
-      else return null
-    } else {
-      await util.promisify(db.update.bind(db))(query, { $set: values })
-      // Fixes issue camo#55. Remove when NeDB is updated to v1.8+
-      return this._findOne(collection, { _id: data._id })
-    }
+    return util.promisify(db.findOne.bind(db))(query)
   }
 
   /**
@@ -207,15 +152,27 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async findOneAndUpdate (collection, query, values, options = {}) {
-    return this._startTask(this._findOneAndUpdate(collection, query, values, options))
-  }
-
-  async _findOneAndDelete (collection, query, options = {}) {
     // Since this is 'findOne...' we'll only allow user to update
     // one document at a time
     options.multi = false
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return util.promisify(db.remove.bind(db))(query, options)
+
+    // TODO: Would like to just use 'Collection.update' here, but
+    // it doesn't return objects on update (but will on insert)...
+    /* db.update(query, values, options, function(error, numReplaced, newDoc) {
+              if (error) return reject(error);
+              resolve(newDoc);
+          }); */
+
+    const data = await this.findOne(collection, query)
+    if (!data) {
+      if (options.upsert) return util.promisify(db.insert.bind(db))(values)
+      else return null
+    } else {
+      await util.promisify(db.update.bind(db))(query, { $set: values })
+      // Fixes issue camo#55. Remove when NeDB is updated to v1.8+
+      return this.findOne(collection, { _id: data._id })
+    }
   }
 
   /**
@@ -227,10 +184,22 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async findOneAndDelete (collection, query, options = {}) {
-    return this._startTask(this._findOneAndDelete(collection, query, options))
+    // Since this is 'findOne...' we'll only allow user to update
+    // one document at a time
+    options.multi = false
+    const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
+    return util.promisify(db.remove.bind(db))(query, options)
   }
 
-  async _find (collection, query, options) {
+  /**
+   * Find documents
+   *
+   * @param {String} collection Collection's name
+   * @param {Object} query Query
+   * @param {Object} options
+   * @returns {Promise}
+   */
+  async find (collection, query, options) {
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
     let cursor = db.find(query)
 
@@ -258,30 +227,6 @@ export default class NeDbClient extends DatabaseClient {
   }
 
   /**
-   * Find documents
-   *
-   * @param {String} collection Collection's name
-   * @param {Object} query Query
-   * @param {Object} options
-   * @returns {Promise}
-   */
-  async find (collection, query, options) {
-    return this._startTask(this._find(collection, query, options))
-  }
-
-  /**
-   * Get count of collection by query
-   *
-   * @param {String} collection Collection's name
-   * @param {Object} query Query
-   * @returns {Promise}
-   */
-  async _count (collection, query) {
-    const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    return util.promisify(db.count.bind(db))(query)
-  }
-
-  /**
    * Get count of collection by query
    *
    * @param {String} collection Collection's name
@@ -289,16 +234,8 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async count (collection, query) {
-    return this._startTask(this._count(collection, query))
-  }
-
-  async _createIndex (collection, field, options) {
-    options = options || {}
-    options.unique = options.unique || false
-    options.sparse = options.sparse || false
-
     const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
-    await util.promisify(db.ensureIndex.bind(db))({ fieldName: field, unique: options.unique, sparse: options.sparse })
+    return util.promisify(db.count.bind(db))(query)
   }
 
   /**
@@ -310,7 +247,12 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async createIndex (collection, field, options) {
-    return this._startTask(this._createIndex(collection, field, options))
+    options = options || {}
+    options.unique = options.unique || false
+    options.sparse = options.sparse || false
+
+    const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
+    await util.promisify(db.ensureIndex.bind(db))({ fieldName: field, unique: options.unique, sparse: options.sparse })
   }
 
   /**
@@ -341,7 +283,7 @@ export default class NeDbClient extends DatabaseClient {
     for (const collection of Object.keys(this._collections)) {
       let db
       try {
-        db = this._collections[collection]
+        db = await this._collections[collection]
         db.persistence.stopAutocompaction()
         const queueDrained = new Promise(resolve => { db.executor.queue.drain = resolve })
         // Since Collections are always loaded manually (not with nedb's `autoload`), and db is a properly loaded
@@ -374,18 +316,20 @@ export default class NeDbClient extends DatabaseClient {
    */
   // TODO: this must be carefully used, will drop database known at this point in runtime. If no instance of a model has been created, the collection of this model won't be dropped.
   async dropDatabase () {
-    for (const collection in this._collections) {
-      const dbLocation = getCollectionPath(this._path, collection)
+    await this._waitForTasks()
+    const locations = Object.keys(this._collections).map(collection => getCollectionPath(this._path, collection))
+    await this.close()
+    for (const location of locations) {
       // Only exists in memory, so just delete the 'Datastore'
-      if (dbLocation !== 'memory') {
+      if (location !== 'memory') {
         // Delete the file, but only if it exists
         try {
-          await util.promisify(fs.unlink)(dbLocation)
+          await util.promisify(fs.unlink)(location)
         } catch (error) {
+          console.error('deletion errored', error)
           // pass, there is no one error code on all platforms that indicates the file does not exist
         }
       }
-      delete this._collections[collection]
     }
   }
 
