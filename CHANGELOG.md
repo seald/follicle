@@ -1,6 +1,6 @@
 #Changelog
 
-## 1.1.9 (unreleased)
+## 1.1.9 (2020-10-30)
   - fix bug in the layer to track if there are still ongoing tasks which threw at close time if one of the tasks failed;
   - fix bug in the layer to track if there are still ongoing tasks which triggered unhandled rejections;
   - move layer to track if there are still ongoing tasks to the Client class;
