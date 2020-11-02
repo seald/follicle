@@ -400,6 +400,93 @@ describe('Embedded', () => {
 
       expect(() => Wallet.create({})).to.throw(Error, /required/)
     })
+
+    it('should not throw during preValidate if EmbeddedDocuments are malformed', async () => {
+      class Money extends EmbeddedDocument {
+        constructor () {
+          super()
+          this.value = { type: String, default: 'hello' }
+        }
+      }
+
+      class Wallet extends Document {
+        constructor () {
+          super()
+          this.contents = { type: Money, required: true }
+        }
+      }
+
+      const w = Wallet.create({ contents: { value: 'test' } })
+      await w.save()
+      w.contents = { value: 'test' }
+      await w.save()
+        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
+        .catch(error => {
+          expect(error).to.be.instanceof(ValidationError)
+          expect(error.message).to.contain('Value assigned to Wallet.contents should be Money, got object')
+        })
+    })
+
+    it('should not throw during preValidate if Array<EmbeddedDocuments> are malformed', async () => {
+      class Money extends EmbeddedDocument {
+        constructor () {
+          super()
+          this.value = { type: String, default: 'hello' }
+        }
+      }
+
+      class Wallet extends Document {
+        constructor () {
+          super()
+          this.contents = [Money]
+        }
+      }
+
+      const w = Wallet.create({ contents: [{ value: 'test' }] })
+      await w.save()
+      w.contents = [{ value: 'test' }]
+      await w.save()
+        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
+        .catch(error => {
+          expect(error).to.be.instanceof(ValidationError)
+          expect(error.message).to.contain('Value assigned to Wallet.contents should be [Money], got [[object Object]]')
+        })
+    })
+
+    it('should throw during validation if members of Array<EmbeddedDocuments> are malformed', async () => {
+      class Money extends EmbeddedDocument {
+        constructor () {
+          super()
+          this.value = { type: String, default: 'hello' }
+        }
+      }
+
+      class Wallet extends Document {
+        constructor () {
+          super()
+          this.contents = [Money]
+        }
+      }
+
+      const w = Wallet.create({ contents: [{ value: 'test' }] })
+      await w.save()
+
+      w.contents = [Money.create({ value: 'test' }), { value: 'test' }]
+      await w.save()
+        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
+        .catch(error => {
+          expect(error).to.be.instanceof(ValidationError)
+          expect(error.message).to.contain('Value assigned to Wallet.contents should be [Money], got [[object Object],[object Object]]')
+        })
+
+      w.contents = [{ value: 'test' }, Money.create({ value: 'test' })]
+      await w.save()
+        .then(() => expect.fail(null, Error, 'Expected error, but got none.'))
+        .catch(error => {
+          expect(error).to.be.instanceof(ValidationError)
+          expect(error.message).to.contain('Value assigned to Wallet.contents should be [Money], got [[object Object],[object Object]]')
+        })
+    })
   })
 
   describe('canonicalize', () => {

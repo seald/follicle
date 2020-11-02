@@ -1,5 +1,9 @@
 #Changelog
 
+## 1.1.10 (unreleased)
+ - fix bug in how arrays of EmbeddedDocuments are validated which could skip validation and / or throw internal
+ unexpected errors
+
 ## 1.1.9 (2020-10-30)
   - fix bug in the layer to track if there are still ongoing tasks which threw at close time if one of the tasks failed;
   - fix bug in the layer to track if there are still ongoing tasks which triggered unhandled rejections;

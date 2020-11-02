@@ -136,19 +136,7 @@ export default ({ client, validators }) => {
       Object.keys(this._schema).forEach(key => {
         const value = this[key]
 
-        // TODO: This should probably be in Document, not BaseDocument
-        if (value !== null && value !== undefined) {
-          if (isEmbeddedDocument(value)) {
-            value.validate()
-            return
-          } else if (isArray(value) && value.length > 0 && isEmbeddedDocument(value[0])) {
-            value.forEach(v => {
-              if (v.validate) v.validate()
-            })
-            return
-          }
-        }
-
+        // Verify the value corresponds to the model
         if (!isValidType(value, this._schema[key].type)) {
           // TODO: Formatting should probably be done somewhere else
           let typeName = null
@@ -166,6 +154,20 @@ export default ({ client, validators }) => {
           else valueName = typeof (value)
 
           throw new ValidationError(`Value assigned to ${this.collectionName()}.${key} should be ${typeName}, got ${valueName}`)
+        }
+
+        // Then, Verify the custom validators
+        // TODO: This should probably be in Document, not BaseDocument
+        if (value !== null && value !== undefined) {
+          if (isEmbeddedDocument(value)) {
+            value.validate()
+            return
+          } else if (isArray(value) && value.length > 0 && isEmbeddedDocument(value[0])) {
+            value.forEach(v => {
+              if (v.validate) v.validate()
+            })
+            return
+          }
         }
 
         if (this._schema[key].required && isEmptyValue(value)) { throw new ValidationError(`Key ${this.collectionName()}.${key} is required, but got ${value}`) }
@@ -445,7 +447,8 @@ export default ({ client, validators }) => {
     _getEmbeddeds () {
       let embeddeds = []
       Object.keys(this._schema).forEach(v => {
-        if ((isEmbeddedDocument(this._schema[v].type) && !isEmptyValue(this[v])) || (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0]))) { embeddeds = embeddeds.concat(this[v]) }
+        if ((isEmbeddedDocument(this._schema[v].type) && !isEmptyValue(this[v]) && isEmbeddedDocument(this[v]))) { embeddeds = embeddeds.concat(this[v]) }
+        if (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0])) { embeddeds = embeddeds.concat(this[v].filter(x => isEmbeddedDocument(x))) }
       })
       return embeddeds
     }
