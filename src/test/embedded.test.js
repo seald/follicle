@@ -453,6 +453,26 @@ describe('Embedded', () => {
         })
     })
 
+    it('should not throw during preValidate if Array<EmbeddedDocuments> is not given', async () => {
+      class Money extends EmbeddedDocument {
+        constructor () {
+          super()
+          this.value = { type: String, default: 'hello' }
+        }
+      }
+
+      class Wallet extends Document {
+        constructor () {
+          super()
+          this.contents = { type: [Money], required: false }
+        }
+      }
+
+      const w = Wallet.create({ contents: undefined }) // shouldn't throw
+      w.contents = undefined
+      await w.save() // shouldn't throw
+    })
+
     it('should throw during validation if members of Array<EmbeddedDocuments> are malformed', async () => {
       class Money extends EmbeddedDocument {
         constructor () {

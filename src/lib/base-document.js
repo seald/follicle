@@ -238,7 +238,7 @@ export default ({ client, validators }) => {
         Object.keys(d).forEach(key => {
           const value = d[key] === null ? instance.getDefault(key) : d[key]
           // If its not in the schema, we don't care about it... right?
-          if (key in instance._schema) {
+          if (key in instance._schema && value !== undefined) {
             const type = instance._schema[key].type
             // Initialize EmbeddedDocument
             if (type.documentClass && type.documentClass() === 'embedded') {
@@ -447,8 +447,10 @@ export default ({ client, validators }) => {
     _getEmbeddeds () {
       let embeddeds = []
       Object.keys(this._schema).forEach(v => {
-        if ((isEmbeddedDocument(this._schema[v].type) && !isEmptyValue(this[v]) && isEmbeddedDocument(this[v]))) { embeddeds = embeddeds.concat(this[v]) }
-        if (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0])) { embeddeds = embeddeds.concat(this[v].filter(x => isEmbeddedDocument(x))) }
+        if (!isEmptyValue(this[v])) {
+          if (isEmbeddedDocument(this._schema[v].type) && isEmbeddedDocument(this[v])) { embeddeds = embeddeds.concat(this[v]) }
+          if (isArray(this._schema[v].type) && isEmbeddedDocument(this._schema[v].type[0])) { embeddeds = embeddeds.concat(this[v].filter(x => isEmbeddedDocument(x))) }
+        }
       })
       return embeddeds
     }
