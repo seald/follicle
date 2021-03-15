@@ -31,15 +31,7 @@
     "query",
     "db"
   ],
-  "homepage": "https://gitlab.tardis.seald.io/seald/follicle",
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.tardis.seald.io/seald/follicle.git"
-  },
-  "publishConfig": {
-    "registry": "https://nexus.tardis.seald.io/repository/npm-hosted"
-  },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "cm build",
     "pretest": "cm pretest",
