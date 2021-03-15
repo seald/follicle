@@ -1,5 +1,8 @@
 #Changelog
 
+## v1.2.1 (2020-03-15)
+- Removing peer dependencies
+
 ## v1.2.0 (2020-03-15)
 - Release on public NPM registry
 
