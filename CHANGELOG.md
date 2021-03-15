@@ -1,6 +1,9 @@
 #Changelog
 
-## 1.1.10 (unreleased)
+## v1.2.0 (2020-03-15)
+- Release on public NPM registry
+
+## 1.1.10 (2020-11-02)
  - fix bug in how arrays of EmbeddedDocuments are validated which could skip validation and / or throw internal
  unexpected errors
 

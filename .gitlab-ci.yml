@@ -1,18 +1,8 @@
 image: node:12
 
-services:
-  - name: mongo:jessie
-    alias: mongo
-
-variables:
-  MONGO_HOSTNAME: mongo:27017
 
 before_script:
-  - echo "//nexus.tardis.seald.io/repository/npm/:_authToken=${AUTH_TOKEN}" > .npmrc
-  - echo "//nexus.tardis.seald.io/repository/npm-hosted/:_authToken=${AUTH_TOKEN}" >> .npmrc
-  - echo "registry=https://nexus.tardis.seald.io/repository/npm/" >> .npmrc
-  - echo "@seald:registry=https://nexus.tardis.seald.io/repository/npm-hosted/" >> .npmrc
-  - echo "always-auth=true" >> .npmrc
+  - echo "//registry.npmjs.org/:_authToken=${NPM_REGISTRY_TOKEN}" > .npmrc
   - npm ci --cache .npm --prefer-offline
 
 cache:
@@ -22,6 +12,11 @@ cache:
 
 test:
   stage: test
+  services:
+    - name: mongo:jessie
+      alias: mongo
+  variables:
+    MONGO_HOSTNAME: mongo:27017
   script:
     - npm run coverage
   artifacts:

@@ -1,5 +1,5 @@
 {
-  "name": "@seald/follicle",
+  "name": "follicle",
   "main": "build/index.js",
   "module": "src/index.js",
   "files": [
