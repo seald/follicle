@@ -1,5 +1,8 @@
 #Changelog
 
+## v1.2.2 (2020-03-25)
+- Updating dependencies
+
 ## v1.2.1 (2020-03-15)
 - Removing peer dependencies
 
