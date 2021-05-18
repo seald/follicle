@@ -1,6 +1,6 @@
 import * as path from 'path'
 import * as fs from 'fs'
-import Datastore from 'nedb'
+import Datastore from '@seald-io/nedb'
 import DatabaseClient from './client'
 import temp from 'temp'
 import util from 'util'
