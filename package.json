@@ -51,7 +51,7 @@
     "@babel/core": "^7.13.10",
     "@babel/preset-env": "^7.13.12",
     "@react-native-community/async-storage": "^1.12.1",
-    "@seald-io/nedb": "^2.0.0-1",
+    "@seald-io/nedb": "^2.0.0",
     "centimaitre": "^1.0.4",
     "chai": "^4.3.4",
     "dirty-chai": "^2.0.1",

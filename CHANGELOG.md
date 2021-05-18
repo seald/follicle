@@ -1,5 +1,9 @@
 #Changelog
 
+## [2.0.0] 2021-05-18
+### Changed
+- Switched to `@seald-io/nedb@^2.0.0` rather than `nedb@^1.8.0` since it is unmaintained
+
 ## v1.2.2 (2020-03-25)
 - Updating dependencies
 
