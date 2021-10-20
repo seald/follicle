@@ -336,6 +336,8 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
 
     static async _removeIndexes () {
       for (const k of await client.listIndexes(this.collectionName())) {
+        // The _id index cannot be removed, otherwise the collection is not indexed at all, and all queries will return
+        // empty.
         if (k !== '_id') await client.removeIndex(this.collectionName(), k)
       }
       this._indexesCreated = false
@@ -398,6 +400,10 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
 
     static async __migrateCollection () {
       const data = await client.find(this.collectionName(), { _version: { $ne: this._getDocumentVersion() } }, {})
+      // The constraints in the model may have changed between the previous version and the current version of the
+      // model. Instead of inferring if the indexes currently in database match the model, we remove existing
+      // constraints during the migration and add new clean constraints from the current version of the model.
+      // Because this can be a heavy operation, we only do it if there are some documents to migrate in the collection.
       if (data.length) await this.removeIndexes()
       const migrate = migrateDocument(this._getMigrations())
       await Promise.all(data

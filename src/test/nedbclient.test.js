@@ -128,13 +128,15 @@ describe('NeDbClient', () => {
       user1.name = 'Bill'
       user1.email = 'billy@example.com'
 
+      await user1.save()
+
       const user2 = User.create()
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
       assert.sameMembers(await database.listIndexes('User'), ['_id', 'email'])
       await database.removeIndex('User', 'email')
 
-      await Promise.all([user1.save(), user2.save()])
+      await user2.save()
 
       validateId(user1)
       validateId(user2)
@@ -215,7 +217,7 @@ describe('NeDbClient on disk', () => {
     }
     let unhandled = false
 
-    process.on('unhandledRejection', (reason, promise) => {
+    process.on('unhandledRejection', () => {
       unhandled = true
     })
 
