@@ -14,7 +14,9 @@ export default Document => class Data extends Document {
       item: {
         type: Number,
         min: 0,
-        max: 100
+        max: 100,
+        unique: true,
+        sparse: false
       },
       values: {
         type: [Number]
@@ -43,7 +45,9 @@ export const getMigratedDataModel = Document => class Data extends Document {
       fluffykin: { // renaming model field item to fluffykin
         type: Number,
         min: 0,
-        max: 100
+        max: 100,
+        unique: true,
+        sparse: false
       },
       values: {
         type: [Number]

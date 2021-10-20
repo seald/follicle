@@ -3,6 +3,7 @@ import { MongoClient as MDBClient, ObjectId } from 'mongodb'
 import { isObject } from '../validate'
 import { deepTraverse } from '../util'
 import { URL } from 'url'
+import util from 'util'
 
 export default class MongoClient extends DatabaseClient {
   constructor (url, mongo) {
@@ -246,6 +247,29 @@ export default class MongoClient extends DatabaseClient {
         return resolve(count)
       })
     })
+  }
+
+  /**
+   * Remove index
+   *
+   * @param {String} collection Collection's name
+   * @param {String} field Field name
+   * @returns {Promise}
+   */
+  async removeIndex (collection, field) {
+    const db = this._mongo.collection(collection)
+    await util.promisify(db.removeIndex.bind(db))(field)
+  }
+
+  /**
+   * List indexes
+   *
+   * @param {String} collection Collection's name
+   * @returns {Promise<Array<>>}
+   */
+  async listIndexes (collection) {
+    const db = this._mongo.collection(collection)
+    return await db.listIndexes().next() // TODO: will fail if there are more than 1k indexes
   }
 
   /**

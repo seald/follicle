@@ -330,6 +330,17 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       return client.count(this.collectionName(), query)
     }
 
+    static removeIndexes () {
+      return client._startTask(this._removeIndexes())
+    }
+
+    static async _removeIndexes () {
+      for (const k of await client.listIndexes(this.collectionName())) {
+        if (k !== '_id') await client.removeIndex(this.collectionName(), k)
+      }
+      this._indexesCreated = false
+    }
+
     static createIndexes () {
       return client._startTask(this._createIndexes())
     }
@@ -387,11 +398,13 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
 
     static async __migrateCollection () {
       const data = await client.find(this.collectionName(), { _version: { $ne: this._getDocumentVersion() } }, {})
+      if (data.length) await this.removeIndexes()
       const migrate = migrateDocument(this._getMigrations())
       await Promise.all(data
         .map(entry => migrate(entry))
         .map(async entry => client.save(this.collectionName(), entry._id, entry))
       )
+      await this.createIndexes()
     }
 
     /**

@@ -70,6 +70,14 @@ export default class DatabaseClient {
     throw new TypeError('You must override createIndex.')
   }
 
+  removeIndex (collection, field) {
+    throw new TypeError('You must override removeIndex.')
+  }
+
+  listIndexes (collection) {
+    throw new TypeError('You must override listIndexes.')
+  }
+
   static connect (url, options) {
     throw new TypeError('You must override connect (static).')
   }
