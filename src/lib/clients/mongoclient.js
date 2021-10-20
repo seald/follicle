@@ -258,18 +258,18 @@ export default class MongoClient extends DatabaseClient {
    */
   async removeIndex (collection, field) {
     const db = this._mongo.collection(collection)
-    await util.promisify(db.removeIndex.bind(db))(field)
+    await db.dropIndex(field)
   }
 
   /**
    * List indexes
    *
    * @param {String} collection Collection's name
-   * @returns {Promise<Array<>>}
+   * @returns {Promise<Array<string>>}
    */
   async listIndexes (collection) {
     const db = this._mongo.collection(collection)
-    return await db.listIndexes().next() // TODO: will fail if there are more than 1k indexes
+    return await db.listIndexes().toArray()
   }
 
   /**
