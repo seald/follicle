@@ -256,6 +256,12 @@ export default class MongoClient extends DatabaseClient {
    * @returns {Promise}
    */
   async removeIndex (collection, field) {
+    // The _id_ index is created by mongodb and used in its internal functions.
+    // Removing the _id_ index breaks the database:
+    // - it would return empty Arrays at all requests;
+    // - crash when creating a new index.
+    // We silently avoid removing it.
+    if (field === '_id_') return
     const db = this._mongo.collection(collection)
     await db.dropIndex(field)
   }
@@ -268,7 +274,7 @@ export default class MongoClient extends DatabaseClient {
    */
   async listIndexes (collection) {
     const db = this._mongo.collection(collection)
-    return (await db.listIndexes().toArray()).map(e => Object.keys(e.key)[0])
+    return (await db.listIndexes().toArray()).map(e => e.name)
   }
 
   /**
@@ -286,7 +292,7 @@ export default class MongoClient extends DatabaseClient {
 
     const db = this._mongo.collection(collection)
 
-    await db.createIndex({ [field]: 1 }, { unique: options.unique, sparse: options.sparse, name: field })
+    await db.createIndex({ [field]: 1 }, { unique: options.unique, sparse: options.sparse })
   }
 
   /**

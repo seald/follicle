@@ -252,8 +252,9 @@ describe('MongoClient', function () {
       const user2 = User.create()
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
-      assert.sameMembers(await database.listIndexes('User'), ['_id', 'email'])
-      await database.removeIndex('User', 'email')
+      // the ids in mongodb have different names than in nedb
+      assert.sameMembers(await database.listIndexes('User'), ['_id_', 'email_1'])
+      await database.removeIndex('User', 'email_1')
 
       await user2.save()
 

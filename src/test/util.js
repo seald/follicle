@@ -5,6 +5,7 @@ import getData from './data'
 
 chai.use(dirtyChai)
 const expect = chai.expect
+const assert = chai.assert
 
 export const validateId = obj => {
   expect(obj).to.not.be.null()
@@ -39,19 +40,23 @@ export const data = Document => {
 }
 
 export const validateData1 = function (d) {
-  expect(d.number).to.be.equal(1)
-  expect(d.source).to.be.equal('arstechnica')
-  expect(d.item).to.be.equal(99)
-  expect(d).to.have.property('values').with.length(3)
-  expect(d.date.valueOf()).to.be.equal(1434304033241)
+  assert.deepInclude(d, {
+    number: 1,
+    source: 'arstechnica',
+    item: 99,
+    values: [33, 101, -1],
+    date: new Date(1434304033241)
+  })
 }
 
 export const validateData2 = function (d) {
-  expect(d.number).to.be.equal(2)
-  expect(d.source).to.be.equal('reddit')
-  expect(d.item).to.be.equal(26)
-  expect(d).to.have.property('values').with.length(4)
-  expect(d.date.valueOf()).to.be.equal(1434304039234)
+  assert.deepInclude(d, {
+    number: 2,
+    source: 'reddit',
+    item: 26,
+    values: [1, 2, 3, 4],
+    date: new Date(1434304039234)
+  })
 }
 
 // If we expect an error (and check for it in 'catch'), then

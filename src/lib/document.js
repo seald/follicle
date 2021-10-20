@@ -336,9 +336,9 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
 
     static async _removeIndexes () {
       for (const k of await client.listIndexes(this.collectionName())) {
-        // The _id index cannot be removed, otherwise the collection is not indexed at all, and all queries will return
-        // empty.
-        if (k !== '_id') await client.removeIndex(this.collectionName(), k)
+        // The database's internal index _id (or _id_ in mongoDB) index should not be removed, but this edge case is
+        // handled by the database clients.
+        await client.removeIndex(this.collectionName(), k)
       }
       this._indexesCreated = false
     }
@@ -366,7 +366,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
     static _fromData (datas) {
       if (!isArray(datas)) datas = [datas]
       const documentVersion = this._getDocumentVersion()
-      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new CamoError('💩')
+      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new CamoError('There are documents that don\'t match the migration version, some migrations are not applied, or the database is too recent.')
 
       return super._fromData(datas)
       // This way we preserve the original structure of the data. Data

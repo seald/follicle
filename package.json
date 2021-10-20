@@ -54,6 +54,7 @@
     "@seald-io/nedb": "^2.0.0",
     "centimaitre": "^1.0.4",
     "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
     "fs-jetpack": "^4.1.0",
     "mocha": "^8.3.2",
