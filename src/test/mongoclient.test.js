@@ -8,6 +8,7 @@ import { validateId } from './util'
 
 chai.use(dirtyChai)
 const expect = chai.expect
+const assert = chai.assert
 
 describe('MongoClient', function () {
   const url = `mongodb://${process.env.MONGO_HOSTNAME}/camo_test`
@@ -30,8 +31,8 @@ describe('MongoClient', function () {
     }
   })
 
-  afterEach(function () {
-    return database && database.dropDatabase()
+  afterEach(async function () {
+    if (database) await database.dropDatabase()
   })
 
   after(async function () {
@@ -246,13 +247,15 @@ describe('MongoClient', function () {
       user1.name = 'Bill'
       user1.email = 'billy@example.com'
 
+      await user1.save()
+
       const user2 = User.create()
       user1.name = 'Billy'
       user2.email = 'billy@example.com'
-
+      assert.sameMembers(await database.listIndexes('User'), ['_id', 'email'])
       await database.removeIndex('User', 'email')
 
-      await Promise.all([user1.save(), user2.save()])
+      await user2.save()
 
       validateId(user1)
       validateId(user2)

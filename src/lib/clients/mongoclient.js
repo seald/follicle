@@ -3,7 +3,6 @@ import { MongoClient as MDBClient, ObjectId } from 'mongodb'
 import { isObject } from '../validate'
 import { deepTraverse } from '../util'
 import { URL } from 'url'
-import util from 'util'
 
 export default class MongoClient extends DatabaseClient {
   constructor (url, mongo) {
@@ -269,7 +268,7 @@ export default class MongoClient extends DatabaseClient {
    */
   async listIndexes (collection) {
     const db = this._mongo.collection(collection)
-    return await db.listIndexes().toArray()
+    return (await db.listIndexes().toArray()).map(e => Object.keys(e.key)[0])
   }
 
   /**
@@ -280,16 +279,14 @@ export default class MongoClient extends DatabaseClient {
      * @param {Object} options Options
      * @returns {Promise}
      */
-  createIndex (collection, field, options) {
+  async createIndex (collection, field, options) {
     options = options || {}
     options.unique = options.unique || false
     options.sparse = options.sparse || false
 
     const db = this._mongo.collection(collection)
 
-    const keys = {}
-    keys[field] = 1
-    db.createIndex(keys, { unique: options.unique, sparse: options.sparse })
+    await db.createIndex({ [field]: 1 }, { unique: options.unique, sparse: options.sparse, name: field })
   }
 
   /**
