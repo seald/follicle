@@ -476,7 +476,10 @@ describe('Migration', () => {
     const makeModel = Document => class Data extends Document {
       constructor () {
         super()
-        this.schema({ number: { type: Number } })
+        this.schema({
+          number: { type: Number },
+          constrained: { type: String }
+        })
       }
     }
 
@@ -484,23 +487,23 @@ describe('Migration', () => {
     const makeMigratedModel = Document => class Data extends Document {
       constructor () {
         super()
-        this.schema({ number: { type: Number, unique: true } })
+        this.schema({
+          number: { type: Number },
+          constrained: { type: String, unique: true }
+        })
       }
     }
 
     // Defining migrations
     const migrations = {
-      Data: [entry => {
-        entry.number = 1
-        return entry
-      }]
+      Data: [entry => entry]
     }
 
     // Defining pre-migration data
-    const data = [{ number: 1 }, { number: 2 }]
+    const data = [{ number: 1, constrained: 'duplicate' }, { number: 2, constrained: 'duplicate' }]
 
     // Defining post-migration data
-    const migratedData = [{ number: 1 }, { number: 1 }]
+    const migratedData = [{ number: 1, constrained: 'duplicate' }, { number: 2, constrained: 'duplicate' }]
 
     // Connecting database without migrations, and instantiating the Data model
     let { Document, client: database } = await connect(url)
@@ -540,7 +543,7 @@ describe('Migration', () => {
     Data = await makeMigratedModel(Document)
 
     // Migration will fail as the new constraint does not allow duplicate values of number, in this case the duplicate value is 1
-    await assert.isRejected(Data._migrateCollection(), `Can't insert key ${migratedData[1].number}, it violates the unique constraint`)
+    await assert.isRejected(Data._migrateCollection(), `Can't insert key ${migratedData[1].constrained}, it violates the unique constraint`)
   })
 
   it('Migration that removes a constraint on an existing field', async () => {
@@ -549,7 +552,7 @@ describe('Migration', () => {
       constructor () {
         super()
         this.schema({
-          number: { type: Number, unique: true },
+          number: { type: Number },
           constrained: { type: String, unique: true }
         })
       }
