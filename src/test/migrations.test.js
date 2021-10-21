@@ -62,6 +62,7 @@ describe('Migration', () => {
     const rawOldDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawOldDocument0._id, oldDocuments[0]._id)
     assert.include(rawOldDocument0, data[0])
+    assert.strictEqual(rawOldDocument0._version, 0)
 
     // Closing database, re-opening it with migrations and instantiating the Data model
     await database.close();
@@ -114,6 +115,7 @@ describe('Migration', () => {
     const rawOldDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawOldDocument0._id, oldDocuments[0]._id)
     assert.include(rawOldDocument0, data[0])
+    assert.strictEqual(rawOldDocument0._version, 0)
 
     // Closing database, re-opening it with migrations and instantiating the Data model
     await database.close();
@@ -134,6 +136,7 @@ describe('Migration', () => {
     const rawNewDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawNewDocument0._id, oldDocuments[0]._id)
     assert.include(rawNewDocument0, migratedData[0])
+    assert.strictEqual(rawNewDocument0._version, 1)
 
     await database.close();
     // re-loading migrated db
@@ -186,6 +189,7 @@ describe('Migration', () => {
     const rawOldDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawOldDocument0._id, oldDocuments[0]._id)
     assert.include(rawOldDocument0, data[0])
+    assert.strictEqual(rawOldDocument0._version, 0)
 
     // Closing database, re-opening it with migrations and instantiating the Data model
     await database.close();
@@ -206,6 +210,7 @@ describe('Migration', () => {
     const rawNewDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawNewDocument0._id, oldDocuments[0]._id)
     assert.include(rawNewDocument0, migratedData[0])
+    assert.strictEqual(rawNewDocument0._version, 1)
 
     await database.close();
     // re-loading migrated db
@@ -223,6 +228,8 @@ describe('Migration', () => {
     const rawReloadedDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawReloadedDocument0._id, oldDocuments[0]._id)
     assert.include(rawReloadedDocument0, migratedData[0])
+    assert.strictEqual(rawReloadedDocument0._version, 1)
+
     await database.close()
   })
 
@@ -282,10 +289,12 @@ describe('Migration', () => {
     const rawOldDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawOldDocument0._id, oldDocuments[0]._id)
     assert.include(rawOldDocument0, data[0])
+    assert.strictEqual(rawOldDocument0._version, 0)
 
     const rawOldDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawOldDocument1._id, oldDocuments[1]._id)
     assert.include(rawOldDocument1, data[1])
+    assert.strictEqual(rawOldDocument1._version, 0)
 
     // Closing database, re-opening it with migrations and instantiating the migrated Data model
     await database.close();
@@ -309,9 +318,11 @@ describe('Migration', () => {
     const rawNewDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawNewDocument0._id, oldDocuments[0]._id)
     assert.include(rawNewDocument0, migratedData[0])
+    assert.strictEqual(rawNewDocument0._version, 1)
     const rawNewDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawNewDocument1._id, oldDocuments[1]._id)
     assert.include(rawNewDocument1, migratedData[1])
+    assert.strictEqual(rawNewDocument1._version, 1)
 
     await database.close();
     // re-loading migrated db
@@ -330,10 +341,12 @@ describe('Migration', () => {
     const rawReloadedDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawReloadedDocument0._id, oldDocuments[0]._id)
     assert.include(rawReloadedDocument0, migratedData[0])
+    assert.strictEqual(rawReloadedDocument0._version, 1)
 
     const rawReloadedDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawReloadedDocument1._id, oldDocuments[1]._id)
     assert.include(rawReloadedDocument1, migratedData[1])
+    assert.strictEqual(rawReloadedDocument1._version, 1)
     await database.close()
   })
 
@@ -397,10 +410,12 @@ describe('Migration', () => {
     const rawOldDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawOldDocument0._id, oldDocuments[0]._id)
     assert.include(rawOldDocument0, data[0])
+    assert.strictEqual(rawOldDocument0._version, 0)
 
     const rawOldDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawOldDocument1._id, oldDocuments[1]._id)
     assert.include(rawOldDocument1, data[1])
+    assert.strictEqual(rawOldDocument1._version, 0)
 
     // Closing database, re-opening it with migrations and instantiating the migrated Data model
     await database.close();
@@ -424,9 +439,11 @@ describe('Migration', () => {
     const rawNewDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawNewDocument0._id, oldDocuments[0]._id)
     assert.include(rawNewDocument0, migratedData[0])
+    assert.strictEqual(rawNewDocument0._version, 1)
     const rawNewDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawNewDocument1._id, oldDocuments[1]._id)
     assert.include(rawNewDocument1, migratedData[1])
+    assert.strictEqual(rawNewDocument1._version, 1)
 
     await database.close();
     // re-loading migrated db
@@ -445,10 +462,12 @@ describe('Migration', () => {
     const rawReloadedDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawReloadedDocument0._id, oldDocuments[0]._id)
     assert.include(rawReloadedDocument0, migratedData[0])
+    assert.strictEqual(rawReloadedDocument0._version, 1)
 
     const rawReloadedDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawReloadedDocument1._id, oldDocuments[1]._id)
     assert.include(rawReloadedDocument1, migratedData[1])
+    assert.strictEqual(rawReloadedDocument1._version, 1)
     await database.close()
   })
 
@@ -508,10 +527,12 @@ describe('Migration', () => {
     const rawOldDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawOldDocument0._id, oldDocuments[0]._id)
     assert.include(rawOldDocument0, data[0])
+    assert.strictEqual(rawOldDocument0._version, 0)
 
     const rawOldDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawOldDocument1._id, oldDocuments[1]._id)
     assert.include(rawOldDocument1, data[1])
+    assert.strictEqual(rawOldDocument1._version, 0)
 
     // Closing database, re-opening it with migrations and instantiating the migrated Data model
     await database.close();
@@ -584,10 +605,12 @@ describe('Migration', () => {
     const rawOldDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawOldDocument0._id, oldDocuments[0]._id)
     assert.include(rawOldDocument0, data[0])
+    assert.strictEqual(rawOldDocument0._version, 0)
 
     const rawOldDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawOldDocument1._id, oldDocuments[1]._id)
     assert.include(rawOldDocument1, data[1])
+    assert.strictEqual(rawOldDocument1._version, 0)
 
     // Closing database, re-opening it with migrations and instantiating the migrated Data model
     await database.close();
@@ -611,9 +634,12 @@ describe('Migration', () => {
     const rawNewDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawNewDocument0._id, oldDocuments[0]._id)
     assert.include(rawNewDocument0, migratedData[0])
+    assert.strictEqual(rawNewDocument0._version, 1)
+
     const rawNewDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawNewDocument1._id, oldDocuments[1]._id)
     assert.include(rawNewDocument1, migratedData[1])
+    assert.strictEqual(rawNewDocument1._version, 1)
 
     await database.close();
     // re-loading migrated db
@@ -632,10 +658,12 @@ describe('Migration', () => {
     const rawReloadedDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawReloadedDocument0._id, oldDocuments[0]._id)
     assert.include(rawReloadedDocument0, migratedData[0])
+    assert.strictEqual(rawReloadedDocument0._version, 1)
 
     const rawReloadedDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawReloadedDocument1._id, oldDocuments[1]._id)
     assert.include(rawReloadedDocument1, migratedData[1])
+    assert.strictEqual(rawReloadedDocument1._version, 1)
     await database.close()
   })
 
@@ -696,10 +724,12 @@ describe('Migration', () => {
     const rawOldDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawOldDocument0._id, oldDocuments[0]._id)
     assert.include(rawOldDocument0, data[0])
+    assert.strictEqual(rawOldDocument0._version, 0)
 
     const rawOldDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawOldDocument1._id, oldDocuments[1]._id)
     assert.include(rawOldDocument1, data[1])
+    assert.strictEqual(rawOldDocument1._version, 0)
 
     // Closing database, re-opening it with migrations and instantiating the migrated Data model
     await database.close();
@@ -723,9 +753,11 @@ describe('Migration', () => {
     const rawNewDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawNewDocument0._id, oldDocuments[0]._id)
     assert.include(rawNewDocument0, migratedData[0])
+    assert.strictEqual(rawNewDocument0._version, 1)
     const rawNewDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawNewDocument1._id, oldDocuments[1]._id)
     assert.include(rawNewDocument1, migratedData[1])
+    assert.strictEqual(rawNewDocument1._version, 1)
 
     await database.close();
     // re-loading migrated db
@@ -744,10 +776,12 @@ describe('Migration', () => {
     const rawReloadedDocument0 = await database.findOne('Data', { _id: oldDocuments[0]._id })
     assert.strictEqual(rawReloadedDocument0._id, oldDocuments[0]._id)
     assert.include(rawReloadedDocument0, migratedData[0])
+    assert.strictEqual(rawReloadedDocument0._version, 1)
 
     const rawReloadedDocument1 = await database.findOne('Data', { _id: oldDocuments[1]._id })
     assert.strictEqual(rawReloadedDocument1._id, oldDocuments[1]._id)
     assert.include(rawReloadedDocument1, migratedData[1])
+    assert.strictEqual(rawReloadedDocument1._version, 1)
     await database.close()
   })
 
