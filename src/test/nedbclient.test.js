@@ -8,6 +8,7 @@ import jetpack from 'fs-jetpack'
 
 chai.use(dirtyChai)
 const expect = chai.expect
+const assert = chai.assert
 
 const wd = jetpack.cwd('test_dir')
 
@@ -103,6 +104,40 @@ describe('NeDbClient', () => {
       user2.email = 'billy@example.com'
 
       await Promise.all([user1.save(), user2.save()])
+      validateId(user1)
+      validateId(user2)
+      expect(user1.email).to.be.equal('billy@example.com')
+      expect(user2.email).to.be.equal('billy@example.com')
+    })
+    it('should accept documents with duplicate values in unique-indexed field, but with the indexed forcibly removed', async function () {
+      class User extends Document {
+        constructor () {
+          super()
+
+          this.schema({
+            name: String,
+            email: {
+              type: String,
+              unique: true
+            }
+          })
+        }
+      }
+
+      const user1 = User.create()
+      user1.name = 'Bill'
+      user1.email = 'billy@example.com'
+
+      await user1.save()
+
+      const user2 = User.create()
+      user1.name = 'Billy'
+      user2.email = 'billy@example.com'
+      assert.sameMembers(await database.listIndexes('User'), ['_id', 'email'])
+      await database.removeIndex('User', 'email')
+
+      await user2.save()
+
       validateId(user1)
       validateId(user2)
       expect(user1.email).to.be.equal('billy@example.com')

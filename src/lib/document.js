@@ -330,6 +330,19 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       return client.count(this.collectionName(), query)
     }
 
+    static removeIndexes () {
+      return client._startTask(this._removeIndexes())
+    }
+
+    static async _removeIndexes () {
+      for (const k of await client.listIndexes(this.collectionName())) {
+        // The database's internal index _id (or _id_ in mongoDB) index should not be removed, but this edge case is
+        // handled by the database clients.
+        await client.removeIndex(this.collectionName(), k)
+      }
+      this._indexesCreated = false
+    }
+
     static createIndexes () {
       return client._startTask(this._createIndexes())
     }
@@ -353,7 +366,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
     static _fromData (datas) {
       if (!isArray(datas)) datas = [datas]
       const documentVersion = this._getDocumentVersion()
-      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new CamoError('💩')
+      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new CamoError('There are documents that don\'t match the migration version, some migrations are not applied, or the database is too recent.')
 
       return super._fromData(datas)
       // This way we preserve the original structure of the data. Data
@@ -387,11 +400,17 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
 
     static async __migrateCollection () {
       const data = await client.find(this.collectionName(), { _version: { $ne: this._getDocumentVersion() } }, {})
+      // The constraints in the model may have changed between the previous version and the current version of the
+      // model. Instead of inferring if the indexes currently in database match the model, we remove existing
+      // constraints during the migration and add new clean constraints from the current version of the model.
+      // Because this can be a heavy operation, we only do it if there are some documents to migrate in the collection.
+      if (data.length) await this.removeIndexes()
       const migrate = migrateDocument(this._getMigrations())
       await Promise.all(data
         .map(entry => migrate(entry))
         .map(async entry => client.save(this.collectionName(), entry._id, entry))
       )
+      await this.createIndexes()
     }
 
     /**

@@ -239,6 +239,35 @@ export default class NeDbClient extends DatabaseClient {
   }
 
   /**
+   * Remove index
+   *
+   * @param {String} collection Collection's name
+   * @param {String} field Field name
+   * @returns {Promise}
+   */
+  async removeIndex (collection, field) {
+    // The _id index is created by nedb and used in its internal functions.
+    // Removing the _id index breaks the database:
+    // - it would return empty Arrays at all requests;
+    // - crash when creating a new index.
+    // We silently avoid removing it.
+    if (field === '_id') return
+    const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
+    await util.promisify(db.removeIndex.bind(db))(field)
+  }
+
+  /**
+   * List indexes
+   *
+   * @param {String} collection Collection's name
+   * @returns {Promise<Array<string>>}
+   */
+  async listIndexes (collection) {
+    const db = await getCollection(collection, this._collections, this._path, this._options, this._readOnly)
+    return Object.keys(db.indexes)
+  }
+
+  /**
    * Create index
    *
    * @param {String} collection Collection's name

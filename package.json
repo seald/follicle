@@ -9,7 +9,7 @@
     "/build/lib/**",
     "!/**/*.spec.js"
   ],
-  "version": "2.0.0",
+  "version": "2.0.1-1",
   "description": "A class-based ES6 ODM for Mongo-like databases.",
   "author": {
     "name": "Timothée Rebours",
@@ -54,6 +54,7 @@
     "@seald-io/nedb": "^2.0.0",
     "centimaitre": "^1.0.4",
     "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
     "fs-jetpack": "^4.1.0",
     "mocha": "^8.3.2",

@@ -1,5 +1,13 @@
 #Changelog
 
+## [2.0.1-1] 2021-10-20
+### Changed
+- Rewrote the migrations test suite, and clarify migration errors.
+
+## [2.0.1-0] 2021-10-20
+### Fixed
+- Fixed a migration issue when there are constraints on the migrated fields
+
 ## [2.0.0] 2021-05-18
 ### Changed
 - Switched to `@seald-io/nedb@^2.0.0` rather than `nedb@^1.8.0` since it is unmaintained

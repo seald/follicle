@@ -8,6 +8,7 @@ import { validateId } from './util'
 
 chai.use(dirtyChai)
 const expect = chai.expect
+const assert = chai.assert
 
 describe('MongoClient', function () {
   const url = `mongodb://${process.env.MONGO_HOSTNAME}/camo_test`
@@ -30,8 +31,8 @@ describe('MongoClient', function () {
     }
   })
 
-  afterEach(function () {
-    return database && database.dropDatabase()
+  afterEach(async function () {
+    if (database) await database.dropDatabase()
   })
 
   after(async function () {
@@ -221,6 +222,42 @@ describe('MongoClient', function () {
       user2.email = 'billy@example.com'
 
       await Promise.all([user1.save(), user2.save()])
+      validateId(user1)
+      validateId(user2)
+      expect(user1.email).to.be.equal('billy@example.com')
+      expect(user2.email).to.be.equal('billy@example.com')
+    })
+
+    it('should accept documents with duplicate values in unique-indexed field, but with the indexed forcibly removed', async function () {
+      class User extends Document {
+        constructor () {
+          super()
+
+          this.schema({
+            name: String,
+            email: {
+              type: String,
+              unique: true
+            }
+          })
+        }
+      }
+
+      const user1 = User.create()
+      user1.name = 'Bill'
+      user1.email = 'billy@example.com'
+
+      await user1.save()
+
+      const user2 = User.create()
+      user1.name = 'Billy'
+      user2.email = 'billy@example.com'
+      // the ids in mongodb have different names than in nedb
+      assert.sameMembers(await database.listIndexes('User'), ['_id_', 'email_1'])
+      await database.removeIndex('User', 'email_1')
+
+      await user2.save()
+
       validateId(user1)
       validateId(user2)
       expect(user1.email).to.be.equal('billy@example.com')
