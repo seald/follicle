@@ -1,10 +1,6 @@
 #Changelog
 
-## [2.0.1-1] 2021-10-20
-### Changed
-- Rewrote the migrations test suite, and clarify migration errors.
-
-## [2.0.1-0] 2021-10-20
+## [2.0.1] 2021-10-21
 ### Fixed
 - Fixed a migration issue when there are constraints on the migrated fields
 
