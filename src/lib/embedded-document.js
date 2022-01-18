@@ -1,5 +1,5 @@
-export default ({ BaseDocument }) => {
-  return class EmbeddedDocument extends BaseDocument {
+export default ({ classes }) => {
+  return class EmbeddedDocument extends classes.BaseDocument {
     constructor () {
       super()
 
@@ -11,17 +11,6 @@ export default ({ BaseDocument }) => {
       // it is removed
       delete this._schema._id
       delete this._id
-    }
-
-    // TODO: Is there a way to tell if a class is
-    // a subclass of something? Until I find out
-    // how, we'll be lazy use this.
-    static documentClass () {
-      return 'embedded'
-    }
-
-    documentClass () {
-      return 'embedded'
     }
   }
 }

@@ -5,12 +5,6 @@ export const isDate = d => isNumber(d) || d instanceof Date || isNumber(Date.par
 export const isBuffer = b => typeof b === 'object' || b instanceof Buffer
 export const isObject = o => typeof o === 'object' && o != null
 export const isArray = a => Array.isArray(a)
-export const isDocument = m => m && m.documentClass && m.documentClass() === 'document'
-export const isEmbeddedDocument = e => e && e.documentClass && e.documentClass() === 'embedded'
-export const isSupportedType = t => (t === String || t === Number || t === Boolean ||
-  t === Buffer || t === Date || t === Array ||
-  isArray(t) || t === Object || t instanceof Object ||
-  typeof (t.documentClass) === 'function')
 export const isInChoices = (choices, choice) => {
   if (!choices) return true
   return choices.indexOf(choice) > -1
@@ -20,9 +14,16 @@ export const isEmptyValue = value =>
   (value === '') ||
   (!(typeof value === 'number' || value instanceof Date || typeof value === 'boolean' || typeof value === 'string') && (Object.keys(value).length === 0))
 
-export default ({ client }) => {
+export default ({ client, classes }) => {
   const isNativeId = n => client.isNativeId(n)
-  const isReferenceable = r => isDocument(r) || isNativeId(r)
+  const isReferenceable = r => r instanceof classes.Document || isNativeId(r)
+  const isSupportedType = t => (t === String || t === Number || t === Boolean ||
+    t === Buffer || t === Date || t === Array ||
+    isArray(t) || t === Object || t instanceof Object ||
+    t.prototype instanceof classes.Document || t.prototype instanceof classes.EmbeddedDocument)
+  const isDocument = m => m && (m instanceof classes.Document || m.prototype instanceof classes.Document)
+  const isEmbeddedDocument = e => e && (e instanceof classes.EmbeddedDocument || e.prototype instanceof classes.EmbeddedDocument)
+
   const isType = (value, type) => {
     if (type === String) return isString(value)
     else if (type === Number) return isNumber(value)
@@ -31,8 +32,8 @@ export default ({ client }) => {
     else if (type === Date) return isDate(value)
     else if (type === Array || isArray(type)) return isArray(value)
     else if (type === Object) return isObject(value)
-    else if (type.documentClass && type.documentClass() === 'document') return isDocument(value) || client.isNativeId(value)
-    else if (type.documentClass && type.documentClass() === 'embedded') return isEmbeddedDocument(value)
+    else if (type.prototype instanceof classes.Document) return isDocument(value) || client.isNativeId(value)
+    else if (type.prototype instanceof classes.EmbeddedDocument) return isEmbeddedDocument(value)
     else if (type === client.nativeIdType()) return isNativeId(value)
     else throw new Error(`Unsupported type: ${type.name}`)
   }

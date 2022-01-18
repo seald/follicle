@@ -1,6 +1,6 @@
 import { ValidationError } from './errors'
 
-export default ({ client, validators }) => {
+export default ({ client, validators, classes }) => {
   const {
     isArray,
     isDate,
@@ -32,17 +32,6 @@ export default ({ client, validators }) => {
       }
 
       this._id = null
-    }
-
-    // TODO: Is there a way to tell if a class is
-    // a subclass of something? Until I find out
-    // how, we'll be lazy use this.
-    static documentClass () {
-      throw new TypeError('You must override documentClass (static).')
-    }
-
-    documentClass () {
-      throw new TypeError('You must override documentClass.')
     }
 
     collectionName () {
@@ -195,7 +184,7 @@ export default ({ client, validators }) => {
 
         if (this._schema[key].type === Date && isDate(value)) this[key] = new Date(value)
         // TODO: This should probably be in Document, not BaseDocument
-        else if (value !== null && value !== undefined && value.documentClass && value.documentClass() === 'embedded') { value.canonicalize() }
+        else if (value !== null && value !== undefined && value instanceof classes.EmbeddedDocument) { value.canonicalize() }
       })
     }
 
@@ -241,10 +230,10 @@ export default ({ client, validators }) => {
           if (key in instance._schema && value !== undefined) {
             const type = instance._schema[key].type
             // Initialize EmbeddedDocument
-            if (type.documentClass && type.documentClass() === 'embedded') {
+            if (type.prototype instanceof classes.EmbeddedDocument) {
               if (isEmptyValue(value)) instance[key] = value
               else instance[key] = type._fromData(value)
-            } else if (isArray(type) && type.length > 0 && type[0].documentClass && type[0].documentClass() === 'embedded') {
+            } else if (isArray(type) && type.length > 0 && type[0].prototype instanceof classes.EmbeddedDocument) {
               // Initialize array of EmbeddedDocuments
               instance[key] = []
               value.forEach((v, i) => {
