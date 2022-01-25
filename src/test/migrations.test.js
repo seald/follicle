@@ -798,6 +798,6 @@ describe('Migration', () => {
     }
     const { Document } = await connect(url2)
     const Data = makeModel(Document)
-    await assert.isRejected(Data.migrateCollection(), 'More than 10% of the data file is corrupt')
+    await assert.isRejected(Data.migrateCollection(), 'more than given corruptAlertThreshold (10%)')
   })
 })

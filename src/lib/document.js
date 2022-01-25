@@ -1,5 +1,5 @@
 import { migrateDocument } from './util'
-import { CamoError } from './errors'
+import { FollicleError } from './errors'
 
 export default ({ client, classes, validators, migrations = {} }) => {
   const { isArray, isEmbeddedDocument, isReferenceable } = validators
@@ -341,7 +341,7 @@ export default ({ client, classes, validators, migrations = {} }) => {
     static _fromData (datas) {
       if (!isArray(datas)) datas = [datas]
       const documentVersion = this._getDocumentVersion()
-      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new CamoError('There are documents that don\'t match the migration version, some migrations are not applied, or the database is too recent.')
+      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new FollicleError('There are documents that don\'t match the migration version, some migrations are not applied, or the database is too recent.')
 
       return super._fromData(datas)
       // This way we preserve the original structure of the data. Data

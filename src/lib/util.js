@@ -1,4 +1,4 @@
-import { CamoError } from './errors'
+import { FollicleError } from './errors'
 
 export const deepTraverse = function (obj, func) {
   for (const i in obj) {
@@ -11,7 +11,7 @@ export const deepTraverse = function (obj, func) {
 
 export const migrateDocument = migrations => serializedDocument => {
   const finalVersion = migrations.length
-  if (serializedDocument._version > finalVersion) throw new CamoError('Version of the database is too recent')
+  if (serializedDocument._version > finalVersion) throw new FollicleError('Version of the database is too recent')
   while (serializedDocument._version < finalVersion) {
     serializedDocument = migrations[serializedDocument._version](serializedDocument)
     serializedDocument._version++
