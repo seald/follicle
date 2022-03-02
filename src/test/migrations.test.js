@@ -123,7 +123,7 @@ describe('Migration', () => {
     Data = await makeModel(Document)
 
     // Migrating
-    await Data._migrateCollection()
+    await Data.migrateCollection()
 
     // Checking it is ok at the follicle level
     const newDocuments = await Data.find({}, { sort: ['number'] })
@@ -197,7 +197,7 @@ describe('Migration', () => {
     Data = await makeModel(Document)
 
     // Migrating
-    await Data._migrateCollection()
+    await Data.migrateCollection()
 
     // Checking it is ok at the follicle level
     const newDocuments = await Data.find({}, { sort: ['number'] })
@@ -302,7 +302,7 @@ describe('Migration', () => {
     Data = await makeMigratedModel(Document)
 
     // Migrating
-    await Data._migrateCollection()
+    await Data.migrateCollection()
 
     // Checking it is ok at the follicle level
     const newDocuments = await Data.find({}, { sort: ['number'] })
@@ -423,7 +423,7 @@ describe('Migration', () => {
     Data = await makeMigratedModel(Document)
 
     // Migrating
-    await Data._migrateCollection()
+    await Data.migrateCollection()
 
     // Checking it is ok at the follicle level
     const newDocuments = await Data.find({}, { sort: ['number'] })
@@ -543,7 +543,7 @@ describe('Migration', () => {
     Data = await makeMigratedModel(Document)
 
     // Migration will fail as the new constraint does not allow duplicate values of number, in this case the duplicate value is 1
-    await assert.isRejected(Data._migrateCollection(), `Can't insert key ${migratedData[1].constrained}, it violates the unique constraint`)
+    await assert.isRejected(Data.migrateCollection(), `Can't insert key ${migratedData[1].constrained}, it violates the unique constraint`)
   })
 
   it('Migration that removes a constraint on an existing field', async () => {
@@ -621,7 +621,7 @@ describe('Migration', () => {
     Data = await makeMigratedModel(Document)
 
     // Migrating
-    await Data._migrateCollection()
+    await Data.migrateCollection()
 
     // Checking it is ok at the follicle level
     const newDocuments = await Data.find({}, { sort: ['number'] })
@@ -740,7 +740,7 @@ describe('Migration', () => {
     Data = await makeMigratedModel(Document)
 
     // Migrating
-    await Data._migrateCollection()
+    await Data.migrateCollection()
 
     // Checking it is ok at the follicle level
     const newDocuments = await Data.find({}, { sort: ['numberRenamed'] })
@@ -798,6 +798,6 @@ describe('Migration', () => {
     }
     const { Document } = await connect(url2)
     const Data = makeModel(Document)
-    await assert.isRejected(Data._migrateCollection(), 'More than 10% of the data file is corrupt')
+    await assert.isRejected(Data.migrateCollection(), 'more than given corruptAlertThreshold (10%)')
   })
 })

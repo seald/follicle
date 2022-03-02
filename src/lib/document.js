@@ -1,35 +1,10 @@
-import depd from 'depd'
 import { migrateDocument } from './util'
-import { CamoError } from './errors'
+import { FollicleError } from './errors'
 
-const deprecate = depd('camo')
-
-export default ({ client, BaseDocument, validators, migrations = {} }) => {
+export default ({ client, classes, validators, migrations = {} }) => {
   const { isArray, isEmbeddedDocument, isReferenceable } = validators
 
-  return class Document extends BaseDocument {
-    constructor (name) {
-      super()
-
-      if (name !== undefined && name !== null) {
-        deprecate('Document.constructor(name) - override Document.collectionName() instead')
-        this._meta = {
-          collection: name
-        }
-      }
-    }
-
-    // TODO: Is there a way to tell if a class is
-    // a subclass of something? Until I find out
-    // how, we'll be lazy use this.
-    static documentClass () {
-      return 'document'
-    }
-
-    documentClass () {
-      return 'document'
-    }
-
+  return class Document extends classes.BaseDocument {
     get meta () {
       return this._meta
     }
@@ -366,7 +341,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
     static _fromData (datas) {
       if (!isArray(datas)) datas = [datas]
       const documentVersion = this._getDocumentVersion()
-      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new CamoError('There are documents that don\'t match the migration version, some migrations are not applied, or the database is too recent.')
+      if (datas.some(data => Object.prototype.hasOwnProperty.call(data, '_version') && data._version !== documentVersion)) throw new FollicleError('There are documents that don\'t match the migration version, some migrations are not applied, or the database is too recent.')
 
       return super._fromData(datas)
       // This way we preserve the original structure of the data. Data
@@ -394,11 +369,16 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
       return migrations[this.collectionName()] || []
     }
 
-    static _migrateCollection () {
-      return client._startTask(this.__migrateCollection())
+    static migrateCollection () {
+      return client._startTask(this._migrateCollection())
     }
 
-    static async __migrateCollection () {
+    /**
+     *
+     * @return {Promise}
+     * @private
+     */
+    static async _migrateCollection () {
       const data = await client.find(this.collectionName(), { _version: { $ne: this._getDocumentVersion() } }, {})
       // The constraints in the model may have changed between the previous version and the current version of the
       // model. Instead of inferring if the indexes currently in database match the model, we remove existing
@@ -417,6 +397,7 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * Clear current collection
      *
      * @returns {Promise}
+     * @async
      */
     static clearCollection () {
       return client._startTask(this._clearCollection())
@@ -426,8 +407,10 @@ export default ({ client, BaseDocument, validators, migrations = {} }) => {
      * Clear current collection
      *
      * @returns {Promise}
+     * @private
+     * @async
      */
-    static async _clearCollection () {
+    static _clearCollection () {
       return client.clearCollection(this.collectionName())
     }
   }

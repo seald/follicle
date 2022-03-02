@@ -3,7 +3,6 @@
 import chai from 'chai'
 import dirtyChai from 'dirty-chai'
 import { connect } from '../lib/connect'
-import { isDocument } from '../lib/validate'
 import { ValidationError } from '../lib/errors'
 import getData from './data'
 import { expectError, fail, validateId } from './util'
@@ -516,7 +515,7 @@ describe('Document', () => {
       // of references, so the boss's reference
       // to the employee is still the ID.
       expect(b.employees[0].boss).to.not.be.null()
-      expect(!isDocument(b.employees[0].boss)).to.be.true()
+      expect(!(b.employees[0].boss instanceof Boss)).to.be.true()
     })
 
     it('should allow string types', async () => {

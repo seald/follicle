@@ -3,7 +3,7 @@
  *
  * Adapted from es6-error package.
  */
-export class CamoError extends Error {
+export class FollicleError extends Error {
   constructor (message) {
     super(message)
 
@@ -33,4 +33,4 @@ export class CamoError extends Error {
 /*
  * Error indicating document didn't pass validation.
  */
-export class ValidationError extends CamoError {}
+export class ValidationError extends FollicleError {}

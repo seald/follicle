@@ -215,10 +215,10 @@ describe('NeDbClient on disk', () => {
         }
       }
     }
-    let unhandled = false
+    let unhandled = 0
 
-    process.on('unhandledRejection', () => {
-      unhandled = true
+    process.on('unhandledRejection', (reason, promise) => {
+      unhandled += 1
     })
 
     for (let i = 0; i < 10; i++) {
@@ -228,8 +228,8 @@ describe('NeDbClient on disk', () => {
     }
     await database.close() // should not throw
 
-    expect(unhandled).to.be.equal(true)
-    unhandled = false
+    expect(unhandled).to.be.equal(18) // somehow the unhandledRejection are emitted twice each, couldn't find why, not a major issue
+    unhandled = 0
     const school = School.create()
     school.email = 'test@test.com'
     let error = false
@@ -239,7 +239,7 @@ describe('NeDbClient on disk', () => {
       error = true
     }
     await database.close()
-    expect(unhandled).to.be.equal(false)
+    expect(unhandled).to.be.equal(0)
     expect(error).to.be.equal(true)
   })
 })

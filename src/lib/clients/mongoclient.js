@@ -24,9 +24,6 @@ export default class MongoClient extends DatabaseClient {
     return new Promise(function (resolve, reject) {
       const db = that._mongo.collection(collection)
 
-      // TODO: I'd like to just use update with upsert:true, but I'm
-      // note sure how the query will work if id == null. Seemed to
-      // have some problems before with passing null ids.
       if (id === null) {
         db.insertOne(values, function (error, result) {
           if (error) return reject(error)

@@ -9,8 +9,8 @@
     "/build/lib/**",
     "!/**/*.spec.js"
   ],
-  "version": "2.0.1",
-  "description": "A class-based ES6 ODM for Mongo-like databases.",
+  "version": "3.0.0-0",
+  "description": "A class-based ES6 ODM for Mongo-like databases. Forked from camo.",
   "author": {
     "name": "Timothée Rebours",
     "email": "tim@seald.io",
@@ -41,29 +41,23 @@
     "coverage": "nyc npm test -- --reporter mocha-multi-reporters --reporter-options configFile=./mochaReportConfig.json --forbid-only"
   },
   "engines": {
-    "node": ">=8.0.0"
-  },
-  "dependencies": {
-    "depd": "^2.0.0",
-    "temp": "^0.9.4"
+    "node": ">=12.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.10",
-    "@babel/preset-env": "^7.13.12",
-    "@react-native-community/async-storage": "^1.12.1",
-    "@seald-io/nedb": "^2.0.0",
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.8",
+    "@seald-io/nedb": "^3.0.0-6",
     "centimaitre": "^1.0.4",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
-    "fs-jetpack": "^4.1.0",
-    "mocha": "^8.3.2",
-    "mocha-junit-reporter": "^2.0.0",
+    "fs-jetpack": "^4.3.1",
+    "mocha": "^9.1.4",
+    "mocha-junit-reporter": "^2.0.2",
     "mocha-multi-reporters": "^1.5.1",
-    "mongodb": "^3.6.5",
+    "mongodb": "^4.3.0",
     "nyc": "^15.1.0",
-    "react-native-local-mongodb": "^2.2.9",
-    "source-map-support": "^0.5.19",
-    "standard": "^16.0.3"
+    "source-map-support": "^0.5.21",
+    "standard": "^16.0.4"
   }
 }

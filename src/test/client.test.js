@@ -3,82 +3,10 @@ import chai from 'chai'
 import dirtyChai from 'dirty-chai'
 import { connect } from '../lib/connect'
 import getData from './data'
-import { data, validateData1, validateData2, validateId } from './util'
-import jetpack from 'fs-jetpack'
+import { data, validateData1, validateId } from './util'
 
 chai.use(dirtyChai)
-const { assert, expect } = chai
-
-process.on('unhandledRejection', console.error)
-
-describe('Read only', () => {
-  const tmpDir = jetpack.cwd('tmp')
-  const url = `nedb://${tmpDir.path('test-read-only.nedb')}`
-  let database, Document, Data
-
-  before('fill on-disk db', async () => {
-    tmpDir.dir('', { empty: true })
-    const { Document, client: database } = await connect(url)
-    await database.dropDatabase()
-    const { data1: getData1, data2: getData2 } = data(Document)
-    await getData1().save()
-    await getData2().save()
-    await database.close()
-  })
-
-  beforeEach('prepare inmemory database', async () => {
-    ({ Document, client: database } = await connect(url, { readOnly: true }))
-    Data = await getData(Document)
-  })
-
-  it('check everything', async () => {
-    const data = await Data.find({})
-    assert.strictEqual(data.length, 2)
-    const d1 = await Data.findOne({ item: 99 })
-    validateId(d1)
-    validateData1(d1)
-    const d2 = await Data.findOne({ number: 2 })
-    validateId(d2)
-    validateData2(d2)
-  })
-
-  it('modify, save then reload', async () => {
-    const data = await Data.find({})
-    data[0].number = 36
-    await data[0].save()
-    await database.close();
-    ({ Document, client: database } = await connect(url, { readOnly: true }))
-    Data = await getData(Document)
-    const d1 = await Data.findOne({ item: 99 })
-    validateId(d1)
-    validateData1(d1)
-    const d2 = await Data.findOne({ number: 2 })
-    validateId(d2)
-    validateData2(d2)
-  })
-
-  it('concurrently access database', async () => {
-    const connectAndFind = async (...args) => {
-      const { Document } = await connect(...args)
-      const Data = await getData(Document)
-      return Data.find({}) // we need to await the find operation, because the database is loaded in the background
-    }
-
-    // The problem in concurrent access resides in the temp file nedb creates which is the filename appended with '~'.
-    // The fact that this does not crash is enough to prove that concurrent access works, since a collision on this temp
-    // file causes a crash.
-    // We could think that simply not writing in the database is enough, but we have no guarantee that nedb won't
-    // compact the database, which would trigger a file write, hence a collision on the temp file.
-    // Nedb does not provide a way to disable auto-compaction.
-    await Promise.all([
-      connectAndFind(url),
-      connectAndFind(url, { readOnly: true }),
-      connectAndFind(url, { readOnly: true }),
-      connectAndFind(url, { readOnly: true }),
-      connectAndFind(url, { readOnly: true })
-    ])
-  })
-})
+const { expect } = chai
 
 describe('Client', () => {
   let Document, validators

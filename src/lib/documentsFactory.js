@@ -10,16 +10,17 @@ import getDocument from './document'
  * @constructor
  */
 export const DocumentsFactory = (client, migrations) => {
-  const validators = getValidators({ client })
-  const BaseDocument = getBaseDocument({ client, validators })
-  const Document = getDocument({ BaseDocument, client, validators, migrations })
-  const EmbeddedDocument = getEmbeddedDocument({ BaseDocument, client, validators })
+  const classes = {}
+  const validators = getValidators({ client, classes })
+  classes.BaseDocument = getBaseDocument({ client, validators, classes })
+  classes.Document = getDocument({ classes, client, validators, migrations })
+  classes.EmbeddedDocument = getEmbeddedDocument({ classes, client, validators })
 
   return {
     client,
     validators,
-    BaseDocument,
-    Document,
-    EmbeddedDocument
+    BaseDocument: classes.BaseDocument,
+    Document: classes.Document,
+    EmbeddedDocument: classes.EmbeddedDocument
   }
 }
