@@ -21,6 +21,7 @@ export default ({ client, classes }) => {
     t === Buffer || t === Date || t === Array ||
     isArray(t) || t === Object || t instanceof Object ||
     t.prototype instanceof classes.Document || t.prototype instanceof classes.EmbeddedDocument)
+  // TODO: isDocument (and similarly isEmbeddedDocument) tests that the argument is an instance OR a constructor of a class that inherits from Document, testing both in the same function is a bit dirty, but refactoring this would be heavy
   const isDocument = m => m && (m instanceof classes.Document || m.prototype instanceof classes.Document)
   const isEmbeddedDocument = e => e && (e instanceof classes.EmbeddedDocument || e.prototype instanceof classes.EmbeddedDocument)
 
