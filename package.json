@@ -10,7 +10,7 @@
     "!/**/*.spec.js"
   ],
   "version": "2.0.1",
-  "description": "A class-based ES6 ODM for Mongo-like databases.",
+  "description": "A class-based ES6 ODM for Mongo-like databases. Forked from camo.",
   "author": {
     "name": "Timothée Rebours",
     "email": "tim@seald.io",

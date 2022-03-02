@@ -1,6 +1,6 @@
 # Follicle
 
-Follicle is a fork of camo (https://github.com/scottwrobinson/camo) made for the needs of Seald (https://www.seald.io/)
+Follicle is a fork of [camo](https://github.com/scottwrobinson/camo) made for the needs of [Seald](https://www.seald.io/)
 
 ## Jump To
 * <a href="#why-do-we-need-another-odm">Why do we need another ODM?</a>
@@ -22,44 +22,44 @@ Follicle is a fork of camo (https://github.com/scottwrobinson/camo) made for the
 * <a href="#copyright-license">Copyright & License</a>
 
 ## Why do we need another ODM?
-Short answer, we probably don't. Camo was created for two reasons: to bring traditional-style classes to [MongoDB](https://www.mongodb.com/) JavaScript, and to support [NeDB](https://github.com/louischatriot/nedb) as a backend (which is much like the SQLite-alternative to Mongo).
+Short answer, we probably don't. Follicle was created for two reasons: to bring traditional-style classes to [MongoDB](https://www.mongodb.com/) JavaScript, and to support [NeDB](https://github.com/louischatriot/nedb) as a backend (which is much like the SQLite-alternative to Mongo).
 
 Throughout development this eventually turned in to a library full of [ES6](https://github.com/lukehoban/es6features) features. Coming from a Java background, its easier for me to design and write code in terms of classes, and I suspect this is true for many JavaScript beginners. While ES6 classes don't bring any new functionality to the language, they certainly do make it much easier to jump in to OOP with JavaScript, which is reason enough to warrent a new library, IMO.
 
 ## Why forking camo?
 
-Camo is awesome but has too many incompatible patterns for internal use, a PR wouldn't make sense.
+Camo is awesome but has too many incompatible patterns for internal use such as having only one database client connected which can be difficult in tests where you need multiple databases connected at the same time, a PR wouldn't make sense.
 
 ## Advantages
-So, why use Camo?
+So, why use Follicle?
 
-- **ES6**: ES6 features are quickly being added to Node, especially now that it has merged with io.js. With all of these new features being released, Camo is getting a head start in writing tested and proven ES6 code. This also means that native Promises are built-in to Camo, so no more `promisify`-ing your ODM or waiting for Promise support to be added natively.
-- **Easy to use**: While JavaScript is a great language overall, it isn't always the easiest for beginners to pick up. Camo aims to ease that transition by providing familiar-looking classes and a simple interface. Also, there is no need to install a full MongoDB instance to get started thanks to the support of NeDB.
-- **Multiple backends**: Camo was designed and built with multiple Mongo-like backends in mind, like NeDB, LokiJS\*, and TaffyDB\*. With NeDB support, for example, you don't need to install a full MongoDB instance for development or for smaller projects. This also allows you to use Camo in the browser, since databases like NeDB supports in-memory storage.
-- **Lightweight**: Camo is just a very thin wrapper around the backend databases, which mean you won't be sacrificing performance.
+- **ES6**: ES6 features are quickly being added to Node, especially now that it has merged with io.js. With all of these new features being released, Follicle is getting a head start in writing tested and proven ES6 code. This also means that native Promises are built-in to Follicle, so no more `promisify`-ing your ODM or waiting for Promise support to be added natively.
+- **Easy to use**: While JavaScript is a great language overall, it isn't always the easiest for beginners to pick up. Follicle aims to ease that transition by providing familiar-looking classes and a simple interface. Also, there is no need to install a full MongoDB instance to get started thanks to the support of NeDB.
+- **Multiple backends**: Follicle was designed and built with multiple Mongo-like backends in mind, like NeDB, LokiJS\*, and TaffyDB\*. With NeDB support, for example, you don't need to install a full MongoDB instance for development or for smaller projects. This also allows you to use Follicle in the browser, since databases like NeDB supports in-memory storage.
+- **Lightweight**: Follicle is just a very thin wrapper around the backend databases, which mean you won't be sacrificing performance.
 
 \* Support coming soon.
 
 ## Install and Run
-To use Camo, you must first have installed **Node >2.0.x**, then run the following commands:
+To use Follicle, you must first have installed **Node >2.0.x**, then run the following commands:
 
-    npm install camo --save
+    npm install follicle --save
 
 And at least ONE of the following:
 
-    npm install nedb --save
+    npm install @seald-io/nedb --save
 
     OR
 
     npm install mongodb --save
 
 ## Quick Start
-Camo was built with ease-of-use and ES6 in mind, so you might notice it has more of an OOP feel to it than many existing libraries and ODMs. Don't worry, focusing on object-oriented design doesn't mean we forgot about functional techniques or asynchronous programming. Promises are built-in to the API. Just about every call you make interacting with the database (find, save, delete, etc) will return a Promise. No more callback hell :)
+Follicle was built with ease-of-use and ES6 in mind, so you might notice it has more of an OOP feel to it than many existing libraries and ODMs. Don't worry, focusing on object-oriented design doesn't mean we forgot about functional techniques or asynchronous programming. Promises are built-in to the API. Just about every call you make interacting with the database (find, save, delete, etc) will return a Promise. No more callback hell :)
 
-For a short tutorial on using Camo, check out [this](http://stackabuse.com/getting-started-with-camo/) article.
+**WARNING:** the examples below are out of date for follicle. They are being updated.
 
 ### Connect to the Database
-Before using any document methods, you must first connect to your underlying database. All supported databases have their own unique URI string used for connecting. The URI string usually describes the network location or file location of the database. However, some databases support more than just network or file locations. NeDB, for example, supports storing data in-memory, which can be specified to Camo via `nedb://memory`. See below for details:
+Before using any document methods, you must first connect to your underlying database. All supported databases have their own unique URI string used for connecting. The URI string usually describes the network location or file location of the database. However, some databases support more than just network or file locations. NeDB, for example, supports storing data in-memory, which can be specified to Follicle via `nedb://memory`. See below for details:
 
 - MongoDB: 
   - Format: mongodb://[username:password@]host[:port][/db-name]
@@ -71,7 +71,7 @@ Before using any document methods, you must first connect to your underlying dat
 So to connect to an NeDB database, use the following:
 
 ```javascript
-const connect = require('@seald/follicle').connect;
+const connect = require('camo').connect;
 
 const main = async () => {
   const migrations = {
