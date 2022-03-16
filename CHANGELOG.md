@@ -1,5 +1,19 @@
 #Changelog
 
+## [3.0.0] 2022-03-16
+### Changed
+- Update to NeDB 3
+- Remove compatibility for Node.js below 12
+- Remove RNLocalMongoClient
+- Remove experimental readOnly mode for nedb client
+- Use async methods in nedb client
+- Remove documentClass method and static method on BaseDocument, EmbeddedDocument and Document
+- Change how types are tested with instanceof instead of documentClass method which changes instanciation a bit
+  Rename _migrateCollection static method to migrateCollection (not private)
+- Internalized path.join to avoid dependency with path module polyfill
+- Rename CamoError to FollicleError
+- Remove depd dependency
+
 ## [2.0.1] 2021-10-21
 ### Fixed
 - Fixed a migration issue when there are constraints on the migrated fields
