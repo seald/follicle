@@ -46,7 +46,7 @@
   "devDependencies": {
     "@babel/core": "^7.16.7",
     "@babel/preset-env": "^7.16.8",
-    "@seald-io/nedb": "^3.0.0-6",
+    "@seald-io/nedb": "^3.0.0",
     "centimaitre": "^1.0.4",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
