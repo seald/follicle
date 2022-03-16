@@ -9,7 +9,7 @@
     "/build/lib/**",
     "!/**/*.spec.js"
   ],
-  "version": "3.0.0-0",
+  "version": "3.0.0",
   "description": "A class-based ES6 ODM for Mongo-like databases. Forked from camo.",
   "author": {
     "name": "Timothée Rebours",
