@@ -6,7 +6,13 @@ import getDocument from './document'
 /**
  * @param {DatabaseClient} client
  * @param {Object} migrations
- * @return {{validators: {isString, isNumber, isBoolean, isDate, isBuffer, isObject, isArray, isDocument, isEmbeddedDocument, isReferenceable, isNativeId, isSupportedType, isType, isValidType, isInChoices, isEmptyValue}, BaseDocument: BaseDocument, Document: Document, EmbeddedDocument: EmbeddedDocument}}
+ * @return {{
+ *   client: DatabaseClient,
+ *   validators: {isString, isNumber, isBoolean, isDate, isBuffer, isObject, isArray, isDocument, isEmbeddedDocument, isReferenceable, isNativeId, isSupportedType, isType, isValidType, isInChoices, isEmptyValue},
+ *   BaseDocument: Class<BaseDocument>,
+ *   Document: Class<Document>,
+ *   EmbeddedDocument: Class<EmbeddedDocument>
+ * }}
  * @constructor
  */
 export const DocumentsFactory = (client, migrations) => {
