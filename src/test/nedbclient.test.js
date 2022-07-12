@@ -186,6 +186,36 @@ describe('NeDbClient on disk', () => {
     expect(stat).to.equal(undefined)
   })
 
+  it('drop corrupted database should work', async () => {
+    class School extends Document {
+      constructor () {
+        super()
+
+        this.name = String
+      }
+    }
+
+    const school = School.create()
+    school.name = 'South Park Elementary'
+
+    await school.save()
+    expect(database._collections).to.have.own.property('School')
+    let stat = await wd.inspectAsync('School.fdb')
+    expect(stat).to.have.property('size')
+    expect(stat.size).to.be.above(1)
+
+    await database.close()
+    jetpack.append(wd.path('School.fdb'), 'Oh no!\nThat will clearly screw up the DB file !\nWhat a mess!');
+    ({ Document, client: database } = await connect(url))
+
+    database._getCollection('School') // No need to await the loading (which will fail anyway)
+
+    await database.dropDatabase()
+    expect(database._collections).to.deep.equal({})
+    stat = await wd.inspectAsync('School.fdb')
+    expect(stat).to.equal(undefined)
+  })
+
   it('should execute all operations before closing', async () => {
     class School extends Document {
       constructor () {
