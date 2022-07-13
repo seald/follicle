@@ -317,10 +317,7 @@ export default class NeDbClient extends DatabaseClient {
     await this._waitForTasks()
     const datastores = Object.values(this._collections)
     await this.close()
-    for (const { datastore, loaded } of datastores) {
-      try {
-        await loaded
-      } catch {}
+    for (const { datastore } of datastores) {
       await datastore.dropDatabaseAsync()
     }
   }
