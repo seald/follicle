@@ -2,6 +2,10 @@ import Datastore from '@seald-io/nedb'
 import DatabaseClient from './client'
 import { joinPath } from '../util'
 
+/**
+ * @param {String} url
+ * @returns {String}
+ */
 const urlToPath = url => {
   if (url.indexOf('nedb://') > -1) {
     return url.slice(7, url.length)
@@ -9,6 +13,11 @@ const urlToPath = url => {
   return url
 }
 
+/**
+ * @param {String} dbLocation
+ * @param {String} collection
+ * @returns {string|*}
+ */
 const getCollectionPath = (dbLocation, collection) => {
   if (dbLocation === 'memory') {
     return dbLocation
@@ -16,27 +25,20 @@ const getCollectionPath = (dbLocation, collection) => {
   return joinPath(dbLocation, collection) + '.fdb'
 }
 
-const createCollection = async (collectionName, url, options) => {
+/**
+ * @param {String} collectionName
+ * @param {String} url
+ * @param {Object} options
+ * @return {{datastore: Datastore, loaded: Promise<void>}}
+ */
+const createCollection = (collectionName, url, options) => {
   if (url === 'memory') {
-    return new Datastore({ ...options, inMemoryOnly: true })
+    return { datastore: new Datastore({ ...options, inMemoryOnly: true }), loaded: Promise.resolve() }
   } else {
     const collectionPath = getCollectionPath(url, collectionName)
-    const dataStore = new Datastore({ ...options, filename: collectionPath, autoload: false })
-    await dataStore.loadDatabaseAsync()
-    return dataStore
+    const datastore = new Datastore({ ...options, filename: collectionPath, autoload: false })
+    return { datastore, loaded: datastore.loadDatabaseAsync() }
   }
-}
-
-/**
- * @param name
- * @param collections
- * @param path
- * @param options
- * @return {Promise<Datastore>}
- */
-const getCollection = async (name, collections, path, options) => {
-  if (!(name in collections)) collections[name] = createCollection(name, path, options)
-  return collections[name]
 }
 
 export default class NeDbClient extends DatabaseClient {
@@ -45,8 +47,18 @@ export default class NeDbClient extends DatabaseClient {
     this._path = urlToPath(url)
     this._options = options
 
-    /** @type {Object.<string, Datastore>} */
+    /** @type {Object.<string, {datastore: Datastore, loaded: Promise<void>}>} */
     this._collections = collections || {}
+  }
+
+  /**
+    * @param {String} name
+    * @return {Promise<Datastore>}
+  */
+  async _getCollection (name) {
+    if (!(name in this._collections)) this._collections[name] = createCollection(name, this._path, this._options)
+    await this._collections[name].loaded
+    return this._collections[name].datastore
   }
 
   /**
@@ -58,7 +70,7 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise} Promise with result insert or update query
    */
   async save (collection, id, values) {
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
 
     if (id === null) {
       const { _id } = await db.insertAsync(values)
@@ -76,7 +88,7 @@ export default class NeDbClient extends DatabaseClient {
    */
   async delete (collection, id) {
     if (id === null) return 0
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     return db.removeAsync({ _id: id })
   }
 
@@ -88,7 +100,7 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async deleteOne (collection, query) {
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     return db.removeAsync(query)
   }
 
@@ -100,7 +112,7 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async deleteMany (collection, query) {
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     return db.removeAsync(query, { multi: true })
   }
 
@@ -112,7 +124,7 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async findOne (collection, query) {
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     return db.findOneAsync(query)
   }
 
@@ -130,7 +142,7 @@ export default class NeDbClient extends DatabaseClient {
     // one document at a time
     options.multi = false
     options.returnUpdatedDocs = true
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
 
     const { affectedDocuments } = await db.updateAsync(query, { $set: values }, options)
     return affectedDocuments
@@ -148,7 +160,7 @@ export default class NeDbClient extends DatabaseClient {
     // Since this is 'findOne...' we'll only allow user to update
     // one document at a time
     options.multi = false
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     return db.removeAsync(query, options)
   }
 
@@ -161,7 +173,7 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async find (collection, query, options) {
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     const cursor = db.findAsync(query)
 
     if (options.sort && (Array.isArray(options.sort) || typeof options.sort === 'string' || options.sort instanceof String)) {
@@ -195,7 +207,7 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise}
    */
   async count (collection, query) {
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     return db.countAsync(query)
   }
 
@@ -213,7 +225,7 @@ export default class NeDbClient extends DatabaseClient {
     // - crash when creating a new index.
     // We silently avoid removing it.
     if (field === '_id') return
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     await db.removeIndexAsync(field)
   }
 
@@ -224,7 +236,7 @@ export default class NeDbClient extends DatabaseClient {
    * @returns {Promise<Array<string>>}
    */
   async listIndexes (collection) {
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     return Object.keys(db.indexes)
   }
 
@@ -241,7 +253,7 @@ export default class NeDbClient extends DatabaseClient {
     options.unique = options.unique || false
     options.sparse = options.sparse || false
 
-    const db = await getCollection(collection, this._collections, this._path, this._options)
+    const db = await this._getCollection(collection)
     await db.ensureIndexAsync({ fieldName: field, unique: options.unique, sparse: options.sparse })
   }
 
@@ -273,7 +285,8 @@ export default class NeDbClient extends DatabaseClient {
     for (const collection of Object.keys(this._collections)) {
       let db
       try {
-        db = await this._collections[collection]
+        await this._collections[collection].loaded
+        db = this._collections[collection].datastore
         db.stopAutocompaction()
         await db.compactDatafileAsync()
       } catch (error) {
@@ -304,8 +317,7 @@ export default class NeDbClient extends DatabaseClient {
     await this._waitForTasks()
     const datastores = Object.values(this._collections)
     await this.close()
-    for (const datastorePromise of datastores) {
-      const datastore = await datastorePromise
+    for (const { datastore } of datastores) {
       await datastore.dropDatabaseAsync()
     }
   }
