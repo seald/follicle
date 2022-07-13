@@ -2,6 +2,10 @@ import Datastore from '@seald-io/nedb'
 import DatabaseClient from './client'
 import { joinPath } from '../util'
 
+/**
+ * @param {String} url
+ * @returns {String}
+ */
 const urlToPath = url => {
   if (url.indexOf('nedb://') > -1) {
     return url.slice(7, url.length)
@@ -9,6 +13,11 @@ const urlToPath = url => {
   return url
 }
 
+/**
+ * @param {String} dbLocation
+ * @param {String} collection
+ * @returns {string|*}
+ */
 const getCollectionPath = (dbLocation, collection) => {
   if (dbLocation === 'memory') {
     return dbLocation
@@ -17,10 +26,10 @@ const getCollectionPath = (dbLocation, collection) => {
 }
 
 /**
- * @param collectionName
- * @param url
- * @param options
- * @return {Promise<{datastore: Datastore, loaded: Promise<void>}>}
+ * @param {String} collectionName
+ * @param {String} url
+ * @param {Object} options
+ * @return {{datastore: Datastore, loaded: Promise<void>}}
  */
 const createCollection = (collectionName, url, options) => {
   if (url === 'memory') {
@@ -43,7 +52,7 @@ export default class NeDbClient extends DatabaseClient {
   }
 
   /**
-    * @param name
+    * @param {String} name
     * @return {Promise<Datastore>}
   */
   async _getCollection (name) {
