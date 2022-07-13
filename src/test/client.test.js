@@ -110,7 +110,7 @@ describe('Client', () => {
       })
 
       const user = User.create({
-        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address
       })
 
       await Promise.all([address.save(), dog.save()])
@@ -136,7 +136,7 @@ describe('Client', () => {
       })
 
       const user = User.create({
-        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address
       })
 
       await Promise.all([address.save(), dog.save()])
@@ -161,7 +161,7 @@ describe('Client', () => {
       })
 
       const user = User.create({
-        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address
       })
 
       await Promise.all([address.save(), dog.save()])
@@ -330,11 +330,11 @@ describe('Client', () => {
       })
 
       const user1 = User.create({
-        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address
       })
 
       const user2 = User.create({
-        firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Sally', lastName: 'Bob', pet: dog, address
       })
 
       await Promise.all([address.save(), dog.save()])
@@ -361,11 +361,11 @@ describe('Client', () => {
       })
 
       const user1 = User.create({
-        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address
       })
 
       const user2 = User.create({
-        firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Sally', lastName: 'Bob', pet: dog, address
       })
 
       await Promise.all([address.save(), dog.save()])
@@ -392,11 +392,11 @@ describe('Client', () => {
       })
 
       const user1 = User.create({
-        firstName: 'Billy', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Billy', lastName: 'Bob', pet: dog, address
       })
 
       const user2 = User.create({
-        firstName: 'Sally', lastName: 'Bob', pet: dog, address: address
+        firstName: 'Sally', lastName: 'Bob', pet: dog, address
       })
 
       await Promise.all([address.save(), dog.save()])

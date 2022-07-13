@@ -44,20 +44,20 @@
     "node": ">=12.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.7",
-    "@babel/preset-env": "^7.16.8",
+    "@babel/core": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
     "@seald-io/nedb": "^3.0.0",
     "centimaitre": "^1.0.4",
-    "chai": "^4.3.4",
+    "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
     "fs-jetpack": "^4.3.1",
-    "mocha": "^9.1.4",
+    "mocha": "^10.0.0",
     "mocha-junit-reporter": "^2.0.2",
     "mocha-multi-reporters": "^1.5.1",
-    "mongodb": "^4.3.0",
+    "mongodb": "^4.7.0",
     "nyc": "^15.1.0",
     "source-map-support": "^0.5.21",
-    "standard": "^16.0.4"
+    "standard": "^17.0.0"
   }
 }

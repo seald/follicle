@@ -1,5 +1,13 @@
 #Changelog
 
+## [3.1.0] Unreleased
+### Fixed
+- Fix `dropDatabase` when database is corrupted
+
+### Changed
+- Update dependencies
+
+
 ## [3.0.0] 2022-03-16
 ### Changed
 - Update to NeDB 3
