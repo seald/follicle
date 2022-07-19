@@ -1,6 +1,6 @@
 #Changelog
 
-## [3.1.0] Unreleased
+## [3.1.0] 2022-07-19
 ### Fixed
 - Fix `dropDatabase` when database is corrupted
 

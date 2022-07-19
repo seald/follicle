@@ -1,6 +1,5 @@
 image: node:14
 
-
 before_script:
   - echo "//registry.npmjs.org/:_authToken=${NPM_REGISTRY_TOKEN}" > .npmrc
   - npm ci --cache .npm --prefer-offline
@@ -30,8 +29,6 @@ test:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura-coverage.xml
-
-
 
 deploy:
   stage: deploy
